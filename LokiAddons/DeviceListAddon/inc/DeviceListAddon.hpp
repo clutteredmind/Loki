@@ -1,5 +1,5 @@
 // 
-// Purpose: Declares the node addon that deals with the Windows process list
+// Purpose: Declares the node addon that deals with the Windows device list
 //
 
 #pragma once
@@ -7,7 +7,7 @@
 #include <node.h>
 #include <node_object_wrap.h>
 
-class ProcessListAddon : public node::ObjectWrap
+class DeviceListAddon : public node::ObjectWrap
 {
    public:
    // Initialization.  This function is required by node.
@@ -16,10 +16,10 @@ class ProcessListAddon : public node::ObjectWrap
    private:
 #pragma region Addon logic
 
-   ProcessListAddon();
-   virtual ~ProcessListAddon() override;
-   // query the Windows API for a list of running processes
-   v8::Local<v8::Array> getProcesses();
+   DeviceListAddon();
+   virtual ~DeviceListAddon() override;
+   // query the Windows API for a list of devices
+   v8::Local<v8::Array> getDevices();
 
 #pragma endregion // Addon logic
 
@@ -27,8 +27,8 @@ class ProcessListAddon : public node::ObjectWrap
 
    static void create(const v8::FunctionCallbackInfo<v8::Value>& args);
 
-   // gets a list of all running processes with their associated PIDs
-   static void getProcesses(const v8::FunctionCallbackInfo<v8::Value>& args);
+   // gets a list of all installed devices
+   static void getDevices(const v8::FunctionCallbackInfo<v8::Value>& args);
 
    static v8::Persistent<v8::Function> constructor;
 

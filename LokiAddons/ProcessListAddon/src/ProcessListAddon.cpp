@@ -1,5 +1,5 @@
 // 
-// Purpose: Defines the node module that deals with the Windows process list
+// Purpose: Defines the node addon that deals with the Windows process list
 //
 
 #include "ProcessListAddon.hpp"
@@ -119,8 +119,8 @@ void ProcessListAddon::create(const FunctionCallbackInfo<Value>& args)
    if (args.IsConstructCall())
    {
       // invoked as constructor: 'new Object(...)'
-      ProcessListAddon* obj = new ProcessListAddon();
-      obj->Wrap(args.This());
+      ProcessListAddon* processListAddon = new ProcessListAddon();
+      processListAddon->Wrap(args.This());
 
       args.GetReturnValue().Set(args.This());
    }
