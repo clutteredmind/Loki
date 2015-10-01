@@ -12,9 +12,16 @@ class ProcessListAddon : public node::ObjectWrap
    public:
    // Initialization.  This function is required by node.
    static void init(v8::Handle <v8::Object> target);
+
    private:
+#pragma region Addon logic
+
    ProcessListAddon();
-   ~ProcessListAddon();
+   virtual ~ProcessListAddon() override;
+
+   v8::Local<v8::Array> getProcesses();
+
+#pragma endregion // Addon logic
 
 #pragma region Node.js functions
 
