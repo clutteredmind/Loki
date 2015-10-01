@@ -1,0 +1,10 @@
+# build directories
+Debug
+Release
+
+# Visual Studio stuff
+.vs
+*.opensdf
+*.sdf
+*.suo
+*.user
