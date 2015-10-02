@@ -3,6 +3,7 @@
 require = require('really-need');
 var request = require('supertest');
 var chai = require('chai');
+chai.use(require('chai-string'));
 var expect = chai.expect;
 
 describe('base server functionality', function (){
@@ -21,5 +22,12 @@ describe('base server functionality', function (){
 		request(server)
 			.get('/everything/else')
 			.expect(404, done);
+	});
+});
+
+describe('I\'m showing sasha how to write tests', function(){
+	var blah = 'hello';
+	it('will be equal to hello', function (){
+		expect(blah).to.be.reverseOf('olleh');
 	});
 });
