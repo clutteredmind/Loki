@@ -54,13 +54,12 @@ Local<Array> DeviceListAddon::getDevices()
 
       while (SetupDiEnumDeviceInfo(deviceInfoSet, deviceIndex, &deviceInfoData))
       {
-         wchar_t friendlyName [64] = {0};
-         if (SetupDiGetDeviceRegistryProperty(deviceInfoSet, &deviceInfoData, SPDRP_FRIENDLYNAME, 0L, (PBYTE)friendlyName, 63, 0))
+         wchar_t friendlyName [300] = {0};
+         if (SetupDiGetDeviceRegistryProperty(deviceInfoSet, &deviceInfoData, SPDRP_FRIENDLYNAME, 0L, (PBYTE)friendlyName, 63, NULL))
          {
             std::wstring nameString(friendlyName);
             // TODO: We're only getting a few devices from the list. Figure out why we're not getting everything.
-            // TODO: that C-style cast is no good. figure that out.
-            devices->Set(Integer::New(isolate, counter), String::NewFromTwoByte(isolate, (uint16_t*)nameString.c_str()));
+            devices->Set(Integer::New(isolate, counter), String::NewFromTwoByte(isolate, reinterpret_cast<const uint16_t*>(nameString.c_str())));
             // increment array index counter
             counter++;
          }
