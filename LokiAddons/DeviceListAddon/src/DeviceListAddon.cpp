@@ -14,6 +14,9 @@
 #include <Windows.h>
 #include <SetupAPI.h>
 
+// standard includes
+#include <string>
+
 // use the v8 namespace so we don't have to have v8:: everywhere
 using namespace v8;
 
@@ -50,8 +53,15 @@ Local<Array> DeviceListAddon::getDevices()
 
       while (SetupDiEnumDeviceInfo(deviceInfoSet, deviceIndex, &deviceInfoData))
       {
-         // I don't know what to do here.
-
+         wchar_t friendlyName [64] = {0};
+         if (SetupDiGetDeviceRegistryProperty(deviceInfoSet, &deviceInfoData, SPDRP_FRIENDLYNAME, 0L, (PBYTE)friendlyName, 63, 0))
+         {
+            std::wstring nameString(friendlyName);
+            // TODO: we end up with a lot of blank entries here. Something's not right.
+            // also, that C-style cast is no good. figure that out.
+            devices->Set(Integer::New(isolate, deviceIndex), String::NewFromTwoByte(isolate, (uint16_t*)nameString.c_str()));
+         }
+         // increment counter
          deviceIndex++;
       }
    }
