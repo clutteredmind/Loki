@@ -37,7 +37,7 @@ Local<Array> DeviceListAddon::getDevices()
 
    HDEVINFO allDeviceClasses;
 
-   // Create a HDEVINFO with all present devices.
+   // Create a HDEVINFO with all device classes
    allDeviceClasses = SetupDiGetClassDevs(NULL, NULL, NULL, DIGCF_ALLCLASSES);
 
    if (allDeviceClasses == INVALID_HANDLE_VALUE)
