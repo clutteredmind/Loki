@@ -7,6 +7,13 @@
 // the node libraries
 #include <node.h>
 
+#define WINVER _WIN32_WINNT_WINBLUE
+#define _WIN32_WINNT _WIN32_WINNT_WINBLUE
+
+// windows API headers
+#include <Windows.h>
+#include <SetupAPI.h>
+
 // use the v8 namespace so we don't have to have v8:: everywhere
 using namespace v8;
 
@@ -25,7 +32,35 @@ Local<Array> DeviceListAddon::getDevices()
 
    Local<Array> devices = Array::New(isolate);
 
-   // TODO: write this method
+   HDEVINFO deviceInfoSet;
+
+   // Create a HDEVINFO with all present devices.
+   deviceInfoSet = SetupDiGetClassDevs(NULL, NULL, NULL, DIGCF_PRESENT | DIGCF_ALLCLASSES);
+
+   if (deviceInfoSet == INVALID_HANDLE_VALUE)
+   {
+      isolate->ThrowException(Exception::Error(String::NewFromUtf8(isolate, "Unable to get device info set.")));
+   }
+   else
+   {
+      SP_DEVINFO_DATA deviceInfoData;
+      ZeroMemory(&deviceInfoData, sizeof(SP_DEVINFO_DATA));
+      deviceInfoData.cbSize = sizeof(SP_DEVINFO_DATA);
+      DWORD deviceIndex = 0;
+
+      while (SetupDiEnumDeviceInfo(deviceInfoSet, deviceIndex, &deviceInfoData))
+      {
+         // I don't know what to do here.
+
+         deviceIndex++;
+      }
+   }
+
+   // free deviceInfoSet memory
+   if (deviceInfoSet)
+   {
+      SetupDiDestroyDeviceInfoList(deviceInfoSet);
+   }
 
    // return devices array
    return devices;
