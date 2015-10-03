@@ -4,10 +4,12 @@
 
 #pragma once
 
+#include "LokiAddonBase.hpp"
+
 #include <node.h>
 #include <node_object_wrap.h>
 
-class ProcessListAddon : public node::ObjectWrap
+class ProcessListAddon : LokiAddonBase
 {
    public:
    // Initialization.  This function is required by node.
@@ -17,7 +19,7 @@ class ProcessListAddon : public node::ObjectWrap
 #pragma region Addon logic
 
    ProcessListAddon();
-   virtual ~ProcessListAddon() override;
+   ~ProcessListAddon();
    // query the Windows API for a list of running processes
    v8::Local<v8::Array> getProcesses();
 

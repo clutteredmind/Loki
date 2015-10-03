@@ -4,10 +4,11 @@
 
 #pragma once
 
-#include <node.h>
-#include <node_object_wrap.h>
+#include "LokiAddonBase.hpp"
 
-class DeviceListAddon : public node::ObjectWrap
+#include <node.h>
+
+class DeviceListAddon : LokiAddonBase
 {
    public:
    // Initialization.  This function is required by node.
@@ -16,8 +17,10 @@ class DeviceListAddon : public node::ObjectWrap
    private:
 #pragma region Addon logic
 
+   // constructor
    DeviceListAddon();
-   virtual ~DeviceListAddon() override;
+   // destructor
+   ~DeviceListAddon();
    // query the Windows API for a list of devices
    v8::Local<v8::Array> getDevices();
 

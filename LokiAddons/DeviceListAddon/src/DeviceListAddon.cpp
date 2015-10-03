@@ -192,6 +192,7 @@ void DeviceListAddon::init(Handle<Object> target)
 
    // Set up function prototypes
    NODE_SET_PROTOTYPE_METHOD(tpl, "getDevices", getDevices);
+   NODE_SET_PROTOTYPE_METHOD(tpl, "describe", describe);
 
    constructor.Reset(isolate, tpl->GetFunction());
    target->Set(String::NewFromUtf8(isolate, "DeviceListAddon"), tpl->GetFunction());
