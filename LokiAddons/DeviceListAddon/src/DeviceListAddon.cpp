@@ -8,14 +8,14 @@
 #include <node.h>
 
 #define WINVER _WIN32_WINNT_WINBLUE
-#define _WIN32_WINNT _WIN32_WINNT_WINBLUE
 
 // windows API headers
 #include <Windows.h>
+#include <cfgmgr32.h>
 #include <SetupAPI.h>
 
 // standard includes
-#include <string>
+#include <vector>
 
 // use the v8 namespace so we don't have to have v8:: everywhere
 using namespace v8;
@@ -35,14 +35,14 @@ Local<Array> DeviceListAddon::getDevices()
 
    Local<Array> devices = Array::New(isolate);
 
-   HDEVINFO deviceInfoSet;
+   HDEVINFO allDeviceClasses;
 
    // Create a HDEVINFO with all present devices.
-   deviceInfoSet = SetupDiGetClassDevs(NULL, NULL, NULL, DIGCF_PRESENT | DIGCF_ALLCLASSES);
+   allDeviceClasses = SetupDiGetClassDevs(NULL, NULL, NULL, DIGCF_ALLCLASSES);
 
-   if (deviceInfoSet == INVALID_HANDLE_VALUE)
+   if (allDeviceClasses == INVALID_HANDLE_VALUE)
    {
-      isolate->ThrowException(Exception::Error(String::NewFromUtf8(isolate, "Unable to get device info set.")));
+      isolate->ThrowException(Exception::Error(String::NewFromUtf8(isolate, "Unable to get all device classes.")));
    }
    else
    {
@@ -50,28 +50,130 @@ Local<Array> DeviceListAddon::getDevices()
       ZeroMemory(&deviceInfoData, sizeof(SP_DEVINFO_DATA));
       deviceInfoData.cbSize = sizeof(SP_DEVINFO_DATA);
       DWORD deviceIndex = 0;
-      int counter = 0;
-
-      while (SetupDiEnumDeviceInfo(deviceInfoSet, deviceIndex, &deviceInfoData))
+      bool keepProcessing = true;
+      
+      // loop through and collect all class GUIDs
+      std::vector<GUID> allClassGuids;
+      while (keepProcessing)
       {
-         wchar_t friendlyName [300] = {0};
-         if (SetupDiGetDeviceRegistryProperty(deviceInfoSet, &deviceInfoData, SPDRP_FRIENDLYNAME, 0L, (PBYTE)friendlyName, 63, NULL))
+         // get device information
+         SetupDiEnumDeviceInfo(allDeviceClasses, deviceIndex, &deviceInfoData);
+         // save the GUID if it's not already in the list
+         if (std::find(allClassGuids.begin(), allClassGuids.end(), deviceInfoData.ClassGuid) == allClassGuids.end())
          {
-            std::wstring nameString(friendlyName);
-            // TODO: We're only getting a few devices from the list. Figure out why we're not getting everything.
-            devices->Set(Integer::New(isolate, counter), String::NewFromTwoByte(isolate, reinterpret_cast<const uint16_t*>(nameString.c_str())));
-            // increment array index counter
-            counter++;
+            allClassGuids.push_back(deviceInfoData.ClassGuid);
          }
          // increment device index
          deviceIndex++;
+         // check to see if we should be done
+         keepProcessing = !(GetLastError() == ERROR_NO_MORE_ITEMS);
       }
+
+      // loop through GUIDs to get hardware info for each
+      for (unsigned int counter = 0; counter < allClassGuids.size(); counter++)
+      {
+         HDEVINFO deviceInfo = SetupDiGetClassDevs(&allClassGuids[counter], NULL, NULL, DIGCF_PRESENT);
+         if (deviceInfo == INVALID_HANDLE_VALUE)
+         {
+            OLECHAR* guidAsString;
+            StringFromCLSID(allClassGuids [counter], &guidAsString);
+            std::wstring errorString = L"Unable to get device info for GUID:";
+            errorString += guidAsString;
+            isolate->ThrowException(Exception::Error(String::NewFromUtf8(isolate, std::string(errorString.begin(), errorString.end()).c_str())));
+            CoTaskMemFree(guidAsString);
+         }
+         else
+         {
+            TCHAR deviceInstanceId [MAX_DEVICE_ID_LEN];
+            // reset deviceInfoData
+            ZeroMemory(&deviceInfoData, sizeof(SP_DEVINFO_DATA));
+            deviceInfoData.cbSize = sizeof(SP_DEVINFO_DATA);
+            // reset device index
+            deviceIndex = 0;
+            // a counter for indexing the v8 array
+            int counter = 0;
+            keepProcessing = true;
+            // make an initial call to SetupDiEnumDeviceInfo to populate deviceInfoData
+            SetupDiEnumDeviceInfo(deviceInfo, deviceIndex, &deviceInfoData);
+            while (keepProcessing)
+            {
+               ZeroMemory(deviceInstanceId, MAX_DEVICE_ID_LEN);
+               if (SetupDiGetDeviceInstanceId(deviceInfo, &deviceInfoData, deviceInstanceId, MAX_DEVICE_ID_LEN, NULL))
+               {
+                  // store device information
+                  Local<Object> device = Object::New(isolate);
+
+                  // save device instance ID
+                  std::wstring deviceInstanceIdString(deviceInstanceId);
+                  device->Set(String::NewFromUtf8(isolate, "device_instance_id"), String::NewFromUtf8(isolate, std::string(deviceInstanceIdString.begin(), deviceInstanceIdString.end()).c_str()));
+
+                  BYTE* buffer;
+                  DWORD propertySize = 0;
+
+                  // get friendly name size
+                  SetupDiGetDeviceRegistryProperty(deviceInfo, &deviceInfoData, SPDRP_FRIENDLYNAME, NULL, NULL, 0, &propertySize);
+                  propertySize = propertySize > 1 ? propertySize : 1;
+                  // set buffer size and zero it out
+                  buffer = new BYTE [propertySize];
+                  ZeroMemory(buffer, propertySize);
+                  // get friendly name
+                  SetupDiGetDeviceRegistryProperty(deviceInfo, &deviceInfoData, SPDRP_FRIENDLYNAME, NULL, buffer, propertySize, NULL);
+                  // save friendly name
+                  std::wstring friendlyName(reinterpret_cast<wchar_t*>(buffer));
+                  device->Set(String::NewFromUtf8(isolate, "friendly_name"), String::NewFromUtf8(isolate, std::string(friendlyName.begin(), friendlyName.end()).c_str()));
+                  // release buffer memory
+                  delete [] buffer;
+                  
+                  // get class size
+                  SetupDiGetDeviceRegistryProperty(deviceInfo, &deviceInfoData, SPDRP_CLASS, NULL, NULL, 0, &propertySize);
+                  propertySize = propertySize > 1 ? propertySize : 1;
+                  // set buffer size and zero it out
+                  buffer = new BYTE [propertySize];
+                  ZeroMemory(buffer, propertySize);
+                  // get class
+                  SetupDiGetDeviceRegistryProperty(deviceInfo, &deviceInfoData, SPDRP_CLASS, NULL, buffer, propertySize, NULL);
+                  // save class
+                  std::wstring className(reinterpret_cast<wchar_t*>(buffer));
+                  device->Set(String::NewFromUtf8(isolate, "class_name"), String::NewFromUtf8(isolate, std::string(className.begin(), className.end()).c_str()));
+                  // release buffer memory
+                  delete [] buffer;
+                  
+                  // get hardware id size
+                  SetupDiGetDeviceRegistryProperty(deviceInfo, &deviceInfoData, SPDRP_HARDWAREID, NULL, NULL, 0, &propertySize);
+                  propertySize = propertySize > 1 ? propertySize : 1;
+                  // set buffer size and zero it out
+                  buffer = new BYTE [propertySize];
+                  ZeroMemory(buffer, propertySize);
+                  // get hardware id
+                  SetupDiGetDeviceRegistryProperty(deviceInfo, &deviceInfoData, SPDRP_HARDWAREID, NULL, buffer, propertySize, NULL);
+                  // save hardware id
+                  std::wstring hardwareId(reinterpret_cast<wchar_t*>(buffer));
+                  device->Set(String::NewFromUtf8(isolate, "hardware_id"), String::NewFromUtf8(isolate, std::string(hardwareId.begin(), hardwareId.end()).c_str()));
+                  // release buffer memory
+                  delete [] buffer;
+
+                  // save device
+                  devices->Set(Integer::New(isolate, counter), device);
+                  // increment counter
+                  counter++;
+               }
+               
+               // increment device index
+               deviceIndex++;
+               // attempt to get next device
+               SetupDiEnumDeviceInfo(deviceInfo, deviceIndex, &deviceInfoData);
+               // check to see if we should be done
+               keepProcessing = !(GetLastError() == ERROR_NO_MORE_ITEMS);
+            }
+         }
+      }
+      // add hardware info to device list
    }
 
    // free deviceInfoSet memory
-   if (deviceInfoSet)
+   if (allDeviceClasses)
    {
-      SetupDiDestroyDeviceInfoList(deviceInfoSet);
+      SetupDiDestroyDeviceInfoList(allDeviceClasses);
    }
 
    // return devices array
