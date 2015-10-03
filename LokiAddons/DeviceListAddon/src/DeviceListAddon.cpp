@@ -50,6 +50,7 @@ Local<Array> DeviceListAddon::getDevices()
       ZeroMemory(&deviceInfoData, sizeof(SP_DEVINFO_DATA));
       deviceInfoData.cbSize = sizeof(SP_DEVINFO_DATA);
       DWORD deviceIndex = 0;
+      int counter = 0;
 
       while (SetupDiEnumDeviceInfo(deviceInfoSet, deviceIndex, &deviceInfoData))
       {
@@ -57,11 +58,13 @@ Local<Array> DeviceListAddon::getDevices()
          if (SetupDiGetDeviceRegistryProperty(deviceInfoSet, &deviceInfoData, SPDRP_FRIENDLYNAME, 0L, (PBYTE)friendlyName, 63, 0))
          {
             std::wstring nameString(friendlyName);
-            // TODO: we end up with a lot of blank entries here. Something's not right.
-            // also, that C-style cast is no good. figure that out.
-            devices->Set(Integer::New(isolate, deviceIndex), String::NewFromTwoByte(isolate, (uint16_t*)nameString.c_str()));
+            // TODO: We're only getting a few devices from the list. Figure out why we're not getting everything.
+            // TODO: that C-style cast is no good. figure that out.
+            devices->Set(Integer::New(isolate, counter), String::NewFromTwoByte(isolate, (uint16_t*)nameString.c_str()));
+            // increment array index counter
+            counter++;
          }
-         // increment counter
+         // increment device index
          deviceIndex++;
       }
    }
