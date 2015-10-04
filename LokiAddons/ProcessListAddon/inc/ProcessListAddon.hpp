@@ -7,7 +7,6 @@
 #include "LokiAddonBase.hpp"
 
 #include <node.h>
-#include <node_object_wrap.h>
 
 class ProcessListAddon : LokiAddonBase
 {
