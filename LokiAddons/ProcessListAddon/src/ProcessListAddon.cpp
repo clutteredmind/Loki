@@ -106,7 +106,6 @@ void ProcessListAddon::init(Handle<Object> target)
 
    // Set up function prototypes
    NODE_SET_PROTOTYPE_METHOD(tpl, "getProcesses", getProcesses);
-   NODE_SET_PROTOTYPE_METHOD(tpl, "describe", describe);
 
    constructor.Reset(isolate, tpl->GetFunction());
    target->Set(String::NewFromUtf8(isolate, "ProcessListAddon"), tpl->GetFunction());
