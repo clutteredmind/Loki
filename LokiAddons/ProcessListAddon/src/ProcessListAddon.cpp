@@ -15,8 +15,6 @@
 // use the v8 namespace so we don't have to have v8:: everywhere
 using namespace v8;
 
-Persistent<Function> ProcessListAddon::constructor;
-
 // constructor
 ProcessListAddon::ProcessListAddon() {}
 
@@ -100,7 +98,7 @@ void ProcessListAddon::init(Handle<Object> target)
    Isolate* isolate = Isolate::GetCurrent();
 
    // Prepare constructor template
-   Local<FunctionTemplate> tpl = FunctionTemplate::New(isolate, create);
+   tpl = FunctionTemplate::New(isolate, create);
    tpl->SetClassName(String::NewFromUtf8(isolate, "ProcessListAddon"));
    tpl->InstanceTemplate()->SetInternalFieldCount(1);
 
@@ -109,29 +107,6 @@ void ProcessListAddon::init(Handle<Object> target)
 
    constructor.Reset(isolate, tpl->GetFunction());
    target->Set(String::NewFromUtf8(isolate, "ProcessListAddon"), tpl->GetFunction());
-}
-
-// create a new instance and wrap it up to be passed back to node
-void ProcessListAddon::create(const FunctionCallbackInfo<Value>& args)
-{
-   Isolate* isolate = args.GetIsolate();
-
-   if (args.IsConstructCall())
-   {
-      // invoked as constructor: 'new Object(...)'
-      ProcessListAddon* processListAddon = new ProcessListAddon();
-      processListAddon->Wrap(args.This());
-
-      args.GetReturnValue().Set(args.This());
-   }
-   else
-   {
-      // invoked as a plain function 'Object(...)', turn into function call
-      const int argc = 1;
-      Local<Value> argv [argc] = { args[0] };
-      Local<Function> ctor = Local<Function>::New(isolate, constructor);
-      args.GetReturnValue().Set(ctor->NewInstance(argc, argv));
-   }
 }
 
 // gets a list of all processes with their associated IDs

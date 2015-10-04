@@ -28,12 +28,8 @@ class DeviceListAddon : LokiAddonBase
 
 #pragma region Node.js functions
 
-   static void create(const v8::FunctionCallbackInfo<v8::Value>& args);
-
    // gets a list of all installed devices
    static void getDevices(const v8::FunctionCallbackInfo<v8::Value>& args);
-
-   static v8::Persistent<v8::Function> constructor;
 
 #pragma endregion // Node.js functions
 };

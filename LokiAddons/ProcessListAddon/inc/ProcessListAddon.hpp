@@ -26,12 +26,8 @@ class ProcessListAddon : LokiAddonBase
 
 #pragma region Node.js functions
 
-   static void create(const v8::FunctionCallbackInfo<v8::Value>& args);
-
    // gets a list of all running processes with their associated PIDs
    static void getProcesses(const v8::FunctionCallbackInfo<v8::Value>& args);
-
-   static v8::Persistent<v8::Function> constructor;
 
 #pragma endregion // Node.js functions
 };
