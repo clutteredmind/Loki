@@ -20,6 +20,9 @@
 // use the v8 namespace so we don't have to have v8:: everywhere
 using namespace v8;
 
+// set the addon's name
+const std::string DeviceListAddon::AddonName = "DeviceListAddon";
+
 // constructor
 DeviceListAddon::DeviceListAddon() {}
 
@@ -27,7 +30,7 @@ DeviceListAddon::DeviceListAddon() {}
 DeviceListAddon::~DeviceListAddon() {}
 
 // gets process list from Windows
-Local<Array> DeviceListAddon::getDevices()
+Local<Array> DeviceListAddon::getDeviceList()
 {
    Isolate* isolate = Isolate::GetCurrent();
 
@@ -181,25 +184,20 @@ Local<Array> DeviceListAddon::getDevices()
 // init function called by the main init routine.
 void DeviceListAddon::init(Handle<Object> target)
 {
-   Isolate* isolate = Isolate::GetCurrent();
-
-   // Prepare constructor template
-   tpl = FunctionTemplate::New(isolate, create);
-   tpl->SetClassName(String::NewFromUtf8(isolate, "DeviceListAddon"));
-   tpl->InstanceTemplate()->SetInternalFieldCount(1);
-
-   // Set up function prototypes
-   NODE_SET_PROTOTYPE_METHOD(tpl, "getDevices", getDevices);
-
-   constructor.Reset(isolate, tpl->GetFunction());
-   target->Set(String::NewFromUtf8(isolate, "DeviceListAddon"), tpl->GetFunction());
+   FunctionList functionList {std::make_pair("getDevices", getDevices)};
+   // initialize the base class
+   baseInit(target, AddonName, functionList);
 }
 
 // gets a list of all processes with their associated IDs
 void DeviceListAddon::getDevices(const FunctionCallbackInfo<Value>& args)
 {
    // unwrap object so we can call the correct function on the instance
-   DeviceListAddon* deviceListAddon(ObjectWrap::Unwrap<DeviceListAddon>(args.Holder()));
+   auto deviceListAddon(ObjectWrap::Unwrap<DeviceListAddon>(args.Holder()));
    // return process list to caller
-   args.GetReturnValue().Set(deviceListAddon->getDevices());
+   args.GetReturnValue().Set(deviceListAddon->getDeviceList());
 }
+
+// Do all the magic to make this module accessible by node/javascript
+// THE FIRST PARAMETER TO THE MACRO BELOW MUST MATCH THE MODULE FILENAME
+NODE_MODULE(DeviceListAddon, DeviceListAddon::init)

@@ -21,6 +21,26 @@ LokiAddonBase::LokiAddonBase() { }
 // destructor
 LokiAddonBase::~LokiAddonBase() { }
 
+// init function called by the main init routine.
+void LokiAddonBase::baseInit(Handle<Object> target, std::string addonName, FunctionList list)
+{
+   Isolate* isolate = Isolate::GetCurrent();
+
+   // Prepare constructor template
+   tpl = FunctionTemplate::New(isolate, create);
+   tpl->SetClassName(String::NewFromUtf8(isolate, addonName.c_str()));
+   tpl->InstanceTemplate()->SetInternalFieldCount(1);
+
+   // register functions with node
+   for (std::pair<const char*, v8::FunctionCallback> cb : list)
+   {
+      NODE_SET_PROTOTYPE_METHOD(tpl, cb.first, cb.second);
+   }
+
+   constructor.Reset(isolate, tpl->GetFunction());
+   target->Set(String::NewFromUtf8(isolate, addonName.c_str()), tpl->GetFunction());
+}
+
 // create a new instance and wrap it up to be passed back to node
 void LokiAddonBase::create(const FunctionCallbackInfo<Value>& args)
 {

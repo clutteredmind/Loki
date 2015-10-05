@@ -7,9 +7,20 @@
 #include <node.h>
 #include <node_object_wrap.h>
 
+#include <string>
+#include <vector>
+#include <utility>
+
+#define FUNCTION_PAIR(NAME) std::make_pair <const char *, v8::FunctionCallback>(#NAME, NAME)
+
+using FunctionList = std::vector <std::pair<const char*, v8::FunctionCallback>>;
+
 class LokiAddonBase : public node::ObjectWrap
 {
    public:
+   // Initialization.  This function is required by node.
+   static void baseInit(v8::Handle <v8::Object>, std::string, FunctionList);
+
    // constructor
    LokiAddonBase();
    // destructor

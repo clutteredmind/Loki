@@ -15,6 +15,9 @@
 // use the v8 namespace so we don't have to have v8:: everywhere
 using namespace v8;
 
+// set the addon's name
+const std::string ProcessListAddon::AddonName = "ProcessListAddon";
+
 // constructor
 ProcessListAddon::ProcessListAddon() {}
 
@@ -22,7 +25,7 @@ ProcessListAddon::ProcessListAddon() {}
 ProcessListAddon::~ProcessListAddon() {}
 
 // gets process list from Windows
-Local<Array> ProcessListAddon::getProcesses()
+Local<Array> ProcessListAddon::getProcessList()
 {
    Isolate* isolate = Isolate::GetCurrent();
 
@@ -95,25 +98,20 @@ Local<Array> ProcessListAddon::getProcesses()
 // init function called by the main init routine.
 void ProcessListAddon::init(Handle<Object> target)
 {
-   Isolate* isolate = Isolate::GetCurrent();
-
-   // Prepare constructor template
-   tpl = FunctionTemplate::New(isolate, create);
-   tpl->SetClassName(String::NewFromUtf8(isolate, "ProcessListAddon"));
-   tpl->InstanceTemplate()->SetInternalFieldCount(1);
-
-   // Set up function prototypes
-   NODE_SET_PROTOTYPE_METHOD(tpl, "getProcesses", getProcesses);
-
-   constructor.Reset(isolate, tpl->GetFunction());
-   target->Set(String::NewFromUtf8(isolate, "ProcessListAddon"), tpl->GetFunction());
+   FunctionList functionList {std::make_pair("getProcesses", getProcesses)};
+   // initialize the base class
+   baseInit(target, AddonName, functionList);
 }
 
 // gets a list of all processes with their associated IDs
 void ProcessListAddon::getProcesses(const FunctionCallbackInfo<Value>& args)
 {
    // unwrap object so we can call the correct function on the instance
-   ProcessListAddon* processListAddon (ObjectWrap::Unwrap<ProcessListAddon>(args.Holder()));
+   auto processListAddon (ObjectWrap::Unwrap<ProcessListAddon>(args.Holder()));
    // return process list to caller
-   args.GetReturnValue().Set(processListAddon->getProcesses());
+   args.GetReturnValue().Set(processListAddon->getProcessList());
 }
+
+// Do all the magic to make this module accessible by node/javascript
+// THE FIRST PARAMETER TO THE MACRO BELOW MUST MATCH THE MODULE FILENAME
+NODE_MODULE(ProcessListAddon, ProcessListAddon::init)

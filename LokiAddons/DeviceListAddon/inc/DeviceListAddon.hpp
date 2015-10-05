@@ -11,6 +11,8 @@
 class DeviceListAddon : LokiAddonBase
 {
    public:
+   // this addon's name
+   static const std::string AddonName;
    // Initialization.  This function is required by node.
    static void init(v8::Handle <v8::Object> target);
 
@@ -22,7 +24,7 @@ class DeviceListAddon : LokiAddonBase
    // destructor
    ~DeviceListAddon();
    // query the Windows API for a list of devices
-   v8::Local<v8::Array> getDevices();
+   v8::Local<v8::Array> getDeviceList();
 
 #pragma endregion // Addon logic
 

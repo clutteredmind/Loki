@@ -11,6 +11,8 @@
 class ProcessListAddon : LokiAddonBase
 {
    public:
+   // this addon's name
+   static const std::string AddonName;
    // Initialization.  This function is required by node.
    static void init(v8::Handle <v8::Object> target);
 
@@ -20,7 +22,7 @@ class ProcessListAddon : LokiAddonBase
    ProcessListAddon();
    ~ProcessListAddon();
    // query the Windows API for a list of running processes
-   v8::Local<v8::Array> getProcesses();
+   v8::Local<v8::Array> getProcessList();
 
 #pragma endregion // Addon logic
 
