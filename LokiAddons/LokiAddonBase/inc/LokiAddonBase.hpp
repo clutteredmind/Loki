@@ -11,8 +11,6 @@
 #include <vector>
 #include <utility>
 
-#define FUNCTION_PAIR(NAME) std::make_pair <const char *, v8::FunctionCallback>(#NAME, NAME)
-
 using FunctionList = std::vector <std::pair<const char*, v8::FunctionCallback>>;
 
 class LokiAddonBase : public node::ObjectWrap
