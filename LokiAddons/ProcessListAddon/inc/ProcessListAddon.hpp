@@ -19,7 +19,9 @@ class ProcessListAddon : LokiAddonBase
    private:
 #pragma region Addon logic
 
+   // constructor
    ProcessListAddon();
+   // destructor
    ~ProcessListAddon();
    // query the Windows API for a list of running processes
    v8::Local<v8::Array> getProcessList();
