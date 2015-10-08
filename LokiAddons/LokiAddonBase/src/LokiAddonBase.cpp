@@ -34,9 +34,9 @@ void LokiAddonBase::baseInit(Handle<Object> target, std::string addonName, Funct
    NODE_SET_PROTOTYPE_METHOD(tpl, "describe", describe);
 
    // register functions with node
-   for (std::pair<const char*, v8::FunctionCallback> cb : list)
+   for (std::pair<const char*, v8::FunctionCallback> item : list)
    {
-      NODE_SET_PROTOTYPE_METHOD(tpl, cb.first, cb.second);
+      NODE_SET_PROTOTYPE_METHOD(tpl, item.first, item.second);
    }
 
    constructor.Reset(isolate, tpl->GetFunction());
