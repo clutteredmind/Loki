@@ -29,6 +29,19 @@ DeviceListAddon::DeviceListAddon() {}
 // destructor
 DeviceListAddon::~DeviceListAddon() {}
 
+// describes this object in JSON
+Local<Object> DeviceListAddon::describe()
+{
+   Isolate* isolate = Isolate::GetCurrent();
+
+   Local<Object> description = Object::New(isolate);
+   
+   description->Set(String::NewFromUtf8(isolate, "name"), String::NewFromUtf8(isolate, "DeviceListAddon"));
+   description->Set(String::NewFromUtf8(isolate, "version"), String::NewFromUtf8(isolate, "0.0.1"));
+
+   return description;
+}
+
 // gets process list from Windows
 Local<Array> DeviceListAddon::getDeviceList()
 {

@@ -24,6 +24,19 @@ ProcessListAddon::ProcessListAddon() {}
 // destructor
 ProcessListAddon::~ProcessListAddon() {}
 
+// describes this object in JSON
+Local<Object> ProcessListAddon::describe()
+{
+   Isolate* isolate = Isolate::GetCurrent();
+
+   Local<Object> description = Object::New(isolate);
+   
+   description->Set(String::NewFromUtf8(isolate, "name"), String::NewFromUtf8(isolate, "ProcessListAddon"));
+   description->Set(String::NewFromUtf8(isolate, "version"), String::NewFromUtf8(isolate, "0.0.1"));
+
+   return description;
+}
+
 // gets process list from Windows
 Local<Array> ProcessListAddon::getProcessList()
 {
@@ -83,7 +96,7 @@ Local<Array> ProcessListAddon::getProcessList()
             // clean up process snapshot handle
             CloseHandle(processSnapshotHandle);
          }
-         catch(...)
+         catch (...)
          {
             // clean up process snapshot handle on any exception
             CloseHandle(processSnapshotHandle);
@@ -107,7 +120,7 @@ void ProcessListAddon::init(Handle<Object> target)
 void ProcessListAddon::getProcesses(const FunctionCallbackInfo<Value>& args)
 {
    // unwrap object so we can call the correct function on the instance
-   auto processListAddon (ObjectWrap::Unwrap<ProcessListAddon>(args.Holder()));
+   auto processListAddon(ObjectWrap::Unwrap<ProcessListAddon>(args.Holder()));
    // return process list to caller
    args.GetReturnValue().Set(processListAddon->getProcessList());
 }

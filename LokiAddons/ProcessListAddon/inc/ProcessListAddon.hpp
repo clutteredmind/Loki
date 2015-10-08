@@ -23,6 +23,8 @@ class ProcessListAddon : LokiAddonBase
    ProcessListAddon();
    // destructor
    ~ProcessListAddon();
+   // describes this object in JSON
+   virtual v8::Local<v8::Object> describe() override;
    // query the Windows API for a list of running processes
    v8::Local<v8::Array> getProcessList();
 

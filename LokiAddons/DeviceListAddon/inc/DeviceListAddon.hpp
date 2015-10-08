@@ -23,6 +23,8 @@ class DeviceListAddon : LokiAddonBase
    DeviceListAddon();
    // destructor
    ~DeviceListAddon();
+   // describes this object in JSON
+   virtual v8::Local<v8::Object> describe() override;
    // query the Windows API for a list of devices
    v8::Local<v8::Array> getDeviceList();
 
