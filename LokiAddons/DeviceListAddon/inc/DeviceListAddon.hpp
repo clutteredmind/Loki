@@ -16,6 +16,15 @@ class DeviceListAddon : LokiAddonBase
    // Initialization.  This function is required by node.
    static void init(v8::Handle <v8::Object> target);
 
+#pragma region Node.js functions
+
+   // gets a list of all installed devices
+   static void GetDevices(const v8::FunctionCallbackInfo<v8::Value>& args);
+   // exposes the describe function to JavaScript
+   static void Describe(const v8::FunctionCallbackInfo<v8::Value>& args);
+
+#pragma endregion // Node.js functions
+
    private:
 #pragma region Addon logic
 
@@ -24,16 +33,9 @@ class DeviceListAddon : LokiAddonBase
    // destructor
    ~DeviceListAddon();
    // describes this object in JSON
-   virtual v8::Local<v8::Object> describe() override;
+   v8::Local<v8::Object> describe();
    // query the Windows API for a list of devices
-   v8::Local<v8::Array> getDeviceList();
+   v8::Local<v8::Array> getDevices();
 
 #pragma endregion // Addon logic
-
-#pragma region Node.js functions
-
-   // gets a list of all installed devices
-   static void getDevices(const v8::FunctionCallbackInfo<v8::Value>& args);
-
-#pragma endregion // Node.js functions
 };

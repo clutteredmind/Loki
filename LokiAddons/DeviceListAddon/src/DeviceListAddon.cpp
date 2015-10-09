@@ -43,7 +43,7 @@ Local<Object> DeviceListAddon::describe()
 }
 
 // gets process list from Windows
-Local<Array> DeviceListAddon::getDeviceList()
+Local<Array> DeviceListAddon::getDevices()
 {
    Isolate* isolate = Isolate::GetCurrent();
 
@@ -197,18 +197,27 @@ Local<Array> DeviceListAddon::getDeviceList()
 // init function called by the main init routine.
 void DeviceListAddon::init(Handle<Object> target)
 {
-   FunctionList functionList {std::make_pair("getDevices", getDevices)};
+   FunctionList functionList {std::make_pair("getDevices", GetDevices), std::make_pair("describe", Describe)};
    // initialize the base class
    baseInit(target, AddonName, functionList);
 }
 
 // gets a list of all processes with their associated IDs
-void DeviceListAddon::getDevices(const FunctionCallbackInfo<Value>& args)
+void DeviceListAddon::GetDevices(const FunctionCallbackInfo<Value>& args)
 {
    // unwrap object so we can call the correct function on the instance
    auto deviceListAddon(ObjectWrap::Unwrap<DeviceListAddon>(args.Holder()));
    // return process list to caller
-   args.GetReturnValue().Set(deviceListAddon->getDeviceList());
+   args.GetReturnValue().Set(deviceListAddon->getDevices());
+}
+
+// describes this object in JSON
+void DeviceListAddon::Describe(const FunctionCallbackInfo<Value>& args)
+{
+   // unwrap object so we can call the correct function on the instance
+   auto deviceListAddon(ObjectWrap::Unwrap<DeviceListAddon>(args.Holder()));
+   // return process list to caller
+   args.GetReturnValue().Set(deviceListAddon->describe());
 }
 
 // Do all the magic to make this module accessible by node/javascript

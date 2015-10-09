@@ -16,6 +16,15 @@ class ProcessListAddon : LokiAddonBase
    // Initialization.  This function is required by node.
    static void init(v8::Handle <v8::Object> target);
 
+#pragma region Node.js functions
+
+   // gets a list of all running processes with their associated PIDs
+   static void GetProcesses(const v8::FunctionCallbackInfo<v8::Value>& args);
+   // exposes the describe function to JavaScript
+   static void Describe(const v8::FunctionCallbackInfo<v8::Value>& args);
+
+#pragma endregion // Node.js functions
+
    private:
 #pragma region Addon logic
 
@@ -24,16 +33,9 @@ class ProcessListAddon : LokiAddonBase
    // destructor
    ~ProcessListAddon();
    // describes this object in JSON
-   virtual v8::Local<v8::Object> describe() override;
+   v8::Local<v8::Object> describe();
    // query the Windows API for a list of running processes
-   v8::Local<v8::Array> getProcessList();
+   v8::Local<v8::Array> getProcesses();
 
 #pragma endregion // Addon logic
-
-#pragma region Node.js functions
-
-   // gets a list of all running processes with their associated PIDs
-   static void getProcesses(const v8::FunctionCallbackInfo<v8::Value>& args);
-
-#pragma endregion // Node.js functions
 };

@@ -38,7 +38,7 @@ Local<Object> ProcessListAddon::describe()
 }
 
 // gets process list from Windows
-Local<Array> ProcessListAddon::getProcessList()
+Local<Array> ProcessListAddon::getProcesses()
 {
    Isolate* isolate = Isolate::GetCurrent();
 
@@ -111,18 +111,27 @@ Local<Array> ProcessListAddon::getProcessList()
 // init function called by the main init routine.
 void ProcessListAddon::init(Handle<Object> target)
 {
-   FunctionList functionList {std::make_pair("getProcesses", getProcesses)};
+   FunctionList functionList {std::make_pair("getProcesses", GetProcesses), std::make_pair("describe", Describe)};
    // initialize the base class
    baseInit(target, AddonName, functionList);
 }
 
 // gets a list of all processes with their associated IDs
-void ProcessListAddon::getProcesses(const FunctionCallbackInfo<Value>& args)
+void ProcessListAddon::GetProcesses(const FunctionCallbackInfo<Value>& args)
 {
    // unwrap object so we can call the correct function on the instance
    auto processListAddon(ObjectWrap::Unwrap<ProcessListAddon>(args.Holder()));
    // return process list to caller
-   args.GetReturnValue().Set(processListAddon->getProcessList());
+   args.GetReturnValue().Set(processListAddon->getProcesses());
+}
+
+// describes this object in JSON
+void ProcessListAddon::Describe(const FunctionCallbackInfo<Value>& args)
+{
+   // unwrap object so we can call the correct function on the instance
+   auto processListAddon(ObjectWrap::Unwrap<ProcessListAddon>(args.Holder()));
+   // return process list to caller
+   args.GetReturnValue().Set(processListAddon->describe());
 }
 
 // Do all the magic to make this module accessible by node/javascript
