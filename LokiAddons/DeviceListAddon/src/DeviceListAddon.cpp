@@ -4,9 +4,6 @@
 
 #include "DeviceListAddon.hpp"
 
-// the node libraries
-#include <node.h>
-
 #define WINVER _WIN32_WINNT_WINBLUE
 
 // windows API headers
@@ -20,8 +17,12 @@
 // use the v8 namespace so we don't have to have v8:: everywhere
 using namespace v8;
 
-// set the addon's name
-const std::string DeviceListAddon::AddonName = "DeviceListAddon";
+// Do all the magic to make this module accessible by node/javascript
+// THE FIRST PARAMETER TO THE MACRO BELOW MUST MATCH THE MODULE FILENAME
+NODE_MODULE(DeviceListAddon, DeviceListAddon::Initialize)
+
+// v8 constructor
+Persistent<Function> DeviceListAddon::constructor;
 
 // constructor
 DeviceListAddon::DeviceListAddon() {}
@@ -29,30 +30,61 @@ DeviceListAddon::DeviceListAddon() {}
 // destructor
 DeviceListAddon::~DeviceListAddon() {}
 
-// describes this object in JSON
-Local<Object> DeviceListAddon::describe()
+// init function called by the main init routine.
+void DeviceListAddon::Initialize(Handle<Object> target)
 {
-   Isolate* isolate = Isolate::GetCurrent();
+   auto isolate = Isolate::GetCurrent();
 
-   Local<Object> description = Object::New(isolate);
-   
-   description->Set(String::NewFromUtf8(isolate, "name"), String::NewFromUtf8(isolate, "DeviceListAddon"));
-   description->Set(String::NewFromUtf8(isolate, "version"), String::NewFromUtf8(isolate, "0.0.1"));
+   // Prepare constructor template
+   auto function_template = FunctionTemplate::New(isolate, Create);
+   function_template->SetClassName(String::NewFromUtf8(isolate, "DeviceListAddon"));
+   function_template->InstanceTemplate()->SetInternalFieldCount(1);
 
-   return description;
+   // Export functions to JavaScript
+   NODE_SET_PROTOTYPE_METHOD(function_template, "getDevices", GetDevices);
+
+   constructor.Reset(isolate, function_template->GetFunction());
+   target->Set(String::NewFromUtf8(isolate, "DeviceListAddon"), function_template->GetFunction());
+}
+
+// Creates a new instance of this class.
+void DeviceListAddon::Create(const FunctionCallbackInfo<Value>& args)
+{
+   auto isolate = args.GetIsolate();
+
+   if (args.IsConstructCall())
+   {
+      // Invoked as constructor: new MyObject(...)
+      auto deviceListAddon = new DeviceListAddon();
+      deviceListAddon->Wrap(args.This());
+      args.GetReturnValue().Set(args.This());
+   }
+   else
+   {
+      // Invoked as plain function `MyObject(...)`, turn into construct call.
+      auto ctor = Local<Function>::New(isolate, constructor);
+      args.GetReturnValue().Set(ctor->NewInstance());
+   }
+}
+
+// gets a list of all processes with their associated IDs
+void DeviceListAddon::GetDevices(const FunctionCallbackInfo<Value>& args)
+{
+   // unwrap object so we can call the correct function on the instance
+   auto deviceListAddon(ObjectWrap::Unwrap<DeviceListAddon>(args.Holder()));
+   // return process list to caller
+   args.GetReturnValue().Set(deviceListAddon->getDevices());
 }
 
 // gets process list from Windows
 Local<Array> DeviceListAddon::getDevices()
 {
-   Isolate* isolate = Isolate::GetCurrent();
+   auto isolate = Isolate::GetCurrent();
 
-   Local<Array> devices = Array::New(isolate);
-
-   HDEVINFO allDeviceClasses;
+   auto devices = Array::New(isolate);
 
    // Create a HDEVINFO with all device classes
-   allDeviceClasses = SetupDiGetClassDevs(NULL, NULL, NULL, DIGCF_ALLCLASSES);
+   auto allDeviceClasses = SetupDiGetClassDevs(NULL, NULL, NULL, DIGCF_ALLCLASSES);
 
    if (allDeviceClasses == INVALID_HANDLE_VALUE)
    {
@@ -65,7 +97,7 @@ Local<Array> DeviceListAddon::getDevices()
       deviceInfoData.cbSize = sizeof(SP_DEVINFO_DATA);
       DWORD deviceIndex = 0;
       bool keepProcessing = true;
-      
+
       // loop through and collect all class GUIDs
       std::vector<GUID> allClassGuids;
       while (keepProcessing)
@@ -84,14 +116,14 @@ Local<Array> DeviceListAddon::getDevices()
       }
 
       // loop through GUIDs to get hardware info for each
-      for (unsigned int counter = 0; counter < allClassGuids.size(); counter++)
+      for (auto guid : allClassGuids)
       {
-         HDEVINFO deviceInfo = SetupDiGetClassDevs(&allClassGuids[counter], NULL, NULL, DIGCF_PRESENT);
+         auto deviceInfo = SetupDiGetClassDevs(&guid, NULL, NULL, DIGCF_PRESENT);
          if (deviceInfo == INVALID_HANDLE_VALUE)
          {
             OLECHAR* guidAsString;
-            StringFromCLSID(allClassGuids [counter], &guidAsString);
-            std::wstring errorString = L"Unable to get device info for GUID:";
+            StringFromCLSID(guid, &guidAsString);
+            std::wstring errorString = L"Unable to get device info for GUID: ";
             errorString += guidAsString;
             isolate->ThrowException(Exception::Error(String::NewFromUtf8(isolate, std::string(errorString.begin(), errorString.end()).c_str())));
             CoTaskMemFree(guidAsString);
@@ -115,7 +147,7 @@ Local<Array> DeviceListAddon::getDevices()
                if (SetupDiGetDeviceInstanceId(deviceInfo, &deviceInfoData, deviceInstanceId, MAX_DEVICE_ID_LEN, NULL))
                {
                   // store device information
-                  Local<Object> device = Object::New(isolate);
+                  auto device = Object::New(isolate);
 
                   // save device instance ID
                   std::wstring deviceInstanceIdString(deviceInstanceId);
@@ -137,7 +169,7 @@ Local<Array> DeviceListAddon::getDevices()
                   device->Set(String::NewFromUtf8(isolate, "friendly_name"), String::NewFromUtf8(isolate, std::string(friendlyName.begin(), friendlyName.end()).c_str()));
                   // release buffer memory
                   delete [] buffer;
-                  
+
                   // get class size
                   SetupDiGetDeviceRegistryProperty(deviceInfo, &deviceInfoData, SPDRP_CLASS, NULL, NULL, 0, &propertySize);
                   propertySize = propertySize > 1 ? propertySize : 1;
@@ -151,7 +183,7 @@ Local<Array> DeviceListAddon::getDevices()
                   device->Set(String::NewFromUtf8(isolate, "class_name"), String::NewFromUtf8(isolate, std::string(className.begin(), className.end()).c_str()));
                   // release buffer memory
                   delete [] buffer;
-                  
+
                   // get hardware id size
                   SetupDiGetDeviceRegistryProperty(deviceInfo, &deviceInfoData, SPDRP_HARDWAREID, NULL, NULL, 0, &propertySize);
                   propertySize = propertySize > 1 ? propertySize : 1;
@@ -168,20 +200,19 @@ Local<Array> DeviceListAddon::getDevices()
 
                   // save device
                   devices->Set(Integer::New(isolate, counter), device);
-                  // increment counter
-                  counter++;
                }
-               
+
                // increment device index
                deviceIndex++;
                // attempt to get next device
                SetupDiEnumDeviceInfo(deviceInfo, deviceIndex, &deviceInfoData);
                // check to see if we should be done
                keepProcessing = !(GetLastError() == ERROR_NO_MORE_ITEMS);
+               // increment counter
+               counter++;
             }
          }
       }
-      // add hardware info to device list
    }
 
    // free deviceInfoSet memory
@@ -190,36 +221,6 @@ Local<Array> DeviceListAddon::getDevices()
       SetupDiDestroyDeviceInfoList(allDeviceClasses);
    }
 
-   // return devices array
+   // return devices array, which may be empty if there were failures above
    return devices;
 }
-
-// init function called by the main init routine.
-void DeviceListAddon::init(Handle<Object> target)
-{
-   FunctionList functionList {std::make_pair("getDevices", GetDevices), std::make_pair("describe", Describe)};
-   // initialize the base class
-   baseInit(target, AddonName, functionList);
-}
-
-// gets a list of all processes with their associated IDs
-void DeviceListAddon::GetDevices(const FunctionCallbackInfo<Value>& args)
-{
-   // unwrap object so we can call the correct function on the instance
-   auto deviceListAddon(ObjectWrap::Unwrap<DeviceListAddon>(args.Holder()));
-   // return process list to caller
-   args.GetReturnValue().Set(deviceListAddon->getDevices());
-}
-
-// describes this object in JSON
-void DeviceListAddon::Describe(const FunctionCallbackInfo<Value>& args)
-{
-   // unwrap object so we can call the correct function on the instance
-   auto deviceListAddon(ObjectWrap::Unwrap<DeviceListAddon>(args.Holder()));
-   // return process list to caller
-   args.GetReturnValue().Set(deviceListAddon->describe());
-}
-
-// Do all the magic to make this module accessible by node/javascript
-// THE FIRST PARAMETER TO THE MACRO BELOW MUST MATCH THE MODULE FILENAME
-NODE_MODULE(DeviceListAddon, DeviceListAddon::init)

@@ -4,9 +4,6 @@
 
 #include "ProcessListAddon.hpp"
 
-// the node libraries
-#include <node.h>
-
 // Windows API headers
 #include <Windows.h>
 #include <tlhelp32.h>
@@ -15,8 +12,12 @@
 // use the v8 namespace so we don't have to have v8:: everywhere
 using namespace v8;
 
-// set the addon's name
-const std::string ProcessListAddon::AddonName = "ProcessListAddon";
+// Do all the magic to make this module accessible by node/javascript
+// THE FIRST PARAMETER TO THE MACRO BELOW MUST MATCH THE MODULE FILENAME
+NODE_MODULE(ProcessListAddon, ProcessListAddon::Initialize)
+
+// v8 constructor
+Persistent<Function> ProcessListAddon::constructor;
 
 // constructor
 ProcessListAddon::ProcessListAddon() {}
@@ -24,31 +25,63 @@ ProcessListAddon::ProcessListAddon() {}
 // destructor
 ProcessListAddon::~ProcessListAddon() {}
 
-// describes this object in JSON
-Local<Object> ProcessListAddon::describe()
+// Initialization. This function is required by node.
+void ProcessListAddon::Initialize(Handle<Object> target)
 {
-   Isolate* isolate = Isolate::GetCurrent();
+   auto isolate = Isolate::GetCurrent();
 
-   Local<Object> description = Object::New(isolate);
-   
-   description->Set(String::NewFromUtf8(isolate, "name"), String::NewFromUtf8(isolate, "ProcessListAddon"));
-   description->Set(String::NewFromUtf8(isolate, "version"), String::NewFromUtf8(isolate, "0.0.1"));
+   // Prepare constructor template
+   auto function_template = FunctionTemplate::New(isolate, Create);
+   function_template->SetClassName(String::NewFromUtf8(isolate, "ProcessListAddon"));
+   function_template->InstanceTemplate()->SetInternalFieldCount(1);
 
-   return description;
+   // Export functions to JavaScript
+   NODE_SET_PROTOTYPE_METHOD(function_template, "getProcesses", GetProcesses);
+
+   constructor.Reset(isolate, function_template->GetFunction());
+   target->Set(String::NewFromUtf8(isolate, "ProcessListAddon"), function_template->GetFunction());
+}
+
+// Creates a new instance of this class.
+void ProcessListAddon::Create(const FunctionCallbackInfo<Value>& args)
+{
+   auto isolate = args.GetIsolate();
+
+   if (args.IsConstructCall())
+   {
+      // Invoked as constructor: new MyObject(...)
+      auto processListAddon = new ProcessListAddon();
+      processListAddon->Wrap(args.This());
+      args.GetReturnValue().Set(args.This());
+   }
+   else
+   {
+      // Invoked as plain function `MyObject(...)`, turn into construct call.
+      auto ctor = Local<Function>::New(isolate, constructor);
+      args.GetReturnValue().Set(ctor->NewInstance());
+   }
+}
+
+// gets a list of all processes with their associated IDs
+void ProcessListAddon::GetProcesses(const FunctionCallbackInfo<Value>& args)
+{
+   // unwrap object so we can call the correct function on the instance
+   auto processListAddon(ObjectWrap::Unwrap<ProcessListAddon>(args.Holder()));
+   // return process list to caller
+   args.GetReturnValue().Set(processListAddon->getProcesses());
 }
 
 // gets process list from Windows
 Local<Array> ProcessListAddon::getProcesses()
 {
-   Isolate* isolate = Isolate::GetCurrent();
+   auto isolate = Isolate::GetCurrent();
 
-   Local<Array> processes = Array::New(isolate);
+   auto processes = Array::New(isolate);
 
-   HANDLE processSnapshotHandle;
    PROCESSENTRY32 processEntry;
 
    // get process snapshot
-   processSnapshotHandle = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+   auto processSnapshotHandle = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
    if (processSnapshotHandle == INVALID_HANDLE_VALUE)
    {
       isolate->ThrowException(Exception::Error(String::NewFromUtf8(isolate, "Unable to create process snapshot.")));
@@ -71,7 +104,7 @@ Local<Array> ProcessListAddon::getProcesses()
             do
             {
                // save process information
-               Local<Object> process = Object::New(isolate);
+               auto process = Object::New(isolate);
 
                // save process name
                std::wstring processName(processEntry.szExeFile);
@@ -104,36 +137,6 @@ Local<Array> ProcessListAddon::getProcesses()
       }
    }
 
-   // return processes array, which may be empty, if there were failures above
+   // return processes array, which may be empty if there were failures above
    return processes;
 }
-
-// init function called by the main init routine.
-void ProcessListAddon::init(Handle<Object> target)
-{
-   FunctionList functionList {std::make_pair("getProcesses", GetProcesses), std::make_pair("describe", Describe)};
-   // initialize the base class
-   baseInit(target, AddonName, functionList);
-}
-
-// gets a list of all processes with their associated IDs
-void ProcessListAddon::GetProcesses(const FunctionCallbackInfo<Value>& args)
-{
-   // unwrap object so we can call the correct function on the instance
-   auto processListAddon(ObjectWrap::Unwrap<ProcessListAddon>(args.Holder()));
-   // return process list to caller
-   args.GetReturnValue().Set(processListAddon->getProcesses());
-}
-
-// describes this object in JSON
-void ProcessListAddon::Describe(const FunctionCallbackInfo<Value>& args)
-{
-   // unwrap object so we can call the correct function on the instance
-   auto processListAddon(ObjectWrap::Unwrap<ProcessListAddon>(args.Holder()));
-   // return process list to caller
-   args.GetReturnValue().Set(processListAddon->describe());
-}
-
-// Do all the magic to make this module accessible by node/javascript
-// THE FIRST PARAMETER TO THE MACRO BELOW MUST MATCH THE MODULE FILENAME
-NODE_MODULE(ProcessListAddon, ProcessListAddon::init)
