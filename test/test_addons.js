@@ -27,7 +27,16 @@ describe('addon tests', function () {
 		});
 		
 		describe('functions', function () {
-			
+			describe('getProcesses', function () {
+				it('should have a "getProcesses" function', function () {
+					var processListAddon = new addon.ProcessListAddon ();
+					processListAddon.getProcesses().should.be.a.Function;
+				});
+				it('should return an array', function () {
+					var processListAddon = new addon.ProcessListAddon ();
+					(processListAddon.getProcesses()).should.be.an.Array;
+				});
+			});
 		});
 	});
 	
@@ -46,6 +55,19 @@ describe('addon tests', function () {
 		it('should return a wrapped object with "new"', function () {
 			var deviceListAddon = new addon.DeviceListAddon ();
 			deviceListAddon.should.not.be.null;
+		});
+		
+		describe('functions', function () {
+			describe('getDevices', function () {
+				it('should have a "getDevices" function', function () {
+					var deviceListAddon = new addon.DeviceListAddon ();
+					deviceListAddon.getDevices().should.be.a.Function;
+				});
+				it('should return an array', function () {
+					var deviceListAddon = new addon.DeviceListAddon ();
+					(deviceListAddon.getDevices()).should.be.an.Array;
+				});
+			});
 		});
 	});
 });
