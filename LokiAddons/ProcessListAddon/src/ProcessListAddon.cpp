@@ -16,9 +16,6 @@ using namespace v8;
 // THE FIRST PARAMETER TO THE MACRO BELOW MUST MATCH THE MODULE FILENAME
 NODE_MODULE(ProcessListAddon, ProcessListAddon::Initialize)
 
-// v8 constructor
-Persistent<Function> ProcessListAddon::constructor;
-
 // constructor
 ProcessListAddon::ProcessListAddon() {}
 

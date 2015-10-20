@@ -21,9 +21,6 @@ using namespace v8;
 // THE FIRST PARAMETER TO THE MACRO BELOW MUST MATCH THE MODULE FILENAME
 NODE_MODULE(DeviceListAddon, DeviceListAddon::Initialize)
 
-// v8 constructor
-Persistent<Function> DeviceListAddon::constructor;
-
 // constructor
 DeviceListAddon::DeviceListAddon() {}
 
