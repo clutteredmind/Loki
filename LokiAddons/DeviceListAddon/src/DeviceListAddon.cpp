@@ -27,7 +27,7 @@ DeviceListAddon::DeviceListAddon() {}
 // destructor
 DeviceListAddon::~DeviceListAddon() {}
 
-// init function called by the main init routine.
+// Initialization. This function is required by node.
 void DeviceListAddon::Initialize(Handle<Object> target)
 {
    auto isolate = Isolate::GetCurrent();
@@ -52,8 +52,8 @@ void DeviceListAddon::Create(const FunctionCallbackInfo<Value>& args)
    if (args.IsConstructCall())
    {
       // Invoked as constructor: new MyObject(...)
-      auto deviceListAddon = new DeviceListAddon();
-      deviceListAddon->Wrap(args.This());
+      auto device_list_addon = new DeviceListAddon();
+      device_list_addon->Wrap(args.This());
       args.GetReturnValue().Set(args.This());
    }
    else
@@ -68,9 +68,9 @@ void DeviceListAddon::Create(const FunctionCallbackInfo<Value>& args)
 void DeviceListAddon::GetDevices(const FunctionCallbackInfo<Value>& args)
 {
    // unwrap object so we can call the correct function on the instance
-   auto deviceListAddon(ObjectWrap::Unwrap<DeviceListAddon>(args.Holder()));
+   auto device_list_addon = ObjectWrap::Unwrap<DeviceListAddon>(args.Holder());
    // return process list to caller
-   args.GetReturnValue().Set(deviceListAddon->getDevices());
+   args.GetReturnValue().Set(device_list_addon->getDevices());
 }
 
 // gets process list from Windows

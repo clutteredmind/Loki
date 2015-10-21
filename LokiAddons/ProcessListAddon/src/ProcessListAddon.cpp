@@ -47,8 +47,8 @@ void ProcessListAddon::Create(const FunctionCallbackInfo<Value>& args)
    if (args.IsConstructCall())
    {
       // Invoked as constructor: new MyObject(...)
-      auto processListAddon = new ProcessListAddon();
-      processListAddon->Wrap(args.This());
+      auto process_list_addon = new ProcessListAddon();
+      process_list_addon->Wrap(args.This());
       args.GetReturnValue().Set(args.This());
    }
    else
@@ -63,9 +63,9 @@ void ProcessListAddon::Create(const FunctionCallbackInfo<Value>& args)
 void ProcessListAddon::GetProcesses(const FunctionCallbackInfo<Value>& args)
 {
    // unwrap object so we can call the correct function on the instance
-   auto processListAddon(ObjectWrap::Unwrap<ProcessListAddon>(args.Holder()));
+   auto process_list_addon = ObjectWrap::Unwrap<ProcessListAddon>(args.Holder());
    // return process list to caller
-   args.GetReturnValue().Set(processListAddon->getProcesses());
+   args.GetReturnValue().Set(process_list_addon->getProcesses());
 }
 
 // gets process list from Windows
