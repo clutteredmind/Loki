@@ -10,9 +10,9 @@ class DeviceListAddon : public LokiAddonBase
 {
    public:
    // constructor
-   DeviceListAddon();
+   DeviceListAddon() = default;
    // destructor
-   virtual ~DeviceListAddon() override;
+   virtual ~DeviceListAddon() override = default;
    // Initialization. This function is required by node.
    static void Initialize(v8::Handle <v8::Object> target);
    // Creates a new instance of this class.

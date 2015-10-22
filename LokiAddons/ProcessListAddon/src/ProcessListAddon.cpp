@@ -16,12 +16,6 @@ using namespace v8;
 // THE FIRST PARAMETER TO THE MACRO BELOW MUST MATCH THE MODULE FILENAME
 NODE_MODULE(ProcessListAddon, ProcessListAddon::Initialize)
 
-// constructor
-ProcessListAddon::ProcessListAddon() {}
-
-// destructor
-ProcessListAddon::~ProcessListAddon() {}
-
 // Initialization. This function is required by node.
 void ProcessListAddon::Initialize(Handle<Object> target)
 {
@@ -75,22 +69,22 @@ Local<Array> ProcessListAddon::getProcesses()
 
    auto processes = Array::New(isolate);
 
-   PROCESSENTRY32 processEntry;
+   PROCESSENTRY32 process_entry;
 
    // get process snapshot
-   auto processSnapshotHandle = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
-   if (processSnapshotHandle == INVALID_HANDLE_VALUE)
+   auto process_snapshot_handle = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+   if (process_snapshot_handle == INVALID_HANDLE_VALUE)
    {
       isolate->ThrowException(Exception::Error(String::NewFromUtf8(isolate, "Unable to create process snapshot.")));
    }
    else
    {
-      processEntry.dwSize = sizeof(PROCESSENTRY32);
+      process_entry.dwSize = sizeof(PROCESSENTRY32);
 
-      if (!Process32First(processSnapshotHandle, &processEntry))
+      if (!Process32First(process_snapshot_handle, &process_entry))
       {
          isolate->ThrowException(Exception::Error(String::NewFromUtf8(isolate, "Could not retrieve information about first process.")));
-         CloseHandle(processSnapshotHandle);
+         CloseHandle(process_snapshot_handle);
       }
       else
       {
@@ -104,32 +98,32 @@ Local<Array> ProcessListAddon::getProcesses()
                auto process = Object::New(isolate);
 
                // save process name
-               std::wstring processName(processEntry.szExeFile);
-               process->Set(String::NewFromUtf8(isolate, "process_name"), String::NewFromUtf8(isolate, std::string(processName.begin(), processName.end()).c_str()));
+               std::wstring process_name(process_entry.szExeFile);
+               process->Set(String::NewFromUtf8(isolate, "process_name"), String::NewFromUtf8(isolate, std::string(process_name.begin(), process_name.end()).c_str()));
 
                // save process ID
-               process->Set(String::NewFromUtf8(isolate, "process_process_id"), Integer::New(isolate, processEntry.th32ProcessID));
+               process->Set(String::NewFromUtf8(isolate, "process_process_id"), Integer::New(isolate, process_entry.th32ProcessID));
                // save thread count
-               process->Set(String::NewFromUtf8(isolate, "process_thread_count"), Integer::New(isolate, processEntry.cntThreads));
+               process->Set(String::NewFromUtf8(isolate, "process_thread_count"), Integer::New(isolate, process_entry.cntThreads));
                // save parent process ID
-               process->Set(String::NewFromUtf8(isolate, "process_parent_process_id"), Integer::New(isolate, processEntry.th32ParentProcessID));
+               process->Set(String::NewFromUtf8(isolate, "process_parent_process_id"), Integer::New(isolate, process_entry.th32ParentProcessID));
                // save priority base
-               process->Set(String::NewFromUtf8(isolate, "process_priority_base"), Integer::New(isolate, processEntry.pcPriClassBase));
+               process->Set(String::NewFromUtf8(isolate, "process_priority_base"), Integer::New(isolate, process_entry.pcPriClassBase));
 
                // add process to list
                processes->Set(Integer::New(isolate, counter), process);
 
                // increment counter
                counter++;
-            } while (Process32Next(processSnapshotHandle, &processEntry));
+            } while (Process32Next(process_snapshot_handle, &process_entry));
 
             // clean up process snapshot handle
-            CloseHandle(processSnapshotHandle);
+            CloseHandle(process_snapshot_handle);
          }
          catch (...)
          {
             // clean up process snapshot handle on any exception
-            CloseHandle(processSnapshotHandle);
+            CloseHandle(process_snapshot_handle);
          }
       }
    }

@@ -12,9 +12,9 @@ class LokiAddonBase : public node::ObjectWrap
 {
    public:
    // constructor
-   LokiAddonBase();
+   LokiAddonBase() = default;
    // destructor
-   virtual ~LokiAddonBase();
-   // the v8 constructor
+   virtual ~LokiAddonBase() = default;
+   // The v8 constructor
    static v8::Persistent<v8::Function> constructor;
 };

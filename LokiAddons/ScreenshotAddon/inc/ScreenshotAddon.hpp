@@ -6,13 +6,15 @@
 
 #include "LokiAddonBase.hpp"
 
+#include <vector>
+
 class ScreenshotAddon : public LokiAddonBase
 {
    public:
    // constructor
-   ScreenshotAddon();
+   ScreenshotAddon() = default;
    // destructor
-   virtual ~ScreenshotAddon() override;
+   virtual ~ScreenshotAddon() override = default;
    // Initialization. This function is required by node.
    static void Initialize(v8::Handle <v8::Object> target);
    // Creates a new instance of this class.
@@ -22,5 +24,5 @@ class ScreenshotAddon : public LokiAddonBase
 
    private:
    // Takes a screenshot via the Windows API.
-   v8::Local<v8::Object> captureScreen();
+   std::vector<std::uint8_t> captureScreen();
 };

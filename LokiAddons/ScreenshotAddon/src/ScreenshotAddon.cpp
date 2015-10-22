@@ -11,12 +11,6 @@ using namespace v8;
 // THE FIRST PARAMETER TO THE MACRO BELOW MUST MATCH THE MODULE FILENAME
 NODE_MODULE(ScreenshotAddon, ScreenshotAddon::Initialize)
 
-// constructor
-ScreenshotAddon::ScreenshotAddon() {}
-
-// destructor
-ScreenshotAddon::~ScreenshotAddon() {}
-
 // Initialization. This function is required by node.
 void ScreenshotAddon::Initialize(Handle<Object> target)
 {
@@ -57,17 +51,47 @@ void ScreenshotAddon::Create(const FunctionCallbackInfo<Value>& args)
 // Takes a screenshot via the Windows API. Exposed to JavaScript.
 void ScreenshotAddon::CaptureScreen(const FunctionCallbackInfo<Value>& args)
 {
-   // unwrap object so we can call the correct function on the instance
-   auto screenshot_addon = ObjectWrap::Unwrap<ScreenshotAddon>(args.Holder());
-   // return process list to caller
-   args.GetReturnValue().Set(screenshot_addon->captureScreen());
+   auto isolate = args.GetIsolate();
+
+   // set default return value
+   args.GetReturnValue().Set(Undefined(isolate));
+
+   try
+   {
+      // sanity-check arguments
+      if (args.Length() < 1)
+      {
+         throw std::exception("captureScreen: Invalid parameter count. Expected: Parameter 0 'callback' - function");
+      }
+      if (!args [0]->IsFunction())
+      {
+         throw std::exception("captureScreen: Parameter 0 'callback' must be a function");
+      }
+
+      // unwrap object so we can call the correct function on the instance
+      auto screenshot_addon = ObjectWrap::Unwrap<ScreenshotAddon>(args.Holder());
+      // get the screen buffer
+      auto buffer = screenshot_addon->captureScreen();
+      // TODO: hand screen buffer back to JavaScript somehow
+
+      // get the callback function
+      auto callback = Local <Function>::Cast(args [0]);
+      // call it
+      // TODO: argc and argv will need to be set to some real data here
+      callback->Call(isolate->GetCurrentContext()->Global(), 0, {});
+   }
+   catch (std::exception& exception)
+   {
+      isolate->ThrowException(Exception::Error(String::NewFromUtf8(isolate, exception.what())));
+   }
 }
 
-Local<Object> ScreenshotAddon::captureScreen()
+// Takes a screenshot via the Windows API.
+std::vector<uint8_t> ScreenshotAddon::captureScreen()
 {
-   auto isolate = Isolate::GetCurrent();
+   std::vector<uint8_t> screen_buffer;
 
    // TODO: implement this
    
-   return Object::New(isolate);
+   return screen_buffer;
 }

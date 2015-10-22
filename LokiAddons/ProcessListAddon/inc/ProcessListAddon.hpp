@@ -10,9 +10,9 @@ class ProcessListAddon : public LokiAddonBase
 {
    public:
    // constructor
-   ProcessListAddon();
+   ProcessListAddon() = default;
    // destructor
-   virtual ~ProcessListAddon() override;
+   virtual ~ProcessListAddon() override = default;
    // Initialization. This function is required by node.
    static void Initialize(v8::Handle <v8::Object> target);
    // Creates a new instance of this class.
