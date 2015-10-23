@@ -103,10 +103,10 @@ describe('addon tests', function () {
 					screenshot_addon.captureScreen.should.be.a.Function;
 				});
 				it('should throw an exception if called with no arguments', function () {
-					expect(screenshot_addon.captureScreen.bind(screenshot_addon)).to.throw("captureScreen: Invalid parameter count. Expected: Parameter 0 'callback' - function");
+					expect(screenshot_addon.captureScreen.bind(screenshot_addon)).to.throw("Invalid parameter count. Expected one function parameter.");
 				});
 				it('should throw an exception if called with an argument that is not a function', function () {
-					expect(screenshot_addon.captureScreen.bind(screenshot_addon, true)).to.throw("captureScreen: Parameter 0 'callback' must be a function");
+					expect(screenshot_addon.captureScreen.bind(screenshot_addon, true)).to.throw("The parameter must be a function.");
 				});
 				it('should return "undefined" when called with a callback', function () {
 					expect(screenshot_addon.captureScreen(function () {})).to.be.Undefined;

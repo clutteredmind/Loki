@@ -24,5 +24,5 @@ class ScreenshotAddon : public LokiAddonBase
 
    private:
    // Takes a screenshot via the Windows API.
-   std::vector<std::uint8_t> captureScreen();
+   bool captureScreen(std::vector<uint8_t>& screen_buffer);
 };

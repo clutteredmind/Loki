@@ -53,7 +53,7 @@ void ProcessListAddon::Create(const FunctionCallbackInfo<Value>& args)
    }
 }
 
-// gets a list of all processes with their associated IDs
+// Gets a list of all running processes with their associated PIDs. Exposed to JavaScript.
 void ProcessListAddon::GetProcesses(const FunctionCallbackInfo<Value>& args)
 {
    // unwrap object so we can call the correct function on the instance
@@ -62,33 +62,37 @@ void ProcessListAddon::GetProcesses(const FunctionCallbackInfo<Value>& args)
    args.GetReturnValue().Set(process_list_addon->getProcesses());
 }
 
-// gets process list from Windows
+// Gets a list of all running processes with their associated PIDs.
 Local<Array> ProcessListAddon::getProcesses()
 {
    auto isolate = Isolate::GetCurrent();
+   HandleScope scope(isolate);
 
+   // the array of processes to return to JavaScript
    auto processes = Array::New(isolate);
 
-   PROCESSENTRY32 process_entry;
-
    // get process snapshot
-   auto process_snapshot_handle = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
-   if (process_snapshot_handle == INVALID_HANDLE_VALUE)
-   {
-      isolate->ThrowException(Exception::Error(String::NewFromUtf8(isolate, "Unable to create process snapshot.")));
-   }
-   else
-   {
-      process_entry.dwSize = sizeof(PROCESSENTRY32);
+   HANDLE process_snapshot_handle = INVALID_HANDLE_VALUE;
 
-      if (!Process32First(process_snapshot_handle, &process_entry))
+   try
+   {
+      process_snapshot_handle = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+
+      if (process_snapshot_handle == INVALID_HANDLE_VALUE)
       {
-         isolate->ThrowException(Exception::Error(String::NewFromUtf8(isolate, "Could not retrieve information about first process.")));
-         CloseHandle(process_snapshot_handle);
+         throw std::exception("Unable to create process snapshot.");
       }
       else
       {
-         try
+         PROCESSENTRY32 process_entry;
+
+         process_entry.dwSize = sizeof(PROCESSENTRY32);
+
+         if (!Process32First(process_snapshot_handle, &process_entry))
+         {
+            throw std::exception("Could not retrieve information about first process.");
+         }
+         else
          {
             int counter = 0;
             // loop while there are processes to enumerate
@@ -116,17 +120,16 @@ Local<Array> ProcessListAddon::getProcesses()
                // increment counter
                counter++;
             } while (Process32Next(process_snapshot_handle, &process_entry));
-
-            // clean up process snapshot handle
-            CloseHandle(process_snapshot_handle);
-         }
-         catch (...)
-         {
-            // clean up process snapshot handle on any exception
-            CloseHandle(process_snapshot_handle);
          }
       }
    }
+   catch (std::exception& exception)
+   {
+      isolate->ThrowException(Exception::Error(String::NewFromUtf8(isolate, exception.what())));
+   }
+
+   // clean up process snapshot handle
+   CloseHandle(process_snapshot_handle);
 
    // return processes array, which may be empty if there were failures above
    return processes;
