@@ -4,6 +4,8 @@
 
 #include "ScreenshotAddon.hpp"
 
+#include <Windows.h>
+
 // use the v8 namespace so we don't have to have v8:: everywhere
 using namespace v8;
 
@@ -59,19 +61,33 @@ void ScreenshotAddon::CaptureScreen(const FunctionCallbackInfo<Value>& args)
    try
    {
       // sanity-check arguments
-      if (args.Length() < 1)
+      if (args.Length() != 1)
       {
-         throw std::exception("captureScreen: Invalid parameter count. Expected: Parameter 0 'callback' - function");
+         throw std::exception("Invalid parameter count. Expected one function parameter.");
       }
       if (!args [0]->IsFunction())
       {
-         throw std::exception("captureScreen: Parameter 0 'callback' must be a function");
+         throw std::exception("The parameter must be a function.");
       }
 
       // unwrap object so we can call the correct function on the instance
       auto screenshot_addon = ObjectWrap::Unwrap<ScreenshotAddon>(args.Holder());
-      // get the screen buffer
-      auto buffer = screenshot_addon->captureScreen();
+
+      // the screen buffer
+      std::vector<uint8_t> screen_buffer;
+      // if it doesn't work, report the error
+      if (!screenshot_addon->captureScreen(screen_buffer))
+      {
+         std::string error = "Unable to capture screenshot";
+         std::string last_error_string;
+         if (screenshot_addon->GetLastErrorString(last_error_string))
+         {
+            // append more specific error message
+            error += ": ";
+            error += last_error_string;
+            throw std::exception(error.c_str());
+         }
+      }
       // TODO: hand screen buffer back to JavaScript somehow
 
       // get the callback function
@@ -87,11 +103,97 @@ void ScreenshotAddon::CaptureScreen(const FunctionCallbackInfo<Value>& args)
 }
 
 // Takes a screenshot via the Windows API.
-std::vector<uint8_t> ScreenshotAddon::captureScreen()
+bool ScreenshotAddon::captureScreen(std::vector<uint8_t>& screen_buffer)
 {
-   std::vector<uint8_t> screen_buffer;
+   bool success = true;
 
-   // TODO: implement this
-   
-   return screen_buffer;
+   // get screen dimensions
+   int screen_x = GetSystemMetrics(SM_XVIRTUALSCREEN);
+   int screen_y = GetSystemMetrics(SM_YVIRTUALSCREEN);
+   int screen_width = GetSystemMetrics(SM_CXVIRTUALSCREEN);
+   int screen_height = GetSystemMetrics(SM_CYVIRTUALSCREEN);
+   // resize the screen buffer to accomodate enough data
+   screen_buffer.resize(screen_width * screen_height * 4);
+   // objects for working with the Windows API
+   LPBITMAPINFO bitmap_info = NULL;
+   HDC compatible_device_context = NULL;
+   HDC screen_device_context = NULL;
+   HBITMAP bitmap_handle = NULL;
+
+   try
+   {
+      // Get a DC compatible with the screen
+      compatible_device_context = CreateCompatibleDC(0);
+      if (compatible_device_context == NULL)
+      {
+         throw std::exception("captureScreen: Unable to create compatible device context");
+      }
+
+      screen_device_context = GetDC(0);
+      if (screen_device_context == NULL)
+      {
+         throw std::exception("captureScreen: Unable to get screen device context");
+      }
+      // make a bmp in memory to store the capture in
+      bitmap_handle = CreateCompatibleBitmap(screen_device_context, screen_width, screen_height);
+      if (bitmap_handle == NULL)
+      {
+         throw std::exception("captureScreen: Unable to create compatible bitmap");
+      }
+
+      // join em up
+      HGDIOBJ previous_object(SelectObject(compatible_device_context, bitmap_handle));
+      if (previous_object == NULL)
+      {
+         throw std::exception("captureScreen: Unable to select bitmap object");
+      }
+
+      // copy from the screen to bitmap
+      if (BitBlt(compatible_device_context, 0, 0, screen_width, screen_height, screen_device_context, screen_x, screen_y, SRCCOPY) == NULL)
+      {
+         throw std::exception("captureScreen: Unable to capture the screen");
+      }
+
+      // GetDIBits requires format info about the bitmap. We can have GetDIBits
+      // fill a structure with that info if we pass a NULL pointer for lpvBits:
+      // Reserve memory for bitmap info (BITMAPINFOHEADER + largest possible
+      // palette):
+      if ((bitmap_info = (LPBITMAPINFO) (new char [sizeof(BITMAPINFOHEADER) + 256 * sizeof(RGBQUAD)])) == NULL)
+      {
+         throw std::exception("captureScreen: Failed to allocate memory for bitmap");
+      }
+      ZeroMemory(&bitmap_info->bmiHeader, sizeof(BITMAPINFOHEADER));
+      bitmap_info->bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+
+      // Get info
+      if (!GetDIBits(compatible_device_context, bitmap_handle, 0, screen_height, NULL, bitmap_info, DIB_RGB_COLORS))
+      {
+         throw std::exception("captureScreen: Unable to get bitmap information");
+      }
+      // Get the bits out
+      if (!GetDIBits(compatible_device_context, bitmap_handle, 0, screen_height, &screen_buffer [0], bitmap_info, DIB_RGB_COLORS))
+      {
+         throw std::exception("captureScreen: Unable to copy screen capture bitmap");
+      }
+   }
+   catch (std::exception& exception)
+   {
+      // save the error message
+      SetLastErrorString(std::string(exception.what()));
+      // clear the screen buffer before sending it back
+      screen_buffer.clear();
+      // set failed flag
+      success = false;
+   }
+
+   // free dynamic memory
+   ReleaseDC(NULL, compatible_device_context);
+   ReleaseDC(NULL, screen_device_context);
+   DeleteObject(bitmap_handle);
+   if (bitmap_info)
+   {
+      delete bitmap_info;
+   }
+
+   return success;
 }
