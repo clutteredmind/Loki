@@ -14,7 +14,6 @@ describe('addon tests', function () {
 
 		describe('addon', function () {
 			var addon = null;
-
 			beforeEach(function () {
 				addon = require(path.join(base_addon_path, addon_name));
 			});
@@ -24,7 +23,7 @@ describe('addon tests', function () {
 			});
 
 			describe('ProcessListAddon', function () {
-				var process_list_addon;
+				var process_list_addon = null;
 				beforeEach(function () {
 					process_list_addon = new addon.ProcessListAddon();
 				});
@@ -52,7 +51,6 @@ describe('addon tests', function () {
 
 		describe('addon', function () {
 			var addon = null;
-
 			beforeEach(function () {
 				addon = require(path.join(base_addon_path, addon_name));
 			});
@@ -77,7 +75,7 @@ describe('addon tests', function () {
 							device_list_addon.getDevices.should.be.a.Function;
 						});
 						it('should return an array', function () {
-							(device_list_addon.getDevices()).should.be.an.Array;
+							expect(function () { device_list_addon.getDevices() }).to.be.an.Array;
 						});
 					});
 				});
@@ -90,7 +88,6 @@ describe('addon tests', function () {
 
 		describe('addon', function () {
 			var addon = null;
-
 			beforeEach(function () {
 				addon = require(path.join(base_addon_path, addon_name));
 			});
@@ -115,10 +112,10 @@ describe('addon tests', function () {
 							screenshot_addon.captureScreen.should.be.a.Function;
 						});
 						it('should throw an exception if called with no arguments', function () {
-							expect(screenshot_addon.captureScreen.bind(screenshot_addon)).to.throw("Invalid parameter count. Expected one function parameter.");
+							expect(function () { screenshot_addon.captureScreen(); }).to.throw("Invalid parameter count. Expected one function parameter.");
 						});
 						it('should throw an exception if called with an argument that is not a function', function () {
-							expect(screenshot_addon.captureScreen.bind(screenshot_addon, true)).to.throw("The parameter must be a function.");
+							expect(function () { screenshot_addon.captureScreen(0); }).to.throw("The parameter must be a function.");
 						});
 						it('should return "undefined" when called with a callback', function () {
 							expect(screenshot_addon.captureScreen(function () { })).to.be.Undefined;

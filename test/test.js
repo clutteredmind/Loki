@@ -6,19 +6,19 @@ var chai = require('chai');
 chai.use(require('chai-string'));
 var expect = chai.expect;
 
-describe('base server functionality', function (){
+describe('base server functionality', function () {
 	var server;
-	
-	beforeEach(function (){
+
+	beforeEach(function () {
 		server = require('../app.js', { bustCache: true });
 	});
-	
-	it('responds to /', function (done){
+
+	it('responds to /', function (done) {
 		this.slow(2000);
 		request(server).get('/').expect(200, done);
 	});
-	
-	it('gives a 404 for everything else', function (done){
+
+	it('gives a 404 for everything else', function (done) {
 		request(server).get('/everything/else').expect(404, done);
 	});
 });
