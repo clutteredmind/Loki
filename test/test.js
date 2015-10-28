@@ -1,7 +1,10 @@
 'use strict';
 
 require = require('really-need');
+
+var uuid = require('node-uuid');
 var request = require('supertest');
+
 var chai = require('chai');
 chai.use(require('chai-string'));
 var expect = chai.expect;
@@ -18,7 +21,8 @@ describe('base server functionality', function () {
 		request(server).get('/').expect(200, done);
 	});
 
-	it('gives a 404 for everything else', function (done) {
-		request(server).get('/everything/else').expect(404, done);
+	it('returns a 404 reponse code for invalid URLs', function (done) {
+		// use node-uuid to generate a basically-random URL that will fail
+		request(server).get('/' + uuid.v1()).expect(404, done);
 	});
 });
