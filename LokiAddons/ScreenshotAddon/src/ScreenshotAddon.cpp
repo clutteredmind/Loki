@@ -6,6 +6,8 @@
 
 #include <Windows.h>
 
+#include <node_buffer.h>
+
 // use the v8 namespace so we don't have to have v8:: everywhere
 using namespace v8;
 
@@ -88,13 +90,13 @@ void ScreenshotAddon::CaptureScreen(const FunctionCallbackInfo<Value>& args)
             throw std::exception(error.c_str());
          }
       }
-      // TODO: hand screen buffer back to JavaScript somehow
+      // hand screen buffer back to JavaScript
+      auto return_value = node::Buffer::Copy(isolate, reinterpret_cast<const char*>(screen_buffer.data()), screen_buffer.size()).ToLocalChecked();
 
-      // get the callback function
-      auto callback = Local <Function>::Cast(args [0]);
-      // call it
-      // TODO: argc and argv will need to be set to some real data here
-      callback->Call(isolate->GetCurrentContext()->Global(), 0, {});
+      auto callback = Local<Function>::Cast(args [0]);
+      const int argc = 1;
+      Handle<Value> argv [argc] = {return_value};
+      callback->Call(isolate->GetCurrentContext()->Global(), argc, argv);
    }
    catch (std::exception& exception)
    {
@@ -112,88 +114,43 @@ bool ScreenshotAddon::captureScreen(std::vector<uint8_t>& screen_buffer)
    int screen_y = GetSystemMetrics(SM_YVIRTUALSCREEN);
    int screen_width = GetSystemMetrics(SM_CXVIRTUALSCREEN);
    int screen_height = GetSystemMetrics(SM_CYVIRTUALSCREEN);
-   // resize the screen buffer to accomodate enough data
-   screen_buffer.resize(screen_width * screen_height * 4);
-   // objects for working with the Windows API
-   LPBITMAPINFO bitmap_info = NULL;
-   HDC compatible_device_context = NULL;
-   HDC screen_device_context = NULL;
-   HBITMAP bitmap_handle = NULL;
+
+   // clear buffer
+   screen_buffer.clear();
+
+   HDC desktop_dc;
+   HDC compatible_dc;
+   HBITMAP bitmap;
 
    try
    {
-      // Get a DC compatible with the screen
-      compatible_device_context = CreateCompatibleDC(0);
-      if (compatible_device_context == NULL)
-      {
-         throw std::exception("captureScreen: Unable to create compatible device context");
-      }
+      desktop_dc = CreateDC(L"DISPLAY", NULL, NULL, 0);
+      compatible_dc = CreateCompatibleDC(desktop_dc);
+      bitmap = CreateCompatibleBitmap(desktop_dc, screen_width, screen_height);
+      SelectObject(compatible_dc, bitmap);
+      BitBlt(compatible_dc, 0, 0, screen_width, screen_height, desktop_dc, screen_x, screen_y, SRCCOPY | CAPTUREBLT);
 
-      screen_device_context = GetDC(0);
-      if (screen_device_context == NULL)
-      {
-         throw std::exception("captureScreen: Unable to get screen device context");
-      }
-      // make a bmp in memory to store the capture in
-      bitmap_handle = CreateCompatibleBitmap(screen_device_context, screen_width, screen_height);
-      if (bitmap_handle == NULL)
-      {
-         throw std::exception("captureScreen: Unable to create compatible bitmap");
-      }
-
-      // join em up
-      HGDIOBJ previous_object(SelectObject(compatible_device_context, bitmap_handle));
-      if (previous_object == NULL)
-      {
-         throw std::exception("captureScreen: Unable to select bitmap object");
-      }
-
-      // copy from the screen to bitmap
-      if (BitBlt(compatible_device_context, 0, 0, screen_width, screen_height, screen_device_context, screen_x, screen_y, SRCCOPY) == NULL)
-      {
-         throw std::exception("captureScreen: Unable to capture the screen");
-      }
-
-      // GetDIBits requires format info about the bitmap. We can have GetDIBits
-      // fill a structure with that info if we pass a NULL pointer for lpvBits:
-      // Reserve memory for bitmap info (BITMAPINFOHEADER + largest possible
-      // palette):
-      if ((bitmap_info = (LPBITMAPINFO) (new char [sizeof(BITMAPINFOHEADER) + 256 * sizeof(RGBQUAD)])) == NULL)
-      {
-         throw std::exception("captureScreen: Failed to allocate memory for bitmap");
-      }
-      ZeroMemory(&bitmap_info->bmiHeader, sizeof(BITMAPINFOHEADER));
-      bitmap_info->bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
-
-      // Get info
-      if (!GetDIBits(compatible_device_context, bitmap_handle, 0, screen_height, NULL, bitmap_info, DIB_RGB_COLORS))
-      {
-         throw std::exception("captureScreen: Unable to get bitmap information");
-      }
-      // Get the bits out
-      if (!GetDIBits(compatible_device_context, bitmap_handle, 0, screen_height, &screen_buffer [0], bitmap_info, DIB_RGB_COLORS))
-      {
-         throw std::exception("captureScreen: Unable to copy screen capture bitmap");
-      }
+      // TODO: send this to JavaScript
+      //copy to clipboard
+      OpenClipboard(NULL);
+      EmptyClipboard();
+      SetClipboardData(CF_BITMAP, bitmap);
+      CloseClipboard();
    }
    catch (std::exception& exception)
    {
       // save the error message
       SetLastErrorString(std::string(exception.what()));
-      // clear the screen buffer before sending it back
+      // clear the screen buffer
       screen_buffer.clear();
       // set failed flag
       success = false;
    }
 
-   // free dynamic memory
-   ReleaseDC(NULL, compatible_device_context);
-   ReleaseDC(NULL, screen_device_context);
-   DeleteObject(bitmap_handle);
-   if (bitmap_info)
-   {
-      delete bitmap_info;
-   }
+   // free memory
+   ReleaseDC(NULL, desktop_dc);
+   DeleteDC(compatible_dc);
+   DeleteObject(bitmap);
 
    return success;
 }
