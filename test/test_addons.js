@@ -29,16 +29,16 @@ describe('addon tests', function () {
 				});
 
 				it('should return a wrapped object with "new"', function () {
-					process_list_addon.should.be.an.Object;
+					expect(process_list_addon).to.not.be.null;
 				});
 
 				describe('functions', function () {
 					describe('getProcesses', function () {
 						it('should be a function', function () {
-							process_list_addon.getProcesses.should.be.a.Function;
+							process_list_addon.getProcesses.should.be.a('function');
 						});
 						it('should return an array', function () {
-							(process_list_addon.getProcesses()).should.be.an.Array;
+							(process_list_addon.getProcesses()).should.be.an('array');
 						});
 					});
 				});
@@ -66,16 +66,16 @@ describe('addon tests', function () {
 				});
 
 				it('should return a wrapped object with "new"', function () {
-					device_list_addon.should.be.an.Object;
+					expect(device_list_addon).to.not.be.null;
 				});
 
 				describe('functions', function () {
 					describe('getDevices', function () {
 						it('should be a function', function () {
-							device_list_addon.getDevices.should.be.a.Function;
+							device_list_addon.getDevices.should.be.a('function');
 						});
 						it('should return an array', function () {
-							expect(function () { device_list_addon.getDevices() }).to.be.an.Array;
+							expect(device_list_addon.getDevices()).to.be.an('array');
 						});
 					});
 				});
@@ -103,13 +103,13 @@ describe('addon tests', function () {
 				});
 
 				it('should return a wrapped object with "new"', function () {
-					screenshot_addon.should.be.an.Object;
+					expect(screenshot_addon).to.not.be.null;
 				});
 
 				describe('functions', function () {
 					describe('captureScreen', function () {
 						it('should be a function', function () {
-							screenshot_addon.captureScreen.should.be.a.Function;
+							screenshot_addon.captureScreen.should.be.a('function');
 						});
 						it('should throw an exception if called with no arguments', function () {
 							expect(function () { screenshot_addon.captureScreen(); }).to.throw("Invalid parameter count. Expected one function parameter.");
@@ -118,7 +118,7 @@ describe('addon tests', function () {
 							expect(function () { screenshot_addon.captureScreen(0); }).to.throw("The parameter must be a function.");
 						});
 						it('should return "undefined" when called with a callback', function () {
-							expect(screenshot_addon.captureScreen(function () { })).to.be.Undefined;
+							expect(screenshot_addon.captureScreen(function () { })).to.be.undefined;
 						});
 					});
 				});
