@@ -50,6 +50,8 @@ namespace Loki
       }
 
       protected:
+      // Constructor
+      LokiAddon() = default;
       // the v8 constructor
       static v8::Persistent<v8::Function> constructor;
       // This addon's descriptor
