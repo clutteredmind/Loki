@@ -27,7 +27,7 @@ namespace Loki
       // Set the last error string
       void SetLastErrorString(std::string& error_string);
 
-      protected:
+      private:
       // The last error message
       std::string last_error_string;
    };

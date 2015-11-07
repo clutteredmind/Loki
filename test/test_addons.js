@@ -37,6 +37,9 @@ describe('addon tests', function () {
 						it('should be a function', function () {
 							process_list_addon.getAddonInfo.should.be.a('function');
 						});
+						it('should return an object', function () {
+							process_list_addon.getAddonInfo().should.be.an('object');
+						});
 					});
 					describe('getProcesses', function () {
 						it('should be a function', function () {
@@ -79,6 +82,9 @@ describe('addon tests', function () {
 						it('should be a function', function () {
 							device_list_addon.getAddonInfo.should.be.a('function');
 						});
+						it('should return an object', function () {
+							device_list_addon.getAddonInfo().should.be.an('object');
+						});
 					});
 					describe('getDevices', function () {
 						it('should be a function', function () {
@@ -120,6 +126,9 @@ describe('addon tests', function () {
 					describe('getAddonInfo', function () {
 						it('should be a function', function () {
 							screenshot_addon.getAddonInfo.should.be.a('function');
+						});
+						it('should return an object', function () {
+							screenshot_addon.getAddonInfo().should.be.an('object');
 						});
 					});
 					describe('captureScreen', function () {
