@@ -17,8 +17,6 @@
 // use the v8 namespace so we don't have to have v8:: everywhere
 using namespace v8;
 
-// Do all the magic to make this module accessible by node/javascript
-// THE FIRST PARAMETER TO THE MACRO BELOW MUST MATCH THE MODULE FILENAME
 NODE_MODULE(DeviceListAddon, Loki::DeviceListAddon::Initialize)
 
 namespace Loki
@@ -26,41 +24,40 @@ namespace Loki
    // The v8 constructor
    v8::Persistent<v8::Function> DeviceListAddon::constructor;
 
+   // the addon's descriptor
+   LokiAddonDescriptor DeviceListAddon::descriptor;
+
+   // addon metadata
+   const std::string addon_name = "DeviceListAddon";
+   const int addon_version [3] {1 /*major*/, 0 /*minor*/, 0 /*patch*/};
+   const std::string addon_description = "Retrieves a list of installed devices via the Windows API";
+
    // Initialization. This function is required by node.
    void DeviceListAddon::Initialize(Handle<Object> target)
    {
+      // set addon metadata
+      descriptor.SetName(addon_name);
+      descriptor.SetVersion(LokiAddonDescriptor::GetVersionStringFromArray(addon_version));
+      descriptor.SetDescription(addon_description);
+      // register this class's exported functions for the framework
+      descriptor.AddFunction("getAddonInfo", GetAddonInfo, "Retrieves framework information about this addon.", {}, ParameterType::OBJECT);
+      descriptor.AddFunction("getDevices", GetDevices, "Gets a list of all installed devices.", {}, ParameterType::OBJECT);
+
       auto isolate = Isolate::GetCurrent();
 
       // Prepare constructor template
       auto function_template = FunctionTemplate::New(isolate, Create);
-      function_template->SetClassName(String::NewFromUtf8(isolate, "DeviceListAddon"));
+      function_template->SetClassName(String::NewFromUtf8(isolate, descriptor.GetName().c_str()));
       function_template->InstanceTemplate()->SetInternalFieldCount(1);
 
-      // Export functions to JavaScript
-      NODE_SET_PROTOTYPE_METHOD(function_template, "getDevices", GetDevices);
+      // Set up function prototypes
+      for (auto function : descriptor.GetFunctions())
+      {
+         NODE_SET_PROTOTYPE_METHOD(function_template, function.name.c_str(), function.callback);
+      }
 
       constructor.Reset(isolate, function_template->GetFunction());
-      target->Set(String::NewFromUtf8(isolate, "DeviceListAddon"), function_template->GetFunction());
-   }
-
-   // Creates a new instance of this class.
-   void DeviceListAddon::Create(const FunctionCallbackInfo<Value>& args)
-   {
-      auto isolate = args.GetIsolate();
-
-      if (args.IsConstructCall())
-      {
-         // Invoked as constructor: new MyObject(...)
-         auto device_list_addon = new DeviceListAddon();
-         device_list_addon->Wrap(args.This());
-         args.GetReturnValue().Set(args.This());
-      }
-      else
-      {
-         // Invoked as plain function `MyObject(...)`, turn into construct call.
-         auto ctor = Local<Function>::New(isolate, constructor);
-         args.GetReturnValue().Set(ctor->NewInstance());
-      }
+      target->Set(String::NewFromUtf8(isolate, descriptor.GetName().c_str()), function_template->GetFunction());
    }
 
    // Gets a list of all installed devices. Exposed to JavaScript.

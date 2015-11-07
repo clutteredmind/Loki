@@ -33,6 +33,11 @@ describe('addon tests', function () {
 				});
 
 				describe('functions', function () {
+					describe('getAddonInfo', function () {
+						it('should be a function', function () {
+							process_list_addon.getAddonInfo.should.be.a('function');
+						});
+					});
 					describe('getProcesses', function () {
 						it('should be a function', function () {
 							process_list_addon.getProcesses.should.be.a('function');
@@ -70,6 +75,11 @@ describe('addon tests', function () {
 				});
 
 				describe('functions', function () {
+					describe('getAddonInfo', function () {
+						it('should be a function', function () {
+							device_list_addon.getAddonInfo.should.be.a('function');
+						});
+					});
 					describe('getDevices', function () {
 						it('should be a function', function () {
 							device_list_addon.getDevices.should.be.a('function');
@@ -107,6 +117,11 @@ describe('addon tests', function () {
 				});
 
 				describe('functions', function () {
+					describe('getAddonInfo', function () {
+						it('should be a function', function () {
+							screenshot_addon.getAddonInfo.should.be.a('function');
+						});
+					});
 					describe('captureScreen', function () {
 						it('should be a function', function () {
 							screenshot_addon.captureScreen.should.be.a('function');
@@ -116,9 +131,6 @@ describe('addon tests', function () {
 						});
 						it('should throw an exception if called with an argument that is not a function', function () {
 							expect(function () { screenshot_addon.captureScreen(0); }).to.throw("The parameter must be a function.");
-						});
-						it('should return "undefined" when called with a callback', function () {
-							expect(screenshot_addon.captureScreen(function () { })).to.be.undefined;
 						});
 					});
 				});

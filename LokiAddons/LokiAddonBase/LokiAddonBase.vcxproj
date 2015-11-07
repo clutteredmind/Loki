@@ -131,9 +131,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="inc\LokiAddon.hpp" />
     <ClInclude Include="inc\LokiAddonBase.hpp" />
+    <ClInclude Include="inc\LokiAddonDescriptor.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\LokiAddonDescriptor.cpp" />
     <ClCompile Include="src\LokiAddonBase.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -22,10 +22,13 @@ namespace Loki
       virtual ~LokiAddonBase() = default;
       // Get the last error string
       bool GetLastErrorString(std::string& error_string);
+
+      protected:
       // Set the last error string
       void SetLastErrorString(std::string& error_string);
 
       protected:
+      // The last error message
       std::string last_error_string;
    };
 }

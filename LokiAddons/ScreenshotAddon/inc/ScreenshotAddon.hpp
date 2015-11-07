@@ -4,14 +4,14 @@
 
 #pragma once
 
-#include "LokiAddonBase.hpp"
+#include "LokiAddon.hpp"
 
 // standard includes
 #include <vector>
 
 namespace Loki
 {
-   class ScreenshotAddon : public LokiAddonBase
+   class ScreenshotAddon : public LokiAddon<ScreenshotAddon>
    {
       public:
       // constructor
@@ -20,14 +20,10 @@ namespace Loki
       virtual ~ScreenshotAddon() override = default;
       // Initialization. This function is required by node.
       static void Initialize(v8::Handle <v8::Object> target);
-      // Creates a new instance of this class.
-      static void Create(const v8::FunctionCallbackInfo<v8::Value>& args);
       // Takes a screenshot via the Windows API. Exposed to JavaScript.
       static void CaptureScreen(const v8::FunctionCallbackInfo<v8::Value>& args);
 
       private:
-      // The v8 constructor
-      static v8::Persistent<v8::Function> constructor;
       // Takes a screenshot via the Windows API.
       bool captureScreen(std::vector<uint8_t>& screen_buffer);
    };

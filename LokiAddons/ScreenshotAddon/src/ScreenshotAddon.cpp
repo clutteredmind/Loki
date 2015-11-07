@@ -4,6 +4,9 @@
 
 #include "ScreenshotAddon.hpp"
 
+// for JPEG compression
+#include "jpge.h"
+
 #include <Windows.h>
 
 #include <node_buffer.h>
@@ -11,8 +14,6 @@
 // use the v8 namespace so we don't have to have v8:: everywhere
 using namespace v8;
 
-// Do all the magic to make this module accessible by node/javascript
-// THE FIRST PARAMETER TO THE MACRO BELOW MUST MATCH THE MODULE FILENAME
 NODE_MODULE(ScreenshotAddon, Loki::ScreenshotAddon::Initialize)
 
 namespace Loki
@@ -20,41 +21,40 @@ namespace Loki
    // The v8 constructor
    v8::Persistent<v8::Function> ScreenshotAddon::constructor;
 
+   // the addon's descriptor
+   LokiAddonDescriptor ScreenshotAddon::descriptor;
+
+   // addon metadata
+   const std::string addon_name = "ScreenshotAddon";
+   const int addon_version [3] {1 /*major*/, 0 /*minor*/, 0 /*patch*/};
+   const std::string addon_description = "Grabs a screenshot of the display via the Windows API.";
+
    // Initialization. This function is required by node.
    void ScreenshotAddon::Initialize(Handle<Object> target)
    {
+      // set addon metadata
+      descriptor.SetName(addon_name);
+      descriptor.SetVersion(LokiAddonDescriptor::GetVersionStringFromArray(addon_version));
+      descriptor.SetDescription(addon_description);
+      // register this class's exported functions for the framework
+      descriptor.AddFunction("getAddonInfo", GetAddonInfo, "Retrieves framework information about this addon.", {}, ParameterType::OBJECT);
+      descriptor.AddFunction("captureScreen", CaptureScreen, "Takes a screenshot via the Windows API.", {}, ParameterType::BUFFER);
+
       auto isolate = Isolate::GetCurrent();
 
       // Prepare constructor template
       auto function_template = FunctionTemplate::New(isolate, Create);
-      function_template->SetClassName(String::NewFromUtf8(isolate, "ScreenshotAddon"));
+      function_template->SetClassName(String::NewFromUtf8(isolate, descriptor.GetName().c_str()));
       function_template->InstanceTemplate()->SetInternalFieldCount(1);
 
-      // Export functions to JavaScript
-      NODE_SET_PROTOTYPE_METHOD(function_template, "captureScreen", CaptureScreen);
+      // Set up function prototypes
+      for (auto function : descriptor.GetFunctions())
+      {
+         NODE_SET_PROTOTYPE_METHOD(function_template, function.name.c_str(), function.callback);
+      }
 
       constructor.Reset(isolate, function_template->GetFunction());
-      target->Set(String::NewFromUtf8(isolate, "ScreenshotAddon"), function_template->GetFunction());
-   }
-
-   // Creates a new instance of this class.
-   void ScreenshotAddon::Create(const FunctionCallbackInfo<Value>& args)
-   {
-      auto isolate = args.GetIsolate();
-
-      if (args.IsConstructCall())
-      {
-         // Invoked as constructor: new MyObject(...)
-         auto screenshot_addon = new ScreenshotAddon();
-         screenshot_addon->Wrap(args.This());
-         args.GetReturnValue().Set(args.This());
-      }
-      else
-      {
-         // Invoked as plain function `MyObject(...)`, turn into construct call.
-         auto ctor = Local<Function>::New(isolate, constructor);
-         args.GetReturnValue().Set(ctor->NewInstance());
-      }
+      target->Set(String::NewFromUtf8(isolate, descriptor.GetName().c_str()), function_template->GetFunction());
    }
 
    // Takes a screenshot via the Windows API. Exposed to JavaScript.
@@ -67,7 +67,6 @@ namespace Loki
 
       try
       {
-         // sanity-check arguments
          if (args.Length() != 1)
          {
             throw std::exception("Invalid parameter count. Expected one function parameter.");
@@ -96,11 +95,15 @@ namespace Loki
             }
          }
          // hand screen buffer back to JavaScript
-         auto return_value = node::Buffer::Copy(isolate, reinterpret_cast<const char*>(screen_buffer.data()), screen_buffer.size()).ToLocalChecked();
+         auto screen_data = node::Buffer::Copy(isolate, reinterpret_cast<const char*>(screen_buffer.data()), screen_buffer.size()).ToLocalChecked();
 
-         auto callback = Local<Function>::Cast(args [0]);
-         const int argc = 1;
-         Handle<Value> argv [argc] = {return_value};
+         // Assemble the argument array for the callback
+         const unsigned argc = 1;
+         Local<Value> argv [argc] = {screen_data};
+
+         // Get the callback
+         Local<Function> callback = Local <Function>::Cast(args [0]);
+         // Call it
          callback->Call(isolate->GetCurrentContext()->Global(), argc, argv);
       }
       catch (std::exception& exception)
@@ -114,33 +117,118 @@ namespace Loki
    {
       bool success = true;
 
-      // get screen dimensions
+      // get display dimensions
       int screen_x = GetSystemMetrics(SM_XVIRTUALSCREEN);
       int screen_y = GetSystemMetrics(SM_YVIRTUALSCREEN);
       int screen_width = GetSystemMetrics(SM_CXVIRTUALSCREEN);
       int screen_height = GetSystemMetrics(SM_CYVIRTUALSCREEN);
 
-      // clear buffer
+      // clear target buffer
       screen_buffer.clear();
 
-      HDC desktop_dc;
-      HDC compatible_dc;
-      HBITMAP bitmap;
+      // objects for working with the screen through the Windows API
+      HDC screen_device_context = NULL;
+      HDC compatible_device_context = NULL;
+      HBITMAP bitmap_handle = NULL;
+      // Bitmap format info. Used by GetDIBits.
+      LPBITMAPINFO bitmap_info = NULL;
+      // memory buffers for JPEG compression
+      uint8_t* image_data = NULL;
+      uint8_t* image_data_compressed = NULL;
 
       try
       {
-         desktop_dc = CreateDC(L"DISPLAY", NULL, NULL, 0);
-         compatible_dc = CreateCompatibleDC(desktop_dc);
-         bitmap = CreateCompatibleBitmap(desktop_dc, screen_width, screen_height);
-         SelectObject(compatible_dc, bitmap);
-         BitBlt(compatible_dc, 0, 0, screen_width, screen_height, desktop_dc, screen_x, screen_y, SRCCOPY | CAPTUREBLT);
+         // get a device context for the whole screen
+         screen_device_context = CreateDC(L"DISPLAY", NULL, NULL, 0);
+         if (screen_device_context == NULL)
+         {
+            throw std::exception("captureScreen: Unable to get screen device context");
+         }
 
-         // TODO: send this to JavaScript
-         //copy to clipboard
-         OpenClipboard(NULL);
-         EmptyClipboard();
-         SetClipboardData(CF_BITMAP, bitmap);
-         CloseClipboard();
+         // get a memory device context compatible with the DC acquired above
+         compatible_device_context = CreateCompatibleDC(screen_device_context);
+         if (compatible_device_context == NULL)
+         {
+            throw std::exception("captureScreen: Unable to create compatible device context");
+         }
+
+         // From MSDN: create a bitmap compatible with the device that is associated with the specified device context
+         bitmap_handle = CreateCompatibleBitmap(screen_device_context, screen_width, screen_height);
+         if (bitmap_handle == NULL)
+         {
+            throw std::exception("captureScreen: Unable to create compatible bitmap");
+         }
+
+         // select the bitmap into the device context
+         if (SelectObject(compatible_device_context, bitmap_handle) == NULL)
+         {
+            throw std::exception("captureScreen: Unable to select bitmap object");
+         }
+
+         // copy color data from the screen DC into the compatible DC
+         if (BitBlt(compatible_device_context, 0, 0, screen_width, screen_height, screen_device_context, screen_x, screen_y, SRCCOPY) == NULL)
+         {
+            throw std::exception("captureScreen: Unable to capture the screen");
+         }
+
+         // Reserve memory for bitmap info (BITMAPINFOHEADER + largest possible palette):
+         bitmap_info = reinterpret_cast<LPBITMAPINFO> (new char [sizeof(BITMAPINFOHEADER) + 256 * sizeof(RGBQUAD)]);
+         if (bitmap_info == NULL)
+         {
+            throw std::exception("captureScreen: Failed to allocate memory for bitmap");
+         }
+         ZeroMemory(&bitmap_info->bmiHeader, sizeof(BITMAPINFOHEADER));
+         bitmap_info->bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+
+         // GetDIBits requires format info about the bitmap.
+         // We can have GetDIBits fill a structure with that info if we pass NULL for lpvBits.
+         if (!GetDIBits(compatible_device_context, bitmap_handle, 0, screen_height /* lpvBits */, NULL, bitmap_info, DIB_RGB_COLORS))
+         {
+            throw std::exception("captureScreen: Unable to get bitmap information");
+         }
+
+         // The raw screen buffer. This will contain RGB+alpha information
+         std::vector<uint8_t> raw_screen_buffer;
+         raw_screen_buffer.resize(screen_width * screen_height * 4); // Width * Pixels * 4 bytes per pixel, RGB + alpha
+                                                                     // Now that we have all of the bitmap's information, we pass a pointer to the beginning of
+                                                                     // raw_screen_buffer for GetDIBits to fill it in with bitmap data
+         if (!GetDIBits(compatible_device_context, bitmap_handle, 0, screen_height, &raw_screen_buffer [0], bitmap_info, DIB_RGB_COLORS))
+         {
+            throw std::exception("captureScreen: Unable to copy screen capture bitmap");
+         }
+
+         // calculate the size that the image buffers need to be
+         int buffer_size = screen_width * screen_height * 3;
+         // image_data needs to be big enough to hold all the bitmap data
+         image_data = new uint8_t [buffer_size];
+         // image_data_compressed only needs to be big enough for the compressed version of the image,
+         // but we can't know how big that will be until after compression has been performed.
+         // So we're allocating more space than will be needed in the end.
+         image_data_compressed = new uint8_t [buffer_size];
+         // The final screen buffer. This will omit the alpha channel, so we allocate a bit less space
+         std::vector<uint8_t> final_screen_buffer;
+         final_screen_buffer.resize(buffer_size);
+         // Convert the raw screen buffer to the final buffer.
+         for (int line = 0; line < screen_height; line++)
+         {
+            for (int column = 0; column < screen_width; column++)
+            {
+               int raw_pixel = (line * screen_width) + column;
+               int final_pixel = ((screen_height - line - 1) * screen_width) + column;
+               image_data [final_pixel * 3 + 2] = final_screen_buffer [final_pixel * 3] = raw_screen_buffer [raw_pixel * 4];
+               image_data [final_pixel * 3 + 1] = final_screen_buffer [final_pixel * 3 + 1] = raw_screen_buffer [raw_pixel * 4 + 1];
+               image_data [final_pixel * 3] = final_screen_buffer [final_pixel * 3 + 2] = raw_screen_buffer [raw_pixel * 4 + 2];
+            }
+         }
+         // compress_image_to_jpeg_file_in_memory will reset buffer_size to the size of the compressed data if it is successful
+         if (!jpge::compress_image_to_jpeg_file_in_memory(image_data_compressed, buffer_size, screen_width, screen_height, 3, image_data))
+         {
+            throw std::exception("captureScreen: Unable to compress bitmap to JPEG");
+         }
+         // set size of target buffer
+         screen_buffer.resize(buffer_size);
+         // copy compressed memory into return buffer
+         std::copy(image_data_compressed, image_data_compressed + buffer_size, screen_buffer.begin());
       }
       catch (std::exception& exception)
       {
@@ -152,10 +240,27 @@ namespace Loki
          success = false;
       }
 
-      // free memory
-      ReleaseDC(NULL, desktop_dc);
-      DeleteDC(compatible_dc);
-      DeleteObject(bitmap);
+      // clean up memory, where applicable
+      if (NULL != compatible_device_context)
+      {
+         DeleteDC(compatible_device_context);
+      }
+      if (NULL != bitmap_handle)
+      {
+         DeleteObject(bitmap_handle);
+      }
+      if (NULL != bitmap_info)
+      {
+         delete bitmap_info;
+      }
+      if (NULL != image_data)
+      {
+         delete image_data;
+      }
+      if (NULL != image_data_compressed)
+      {
+         delete image_data_compressed;
+      }
 
       return success;
    }

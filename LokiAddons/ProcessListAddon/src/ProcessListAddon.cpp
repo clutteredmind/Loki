@@ -12,8 +12,6 @@
 // use the v8 namespace so we don't have to have v8:: everywhere
 using namespace v8;
 
-// Do all the magic to make this module accessible by node/javascript
-// THE FIRST PARAMETER TO THE MACRO BELOW MUST MATCH THE MODULE FILENAME
 NODE_MODULE(ProcessListAddon, Loki::ProcessListAddon::Initialize)
 
 namespace Loki
@@ -21,41 +19,40 @@ namespace Loki
    // The v8 constructor
    v8::Persistent<v8::Function> ProcessListAddon::constructor;
 
+   // the addon's descriptor
+   LokiAddonDescriptor ProcessListAddon::descriptor;
+
+   // addon metadata
+   const std::string addon_name = "ProcessListAddon";
+   const int addon_version [3] {1 /*major*/, 0 /*minor*/, 0 /*patch*/};
+   const std::string addon_description = "Retrieves a list of running processes via the Windows API";
+
    // Initialization. This function is required by node.
    void ProcessListAddon::Initialize(Handle<Object> target)
    {
+      // set addon metadata
+      descriptor.SetName(addon_name);
+      descriptor.SetVersion(LokiAddonDescriptor::GetVersionStringFromArray(addon_version));
+      descriptor.SetDescription(addon_description);
+      // register this class's exported functions for the framework
+      descriptor.AddFunction("getAddonInfo", GetAddonInfo, "Retrieves framework information about this addon.", {}, ParameterType::OBJECT);
+      descriptor.AddFunction("getProcesses", GetProcesses, "Gets a list of all running processes.", {}, ParameterType::OBJECT);
+
       auto isolate = Isolate::GetCurrent();
 
       // Prepare constructor template
       auto function_template = FunctionTemplate::New(isolate, Create);
-      function_template->SetClassName(String::NewFromUtf8(isolate, "ProcessListAddon"));
+      function_template->SetClassName(String::NewFromUtf8(isolate, descriptor.GetName().c_str()));
       function_template->InstanceTemplate()->SetInternalFieldCount(1);
 
-      // Export functions to JavaScript
-      NODE_SET_PROTOTYPE_METHOD(function_template, "getProcesses", GetProcesses);
+      // Set up function prototypes
+      for (auto function : descriptor.GetFunctions())
+      {
+         NODE_SET_PROTOTYPE_METHOD(function_template, function.name.c_str(), function.callback);
+      }
 
       constructor.Reset(isolate, function_template->GetFunction());
-      target->Set(String::NewFromUtf8(isolate, "ProcessListAddon"), function_template->GetFunction());
-   }
-
-   // Creates a new instance of this class.
-   void ProcessListAddon::Create(const FunctionCallbackInfo<Value>& args)
-   {
-      auto isolate = args.GetIsolate();
-
-      if (args.IsConstructCall())
-      {
-         // Invoked as constructor: new MyObject(...)
-         auto process_list_addon = new ProcessListAddon();
-         process_list_addon->Wrap(args.This());
-         args.GetReturnValue().Set(args.This());
-      }
-      else
-      {
-         // Invoked as plain function `MyObject(...)`, turn into construct call.
-         auto ctor = Local<Function>::New(isolate, constructor);
-         args.GetReturnValue().Set(ctor->NewInstance());
-      }
+      target->Set(String::NewFromUtf8(isolate, descriptor.GetName().c_str()), function_template->GetFunction());
    }
 
    // Gets a list of all running processes with their associated PIDs. Exposed to JavaScript.
