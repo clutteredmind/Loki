@@ -14,6 +14,7 @@
 // use the v8 namespace so we don't have to have v8:: everywhere
 using namespace v8;
 
+// Tell node which function to use to start setting up this addon
 NODE_MODULE(ScreenshotAddon, Loki::ScreenshotAddon::PreInitialize)
 
 namespace Loki

@@ -16,14 +16,14 @@ namespace Loki
    class LokiAddonBase : public node::ObjectWrap
    {
       public:
-      // constructor
-      LokiAddonBase() = default;
       // destructor
       virtual ~LokiAddonBase() = default;
       // Get the last error string
       bool GetLastErrorString(std::string& error_string);
 
       protected:
+      // constructor
+      LokiAddonBase() = default;
       // Set the last error string
       void SetLastErrorString(std::string& error_string);
 

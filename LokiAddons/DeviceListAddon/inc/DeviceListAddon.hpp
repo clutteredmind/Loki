@@ -11,7 +11,7 @@ namespace Loki
    class DeviceListAddon : public LokiAddon<DeviceListAddon>
    {
       public:
-      // constructor
+      // Constructor
       DeviceListAddon() = default;
       // destructor
       virtual ~DeviceListAddon() override = default;

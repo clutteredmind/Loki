@@ -11,7 +11,7 @@ namespace Loki
    class ProcessListAddon : public LokiAddon<ProcessListAddon>
    {
       public:
-      // constructor
+      // Constructor
       ProcessListAddon() = default;
       // destructor
       virtual ~ProcessListAddon() override = default;

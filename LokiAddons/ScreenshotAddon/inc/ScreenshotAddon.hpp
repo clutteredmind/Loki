@@ -14,7 +14,7 @@ namespace Loki
    class ScreenshotAddon : public LokiAddon<ScreenshotAddon>
    {
       public:
-      // constructor
+      // Constructor
       ScreenshotAddon() = default;
       // destructor
       virtual ~ScreenshotAddon() override = default;
