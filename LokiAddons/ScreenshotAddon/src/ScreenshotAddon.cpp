@@ -20,7 +20,7 @@ NODE_MODULE(ScreenshotAddon, Loki::ScreenshotAddon::PreInitialize)
 namespace Loki
 {
    // The v8 constructor
-   v8::Persistent<v8::Function> ScreenshotAddon::constructor;
+   Persistent<Function> ScreenshotAddon::constructor;
 
    // the addon's descriptor
    LokiAddonDescriptor ScreenshotAddon::descriptor;

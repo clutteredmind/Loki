@@ -18,7 +18,7 @@ NODE_MODULE(ProcessListAddon, Loki::ProcessListAddon::PreInitialize)
 namespace Loki
 {
    // The v8 constructor
-   v8::Persistent<v8::Function> ProcessListAddon::constructor;
+   Persistent<Function> ProcessListAddon::constructor;
 
    // the addon's descriptor
    LokiAddonDescriptor ProcessListAddon::descriptor;

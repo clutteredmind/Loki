@@ -44,7 +44,7 @@ namespace Loki
       }
       // the name of the function
       std::string name;
-      // the actual v8 callback that will be called
+      // the v8 callback that will be used to perform the work
       v8::FunctionCallback callback;
       // a description of the function
       std::string description;
@@ -63,8 +63,8 @@ namespace Loki
       ~LokiAddonDescriptor() = default;
       // Converts an array of integers to a version number string
       static std::string GetVersionStringFromArray(const int version_numbers [3]);
-      // Converts a ParameterType to its string representation
-      static std::string ConvertParameterTypeToString(ParameterType parameter_type);
+      // Returns the string representation of a parameter type
+      static std::string ConvertParameterTypeToString(const ParameterType parameter_type);
       // Setter for the addon's name
       void SetName(const std::string& name);
       // Setter for the addon's version number
@@ -80,7 +80,7 @@ namespace Loki
          const std::vector<Parameter> parameters = {},
          const ParameterType return_type = ParameterType::UNDEFINED);
       // Removes a function description by index
-      bool RemoveFunction(unsigned index);
+      bool RemoveFunction(const unsigned index);
       // Accessor for the addon's name
       std::string GetName();
       // Accessor for the addon's version number

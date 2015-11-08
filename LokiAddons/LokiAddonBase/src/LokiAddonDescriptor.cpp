@@ -23,7 +23,7 @@ namespace Loki
    }
 
    // Converts a ParameterType to its string representation
-   std::string LokiAddonDescriptor::ConvertParameterTypeToString(ParameterType parameter_type)
+   std::string LokiAddonDescriptor::ConvertParameterTypeToString(const ParameterType parameter_type)
    {
       std::string type_as_string = "undefined";
 
@@ -91,7 +91,7 @@ namespace Loki
    }
 
    // Removes a function description by index
-   bool LokiAddonDescriptor::RemoveFunction(unsigned index)
+   bool LokiAddonDescriptor::RemoveFunction(const unsigned index)
    {
       auto result = false;
 

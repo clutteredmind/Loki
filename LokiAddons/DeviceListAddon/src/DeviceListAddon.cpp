@@ -23,7 +23,7 @@ NODE_MODULE(DeviceListAddon, Loki::DeviceListAddon::PreInitialize)
 namespace Loki
 {
    // The v8 constructor
-   v8::Persistent<v8::Function> DeviceListAddon::constructor;
+   Persistent<Function> DeviceListAddon::constructor;
 
    // the addon's descriptor
    LokiAddonDescriptor DeviceListAddon::descriptor;
