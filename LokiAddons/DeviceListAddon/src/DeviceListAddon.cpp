@@ -8,8 +8,8 @@
 
 // windows API headers
 #include <Windows.h>
-#include <cfgmgr32.h>
-#include <SetupAPI.h>
+#include <cfgmgr32.h> // for MAX_DEVICE_ID_LEN
+#include <SetupAPI.h> // for SetupDiGetClassDevs, etc.
 
 // standard includes
 #include <vector>

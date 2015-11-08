@@ -21,14 +21,14 @@ namespace Loki
       // Completes initialization for Node
       static void Initialize(v8::Handle <v8::Object> target)
       {
-         auto isolate = v8::Isolate::GetCurrent();
+         auto isolate = target->GetIsolate();
 
          // Prepare constructor template
          auto function_template = v8::FunctionTemplate::New(isolate, Create);
          function_template->SetClassName(v8::String::NewFromUtf8(isolate, descriptor.GetName().c_str()));
          function_template->InstanceTemplate()->SetInternalFieldCount(1);
 
-         // Set up function prototypes
+         // Set up exported function prototypes
          for (auto function : descriptor.GetFunctions())
          {
             NODE_SET_PROTOTYPE_METHOD(function_template, function.name.c_str(), function.callback);

@@ -6,7 +6,7 @@
 
 // Windows API headers
 #include <Windows.h>
-#include <tlhelp32.h>
+#include <tlhelp32.h> // for CreateToolhelp32Snapshot and some other things
 #include <string>
 
 // use the v8 namespace so we don't have to have v8:: everywhere

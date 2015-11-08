@@ -4,8 +4,7 @@
 
 #include "ScreenshotAddon.hpp"
 
-// for JPEG compression
-#include "jpge.h"
+#include "jpge.h" // for JPEG compression
 
 #include <Windows.h>
 
