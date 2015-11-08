@@ -14,7 +14,7 @@
 // use the v8 namespace so we don't have to have v8:: everywhere
 using namespace v8;
 
-NODE_MODULE(ScreenshotAddon, Loki::ScreenshotAddon::Initialize)
+NODE_MODULE(ScreenshotAddon, Loki::ScreenshotAddon::PreInitialize)
 
 namespace Loki
 {
@@ -30,7 +30,7 @@ namespace Loki
    const std::string addon_description = "Grabs a screenshot of the display via the Windows API.";
 
    // Initialization. This function is required by node.
-   void ScreenshotAddon::Initialize(Handle<Object> target)
+   void ScreenshotAddon::PreInitialize(Handle<Object> target)
    {
       // set addon metadata
       descriptor.SetName(addon_name);
@@ -39,22 +39,8 @@ namespace Loki
       // register this class's exported functions for the framework
       descriptor.AddFunction("getAddonInfo", GetAddonInfo, "Retrieves framework information about this addon.", {}, ParameterType::OBJECT);
       descriptor.AddFunction("captureScreen", CaptureScreen, "Takes a screenshot via the Windows API.", {}, ParameterType::BUFFER);
-
-      auto isolate = Isolate::GetCurrent();
-
-      // Prepare constructor template
-      auto function_template = FunctionTemplate::New(isolate, Create);
-      function_template->SetClassName(String::NewFromUtf8(isolate, descriptor.GetName().c_str()));
-      function_template->InstanceTemplate()->SetInternalFieldCount(1);
-
-      // Set up function prototypes
-      for (auto function : descriptor.GetFunctions())
-      {
-         NODE_SET_PROTOTYPE_METHOD(function_template, function.name.c_str(), function.callback);
-      }
-
-      constructor.Reset(isolate, function_template->GetFunction());
-      target->Set(String::NewFromUtf8(isolate, descriptor.GetName().c_str()), function_template->GetFunction());
+      // complete addon initialization
+      Initialize(target);
    }
 
    // Takes a screenshot via the Windows API. Exposed to JavaScript.

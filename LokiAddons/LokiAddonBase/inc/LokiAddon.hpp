@@ -17,6 +17,27 @@ namespace Loki
       public:
       // Destructor
       virtual ~LokiAddon() = default;
+
+      // Completes initialization for Node
+      static void Initialize(v8::Handle <v8::Object> target)
+      {
+         auto isolate = v8::Isolate::GetCurrent();
+
+         // Prepare constructor template
+         auto function_template = v8::FunctionTemplate::New(isolate, Create);
+         function_template->SetClassName(v8::String::NewFromUtf8(isolate, descriptor.GetName().c_str()));
+         function_template->InstanceTemplate()->SetInternalFieldCount(1);
+
+         // Set up function prototypes
+         for (auto function : descriptor.GetFunctions())
+         {
+            NODE_SET_PROTOTYPE_METHOD(function_template, function.name.c_str(), function.callback);
+         }
+
+         constructor.Reset(isolate, function_template->GetFunction());
+         target->Set(v8::String::NewFromUtf8(isolate, descriptor.GetName().c_str()), function_template->GetFunction());
+      }
+
       // Creates a new instance of this class
       static void Create(const v8::FunctionCallbackInfo<v8::Value>& args)
       {
@@ -40,6 +61,7 @@ namespace Loki
             args.GetReturnValue().Set(ctor->NewInstance(argc, argv));
          }
       }
+
       // Retrieve this addon's information. Exposed to JavaScript
       static void GetAddonInfo(const v8::FunctionCallbackInfo<v8::Value>& args)
       {
