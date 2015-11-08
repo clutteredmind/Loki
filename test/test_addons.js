@@ -37,8 +37,30 @@ describe('addon tests', function () {
 						it('should be a function', function () {
 							process_list_addon.getAddonInfo.should.be.a('function');
 						});
-						it('should return an object', function () {
-							process_list_addon.getAddonInfo().should.be.an('object');
+						describe('return value', function () {
+							var return_value;
+							before(function () {
+								return_value = process_list_addon.getAddonInfo();
+							});
+							it('should be an object', function () {
+								return_value.should.be.an('object');
+							});
+							it('should have a string property called "name"', function () {
+								return_value.name.should.not.be.null;
+								return_value.name.should.be.a('string');
+							});
+							it('should have a string property called "version"', function () {
+								return_value.version.should.not.be.null;
+								return_value.version.should.be.a('string');
+							});
+							it('should have a string property called "description"', function () {
+								return_value.description.should.not.be.null;
+								return_value.description.should.be.a('string');
+							});
+							it('should have a string property called "node_version"', function () {
+								return_value.node_version.should.not.be.null;
+								return_value.node_version.should.be.a('string');
+							});
 						});
 					});
 					describe('getProcesses', function () {
@@ -82,8 +104,30 @@ describe('addon tests', function () {
 						it('should be a function', function () {
 							device_list_addon.getAddonInfo.should.be.a('function');
 						});
-						it('should return an object', function () {
-							device_list_addon.getAddonInfo().should.be.an('object');
+						describe('return value', function () {
+							var return_value;
+							before(function () {
+								return_value = device_list_addon.getAddonInfo();
+							});
+							it('should be an object', function () {
+								return_value.should.be.an('object');
+							});
+							it('should have a string property called "name"', function () {
+								return_value.name.should.not.be.null;
+								return_value.name.should.be.a('string');
+							});
+							it('should have a string property called "version"', function () {
+								return_value.version.should.not.be.null;
+								return_value.version.should.be.a('string');
+							});
+							it('should have a string property called "description"', function () {
+								return_value.description.should.not.be.null;
+								return_value.description.should.be.a('string');
+							});
+							it('should have a string property called "node_version"', function () {
+								return_value.node_version.should.not.be.null;
+								return_value.node_version.should.be.a('string');
+							});
 						});
 					});
 					describe('getDevices', function () {
@@ -127,8 +171,30 @@ describe('addon tests', function () {
 						it('should be a function', function () {
 							screenshot_addon.getAddonInfo.should.be.a('function');
 						});
-						it('should return an object', function () {
-							screenshot_addon.getAddonInfo().should.be.an('object');
+						describe('return value', function () {
+							var return_value;
+							before(function () {
+								return_value = screenshot_addon.getAddonInfo();
+							});
+							it('should be an object', function () {
+								return_value.should.be.an('object');
+							});
+							it('should have a string property called "name"', function () {
+								return_value.name.should.not.be.null;
+								return_value.name.should.be.a('string');
+							});
+							it('should have a string property called "version"', function () {
+								return_value.version.should.not.be.null;
+								return_value.version.should.be.a('string');
+							});
+							it('should have a string property called "description"', function () {
+								return_value.description.should.not.be.null;
+								return_value.description.should.be.a('string');
+							});
+							it('should have a string property called "node_version"', function () {
+								return_value.node_version.should.not.be.null;
+								return_value.node_version.should.be.a('string');
+							});
 						});
 					});
 					describe('captureScreen', function () {
