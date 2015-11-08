@@ -27,7 +27,7 @@ namespace Loki
    const int addon_version [3] {1 /*major*/, 0 /*minor*/, 0 /*patch*/};
    const std::string addon_description = "Retrieves a list of running processes via the Windows API";
 
-   // Initialization. This function is required by node.
+   // Pre-initialization.
    void ProcessListAddon::PreInitialize(Handle<Object> target)
    {
       // set addon metadata

@@ -29,7 +29,7 @@ namespace Loki
    const int addon_version [3] {1 /*major*/, 0 /*minor*/, 0 /*patch*/};
    const std::string addon_description = "Grabs a screenshot of the display via the Windows API.";
 
-   // Initialization. This function is required by node.
+   // Pre-initialization.
    void ScreenshotAddon::PreInitialize(Handle<Object> target)
    {
       // set addon metadata
