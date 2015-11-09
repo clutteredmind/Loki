@@ -15,8 +15,8 @@ namespace Loki
       DeviceListAddon() = default;
       // destructor
       virtual ~DeviceListAddon() override = default;
-      // Pre-initialization.
-      static void PreInitialize(v8::Handle <v8::Object> target);
+      // Initialization function used by Node to set up this addon.
+      static void Initialize(v8::Handle <v8::Object> target);
       // Gets a list of all installed devices. Exposed to JavaScript.
       static void GetDevices(const v8::FunctionCallbackInfo<v8::Value>& args);
 

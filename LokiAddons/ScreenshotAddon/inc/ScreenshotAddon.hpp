@@ -18,8 +18,8 @@ namespace Loki
       ScreenshotAddon() = default;
       // destructor
       virtual ~ScreenshotAddon() override = default;
-      // Pre-initialization.
-      static void PreInitialize(v8::Handle <v8::Object> target);
+      // Initialization function used by Node to set up this addon.
+      static void Initialize(v8::Handle <v8::Object> target);
       // Takes a screenshot via the Windows API. Exposed to JavaScript.
       static void CaptureScreen(const v8::FunctionCallbackInfo<v8::Value>& args);
 

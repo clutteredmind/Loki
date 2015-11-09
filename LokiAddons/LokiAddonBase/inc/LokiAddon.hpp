@@ -18,8 +18,8 @@ namespace Loki
       // Destructor
       virtual ~LokiAddon() = default;
 
-      // Completes initialization for Node
-      static void Initialize(v8::Handle <v8::Object> target)
+      // Registers this addon with Node
+      static void Register(v8::Handle <v8::Object> target)
       {
          auto isolate = target->GetIsolate();
 
@@ -27,6 +27,9 @@ namespace Loki
          auto function_template = v8::FunctionTemplate::New(isolate, Create);
          function_template->SetClassName(v8::String::NewFromUtf8(isolate, descriptor.GetName().c_str()));
          function_template->InstanceTemplate()->SetInternalFieldCount(1);
+
+         // add GetAddonInfo function
+         descriptor.AddFunction("getAddonInfo", GetAddonInfo, "Retrieves framework information about this addon.", {}, ParameterType::OBJECT);
 
          // Set up exported function prototypes
          for (auto function : descriptor.GetFunctions())

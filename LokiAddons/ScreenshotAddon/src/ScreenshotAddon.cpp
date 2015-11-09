@@ -13,15 +13,15 @@
 // use the v8 namespace so we don't have to have v8:: everywhere
 using namespace v8;
 
-// Tell node which function to use to start setting up this addon
-NODE_MODULE(ScreenshotAddon, Loki::ScreenshotAddon::PreInitialize)
+// Tell node which function to use to set up this addon
+NODE_MODULE(ScreenshotAddon, Loki::ScreenshotAddon::Initialize)
 
 namespace Loki
 {
-   // The v8 constructor
+   // The v8 constructor from the template class
    Persistent<Function> ScreenshotAddon::constructor;
 
-   // the addon's descriptor
+   // The template class's descriptor object
    LokiAddonDescriptor ScreenshotAddon::descriptor;
 
    // addon metadata
@@ -29,18 +29,17 @@ namespace Loki
    const int addon_version [3] {1 /*major*/, 0 /*minor*/, 0 /*patch*/};
    const std::string addon_description = "Grabs a screenshot of the display via the Windows API.";
 
-   // Pre-initialization.
-   void ScreenshotAddon::PreInitialize(Handle<Object> target)
+   // Initialization function used by Node to set up this addon.
+   void ScreenshotAddon::Initialize(Handle<Object> target)
    {
       // set addon metadata
       descriptor.SetName(addon_name);
       descriptor.SetVersion(LokiAddonDescriptor::GetVersionStringFromArray(addon_version));
       descriptor.SetDescription(addon_description);
       // register this class's exported functions for the framework
-      descriptor.AddFunction("getAddonInfo", GetAddonInfo, "Retrieves framework information about this addon.", {}, ParameterType::OBJECT);
       descriptor.AddFunction("captureScreen", CaptureScreen, "Takes a screenshot via the Windows API.", {}, ParameterType::BUFFER);
-      // complete addon initialization
-      Initialize(target);
+      // Register addon with Node
+      Register(target);
    }
 
    // Takes a screenshot via the Windows API. Exposed to JavaScript.

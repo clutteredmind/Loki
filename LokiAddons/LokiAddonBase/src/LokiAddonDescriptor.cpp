@@ -13,7 +13,6 @@ namespace Loki
    LokiAddonDescriptor::LokiAddonDescriptor() :
       name(), version(), description(), functions()
    {
-
    }
 
    // Converts an array of integers to a version number string
@@ -49,6 +48,9 @@ namespace Loki
             break;
          case ParameterType::DATE:
             type_as_string = "date";
+            break;
+         case ParameterType::BUFFER:
+            type_as_string = "buffer";
             break;
       }
 
