@@ -10,6 +10,10 @@
 #include <vector>
 #include <utility>
 
+// convenience macros
+#define NO_PARAMETERS {}
+#define LOKI_PARAMETER(param_type, param_name) {std::make_pair(param_type, param_name)}
+
 namespace Loki
 {
    // The types of parameters that can be accepted by a Loki addon's function
@@ -77,7 +81,7 @@ namespace Loki
       void AddFunction(const std::string& name,
          const v8::FunctionCallback callback,
          const std::string& description,
-         const std::vector<Parameter> parameters = {},
+         const std::vector<Parameter> parameters = NO_PARAMETERS,
          const ParameterType return_type = ParameterType::UNDEFINED);
       // Removes a function description by index
       bool RemoveFunction(const unsigned index);

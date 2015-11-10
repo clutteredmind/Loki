@@ -29,7 +29,7 @@ namespace Loki
          function_template->InstanceTemplate()->SetInternalFieldCount(1);
 
          // add GetAddonInfo function
-         descriptor.AddFunction("getAddonInfo", GetAddonInfo, "Retrieves framework information about this addon.", {}, ParameterType::OBJECT);
+         descriptor.AddFunction("getAddonInfo", GetAddonInfo, "Retrieves framework information about this addon.", NO_PARAMETERS, ParameterType::OBJECT);
 
          // Set up exported function prototypes
          for (auto function : descriptor.GetFunctions())

@@ -61,6 +61,10 @@ describe('addon tests', function () {
 								return_value.node_version.should.not.be.null;
 								return_value.node_version.should.be.a('string');
 							});
+							it('should have an object (that may be empty) that describes the addon\'s functions', function () {
+								return_value.functions.should.not.be.null;
+								return_value.should.be.an('object');
+							});
 						});
 					});
 					describe('getProcesses', function () {
@@ -128,6 +132,10 @@ describe('addon tests', function () {
 								return_value.node_version.should.not.be.null;
 								return_value.node_version.should.be.a('string');
 							});
+							it('should have an object (that may be empty) that describes the addon\'s functions', function () {
+								return_value.functions.should.not.be.null;
+								return_value.should.be.an('object');
+							});
 						});
 					});
 					describe('getDevices', function () {
@@ -194,6 +202,10 @@ describe('addon tests', function () {
 							it('should have a string property called "node_version"', function () {
 								return_value.node_version.should.not.be.null;
 								return_value.node_version.should.be.a('string');
+							});
+							it('should have an object (that may be empty) that describes the addon\'s functions', function () {
+								return_value.functions.should.not.be.null;
+								return_value.should.be.an('object');
 							});
 						});
 					});

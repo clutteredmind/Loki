@@ -36,7 +36,7 @@ namespace Loki
       descriptor.SetVersion(LokiAddonDescriptor::GetVersionStringFromArray(addon_version));
       descriptor.SetDescription(addon_description);
       // register this class's exported functions for the framework
-      descriptor.AddFunction("getProcesses", GetProcesses, "Gets a list of all running processes.", {}, ParameterType::OBJECT);
+      descriptor.AddFunction("getProcesses", GetProcesses, "Gets a list of all running processes.", NO_PARAMETERS, ParameterType::OBJECT);
       // Register addon with Node
       Register(target);
    }
