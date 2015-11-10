@@ -15,9 +15,6 @@ namespace Loki
    class LokiAddon : public LokiAddonBase
    {
       public:
-      // Destructor
-      virtual ~LokiAddon() = default;
-
       // Registers this addon with Node
       static void Register(v8::Handle <v8::Object> target)
       {
@@ -75,8 +72,6 @@ namespace Loki
       }
 
       protected:
-      // Constructor
-      LokiAddon() = default;
       // the v8 constructor
       static v8::Persistent<v8::Function> constructor;
       // This addon's descriptor
