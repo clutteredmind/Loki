@@ -4,6 +4,10 @@
 
 #pragma once
 
+// the Node headers
+#include <node.h>
+#include <node_object_wrap.h>
+
 #include "LokiAddonBase.hpp"
 #include "LokiAddonDescriptor.hpp"
 
@@ -12,7 +16,8 @@
 namespace Loki
 {
    template<typename TDerivedLokiAddon>
-   class LokiAddon : public LokiAddonBase
+   class LokiAddon : public node::ObjectWrap,
+                     public LokiAddonBase
    {
       public:
       // Registers this addon with Node
@@ -26,7 +31,7 @@ namespace Loki
          function_template->InstanceTemplate()->SetInternalFieldCount(1);
 
          // add GetAddonInfo function
-         descriptor.AddFunction("getAddonInfo", GetAddonInfo, "Retrieves framework information about this addon.", NO_PARAMETERS, ParameterType::OBJECT);
+         descriptor.AddFunction("getAddonInfo", GetAddonInfo, "Retrieves framework information about this addon.", NO_PARAMETERS, RETURNS_AN OBJECT);
 
          // Set up exported function prototypes
          for (auto function : descriptor.GetFunctions())
@@ -76,8 +81,6 @@ namespace Loki
       static v8::Persistent<v8::Function> constructor;
       // This addon's descriptor
       static LokiAddonDescriptor descriptor;
-
-      private:
       // Retrieve this addon's information.
       v8::Handle<v8::Object> getAddonInfo(v8::Isolate* isolate)
       {

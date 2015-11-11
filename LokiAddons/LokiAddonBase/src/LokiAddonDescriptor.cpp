@@ -7,6 +7,8 @@
 // the node version header
 #include <node_version.h>
 
+#include <algorithm>
+
 namespace Loki
 {
    // Constructor
@@ -76,20 +78,28 @@ namespace Loki
    }
 
    // Adds an exported function description
-   void LokiAddonDescriptor::AddFunction(const LokiFunction new_function)
+   bool LokiAddonDescriptor::AddFunction(const LokiFunction new_function)
    {
-      functions.push_back(new_function);
+      bool result = false;
+      // only add the function if it's not already in the list
+      auto iterator = std::find_if(functions.begin(), functions.end(), [&new_function] (const LokiFunction& function)->bool { return new_function.name.compare(function.name) == 0; });
+      if (iterator == functions.end())
+      {
+         functions.push_back(new_function);
+         result = true;
+      }
+      return result;
    }
 
    // Adds an exported function description
-   void LokiAddonDescriptor::AddFunction(const std::string& name,
+   bool LokiAddonDescriptor::AddFunction(const std::string& name,
       const v8::FunctionCallback callback,
       const std::string& description,
       const std::vector<Parameter> parameters,
       const ParameterType return_type)
    {
       LokiFunction function(name, callback, description, parameters, return_type);
-      functions.push_back(function);
+      return AddFunction(function);
    }
 
    // Removes a function description by index

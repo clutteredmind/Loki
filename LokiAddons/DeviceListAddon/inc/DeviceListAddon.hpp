@@ -20,7 +20,7 @@ namespace Loki
       // Gets a list of all installed devices. Exposed to JavaScript.
       static void GetDevices(const v8::FunctionCallbackInfo<v8::Value>& args);
 
-      private:
+      protected:
       // Gets a list of all installed devices.
       v8::Local<v8::Array> getDevices();
    };

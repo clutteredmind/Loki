@@ -6,6 +6,12 @@
 
 namespace Loki
 {
+   // Constructor
+   LokiAddonBase::LokiAddonBase() :
+      last_error_string()
+   {
+   }
+
    // Get the last error string
    bool LokiAddonBase::GetLastErrorString(std::string& error_string)
    {
@@ -21,12 +27,17 @@ namespace Loki
    }
 
    // Set the last error string
-   void LokiAddonBase::SetLastErrorString(std::string& error_string)
+   bool LokiAddonBase::SetLastErrorString(std::string& error_string)
    {
+      bool result = false;
+
       if (!error_string.empty())
       {
          last_error_string = error_string;
+         result = true;
       }
+
+      return result;
    }
 }
 

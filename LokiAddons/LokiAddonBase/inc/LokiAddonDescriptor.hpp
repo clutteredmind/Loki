@@ -13,6 +13,9 @@
 // convenience macros
 #define NO_PARAMETERS {}
 #define LOKI_PARAMETER(param_type, param_name) {std::make_pair(param_type, param_name)}
+#define RETURNS ParameterType::
+#define RETURNS_A ParameterType::
+#define RETURNS_AN ParameterType::
 
 namespace Loki
 {
@@ -76,9 +79,9 @@ namespace Loki
       // Setter for the addon's description
       void SetDescription(const std::string& description);
       // Adds an exported function description
-      void AddFunction(const LokiFunction new_function);
+      bool AddFunction(const LokiFunction new_function);
       // Adds an exported function description
-      void AddFunction(const std::string& name,
+      bool AddFunction(const std::string& name,
          const v8::FunctionCallback callback,
          const std::string& description,
          const std::vector<Parameter> parameters = NO_PARAMETERS,

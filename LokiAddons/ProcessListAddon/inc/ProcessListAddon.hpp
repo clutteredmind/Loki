@@ -20,7 +20,7 @@ namespace Loki
       // Gets a list of all running processes with their associated PIDs. Exposed to JavaScript.
       static void GetProcesses(const v8::FunctionCallbackInfo<v8::Value>& args);
 
-      private:
+      protected:
       // Gets a list of all running processes with their associated PIDs.
       v8::Local<v8::Array> getProcesses();
    };
