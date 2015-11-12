@@ -153,6 +153,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\LokiAddonBaseTests.cpp" />
+    <ClCompile Include="src\LokiAddonDescriptorTests.cpp" />
     <ClCompile Include="src\Main.cpp" />
   </ItemGroup>
   <ItemGroup>

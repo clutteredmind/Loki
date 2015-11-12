@@ -21,5 +21,8 @@
     <ClCompile Include="src\LokiAddonBaseTests.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\LokiAddonDescriptorTests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

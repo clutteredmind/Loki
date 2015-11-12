@@ -32,12 +32,14 @@ namespace Loki
       DATE,
       BUFFER
    };
+
    // Pairs a parameter type with a name
    struct Parameter
    {
       // The parameter's type and name
       std::pair<ParameterType, std::string> parameter;
    };
+
    // Represents a single function exposed to JavaScript by a Loki addon
    struct LokiFunction
    {
