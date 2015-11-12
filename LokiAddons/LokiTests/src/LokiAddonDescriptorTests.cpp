@@ -3,52 +3,12 @@
 //
 
 #include "gtest/gtest.h"
+
+#include "node_version.h"
 #include "LokiAddonDescriptor.hpp"
 
 using namespace Loki;
 
-// test LokiFunction
-class LokiFunctionTest : public testing::Test
-{
-   public:
-   const std::string function_name = "functionName";
-   static void StubCallback(const v8::FunctionCallbackInfo<v8::Value>& args) {}
-   const std::string function_description = "Function description.";
-   const std::vector<Parameter> parameters = {{std::make_pair(ParameterType::STRING, "some_string")}};
-   const ParameterType return_type = ParameterType::UNDEFINED;
-};
-
-TEST_F(LokiFunctionTest, NameShouldBeSetAtCreation)
-{
-   LokiFunction function(function_name, StubCallback, function_description, parameters, return_type);
-   // compare names
-   EXPECT_EQ(function_name, function.name);
-}
-
-TEST_F(LokiFunctionTest, DescriptionShouldBeSetAtCreation)
-{
-   LokiFunction function(function_name, StubCallback, function_description, parameters, return_type);
-   // compare descriptions
-   EXPECT_EQ(function_description, function.description);
-}
-
-TEST_F(LokiFunctionTest, ParameterListShouldBeSetAtCreation)
-{
-   LokiFunction function(function_name, StubCallback, function_description, parameters, return_type);
-   // compare parameter list
-   EXPECT_EQ(parameters.size(), function.parameters.size());
-   EXPECT_EQ(parameters.front().parameter.first, function.parameters.front().parameter.first);
-   EXPECT_EQ(parameters.front().parameter.second, function.parameters.front().parameter.second);
-}
-
-TEST_F(LokiFunctionTest, ReturnTypeShouldBeSetAtCreation)
-{
-   LokiFunction function(function_name, StubCallback, function_description, parameters, return_type);
-   // compare return types
-   EXPECT_EQ(return_type, function.return_type);
-}
-
-// test LokiAddonDescriptor
 TEST(LokiAddonDescriptorTests, Instantiation)
 {
    LokiAddonDescriptor descriptor;
@@ -57,7 +17,14 @@ TEST(LokiAddonDescriptorTests, Instantiation)
 class LokiAddonDescriptorTest : public testing::Test
 {
    public:
+   // the descriptor to test
    LokiAddonDescriptor descriptor;
+   // test values
+   const std::string test_name = "Descriptor Name";
+   const std::string test_version = "1.2.3";
+   const std::string test_description = "Addon description string.";
+   const int test_version_number_array [3] = {3, 2, 1};
+   static void StubCallback(const v8::FunctionCallbackInfo<v8::Value>& args) {}
 };
 
 TEST_F(LokiAddonDescriptorTest, NameShouldBeBlankWhenDescriptorIsCreated)
@@ -65,7 +32,46 @@ TEST_F(LokiAddonDescriptorTest, NameShouldBeBlankWhenDescriptorIsCreated)
    EXPECT_EQ(0, descriptor.GetName().length());
 }
 
+TEST_F(LokiAddonDescriptorTest, VersionShouldBeBlankWhenDescriptorIsCreated)
+{
+   EXPECT_EQ("", descriptor.GetVersion());
+}
+
 TEST_F(LokiAddonDescriptorTest, DescriptionShouldBeBlankWhenDescriptorIsCreated)
 {
    EXPECT_EQ(0, descriptor.GetDescription().length());
+}
+
+TEST_F(LokiAddonDescriptorTest, NodeVersionShouldBePulledFromNodeHeaderFile)
+{
+   std::string node_version = std::to_string(NODE_MAJOR_VERSION) + '.' + std::to_string(NODE_MINOR_VERSION) + '.' + std::to_string(NODE_PATCH_VERSION);
+   EXPECT_EQ(node_version, descriptor.GetNodeVersion());
+}
+
+TEST_F(LokiAddonDescriptorTest, FunctionListShouldBeEmptyWhenDescriptorIsCreated)
+{
+   EXPECT_EQ(0, descriptor.GetFunctions().size());
+}
+
+TEST_F(LokiAddonDescriptorTest, SetNameShouldSetTheName)
+{
+   descriptor.SetName(test_name);
+   EXPECT_EQ(test_name, descriptor.GetName());
+}
+
+TEST_F(LokiAddonDescriptorTest, SetVersionShouldSetTheVersion)
+{
+   descriptor.SetVersion(test_version);
+   EXPECT_EQ(test_version, descriptor.GetVersion());
+}
+
+TEST_F(LokiAddonDescriptorTest, GetVersionStringFromArrayShouldConvertAnArrayToAString)
+{
+   EXPECT_EQ("3.2.1", LokiAddonDescriptor::GetVersionStringFromArray(test_version_number_array));
+}
+
+TEST_F(LokiAddonDescriptorTest, SetDescriptionShouldSetTheDescription)
+{
+   descriptor.SetDescription(test_description);
+   EXPECT_EQ(test_description, descriptor.GetDescription());
 }
