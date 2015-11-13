@@ -22,6 +22,6 @@ namespace Loki
 
       protected:
       // Gets a list of all running processes with their associated PIDs.
-      v8::Local<v8::Array> getProcesses();
+      v8::Local<v8::Array> getProcesses(v8::Isolate* isolate);
    };
 }

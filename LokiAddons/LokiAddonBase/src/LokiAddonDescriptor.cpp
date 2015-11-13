@@ -9,6 +9,8 @@
 
 #include <algorithm>
 
+using namespace v8;
+
 namespace Loki
 {
    // Constructor
@@ -30,7 +32,7 @@ namespace Loki
 
       switch (parameter_type)
       {
-         case ParameterType::BOOL:
+         case ParameterType::BOOLEAN:
             type_as_string = "bool";
             break;
          case ParameterType::STRING:
@@ -93,7 +95,7 @@ namespace Loki
 
    // Adds an exported function description
    bool LokiAddonDescriptor::AddFunction(const std::string& name,
-      const v8::FunctionCallback callback,
+      const FunctionCallback callback,
       const std::string& description,
       const std::vector<Parameter> parameters,
       const ParameterType return_type)
@@ -145,5 +147,128 @@ namespace Loki
    std::vector<LokiFunction> LokiAddonDescriptor::GetFunctions()
    {
       return functions;
+   }
+
+   // Validates the type and number of parameters passed to a function
+   bool LokiAddonDescriptor::ValidateParameters(const FunctionCallback callback, const FunctionCallbackInfo<Value>& args, std::string& error_message)
+   {
+      auto parameters_are_valid = true;
+
+      // find the correct function
+      auto function_iterator = std::find_if(functions.begin(), functions.end(), [&callback] (const LokiFunction& function)->bool { return callback == function.callback; });
+      if (function_iterator == functions.end())
+      {
+         error_message = "Could not validate parameters. Callback not found.";
+         parameters_are_valid = false;
+      }
+      else
+      {
+         // verify number of parameters
+         if (args.Length() != (*function_iterator).parameters.size())
+         {
+            error_message = (*function_iterator).name +
+               ": Expected " +
+               std::to_string((*function_iterator).parameters.size()) +
+               " parameter" +
+               ((*function_iterator).parameters.size() != 1 ? "s" : "") +
+               " and got " +
+               std::to_string(args.Length()) +
+               ".";
+            parameters_are_valid = false;
+         }
+         else
+         {
+            // verify types of parameters
+            int arg_index = 0;
+            for (auto iterator = (*function_iterator).parameters.begin(); iterator != (*function_iterator).parameters.end() && parameters_are_valid; iterator++)
+            {
+               auto expected_parameter = (*iterator).parameter.first;
+               std::string parameter_article = "";
+               switch (expected_parameter)
+               {
+                  case ParameterType::UNDEFINED:
+                     if (!args[arg_index]->IsUndefined())
+                     {
+                        parameter_article = "";
+                        parameters_are_valid = false;
+                     }
+                     break;
+                  case ParameterType::BOOLEAN:
+                     if (!args [arg_index]->IsBoolean())
+                     {
+                        parameter_article = "a ";
+                        parameters_are_valid = false;
+                     }
+                     break;
+                  case ParameterType::STRING:
+                     if (!args [arg_index]->IsString())
+                     {
+                        parameter_article = "a ";
+                        parameters_are_valid = false;
+                     }
+                     break;
+                  case ParameterType::NUMBER:
+                     if (!args [arg_index]->IsNumber())
+                     {
+                        parameter_article = "a ";
+                        parameters_are_valid = false;
+                     }
+                     break;
+                  case ParameterType::FUNCTION:
+                     if (!args [arg_index]->IsFunction())
+                     {
+                        parameter_article = "a ";
+                        parameters_are_valid = false;
+                     }
+                     break;
+                  case ParameterType::ARRAY:
+                     if (!args [arg_index]->IsArray())
+                     {
+                        parameter_article = "an ";
+                        parameters_are_valid = false;
+                     }
+                     break;
+                  case ParameterType::OBJECT:
+                     if (!args [arg_index]->IsObject())
+                     {
+                        parameter_article = "an ";
+                        parameters_are_valid = false;
+                     }
+                     break;
+                  case ParameterType::DATE:
+                     if (!args [arg_index]->IsDate())
+                     {
+                        parameter_article = "a ";
+                        parameters_are_valid = false;
+                     }
+                     break;
+                  case ParameterType::BUFFER:
+                     if (!args [arg_index]->IsArrayBuffer())
+                     {
+                        parameter_article = "a ";
+                        parameters_are_valid = false;
+                     }
+                     break;
+               }
+               if (!parameters_are_valid)
+               {
+                  // construct error message
+                  auto parameter_name = (*iterator).parameter.second;
+                  error_message = (*function_iterator).name +
+                     ": Expected parameter " +
+                     std::to_string(arg_index) +
+                     " (" +
+                     parameter_name +
+                     ") to be " +
+                     parameter_article +
+                     LokiAddonDescriptor::ConvertParameterTypeToString(expected_parameter) +
+                     ".";
+               }
+               arg_index++;
+            }
+         }
+      }
+
+      return parameters_are_valid;
    }
 }

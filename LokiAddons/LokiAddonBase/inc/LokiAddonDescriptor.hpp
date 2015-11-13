@@ -23,7 +23,7 @@ namespace Loki
    enum ParameterType
    {
       UNDEFINED = 0,
-      BOOL,
+      BOOLEAN,
       STRING,
       NUMBER,
       FUNCTION,
@@ -100,6 +100,8 @@ namespace Loki
       std::string GetNodeVersion();
       // Accessor for the function list
       std::vector<LokiFunction> GetFunctions();
+      // Validates the type and number of parameters passed to a function
+      bool ValidateParameters(const v8::FunctionCallback callback, const v8::FunctionCallbackInfo<v8::Value>& args, std::string& error_message);
 
       private:
       // The addon's name

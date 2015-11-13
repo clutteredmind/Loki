@@ -70,10 +70,23 @@ namespace Loki
       // Retrieve this addon's information. Exposed to JavaScript
       static void GetAddonInfo(const v8::FunctionCallbackInfo<v8::Value>& args)
       {
-         // unwrap object so we can call the correct function on the instance
-         auto addon = ObjectWrap::Unwrap<TDerivedLokiAddon>(args.Holder());
-         // return info object
-         args.GetReturnValue().Set(addon->getAddonInfo(args.GetIsolate()));
+         auto isolate = args.GetIsolate();
+         HandleScope scope(isolate);
+
+         // validate parameters
+         std::string error_string;
+         if (descriptor.ValidateParameters(GetAddonInfo, args, error_string))
+         {
+            // unwrap object so we can call the correct function on the instance
+            auto addon = ObjectWrap::Unwrap<TDerivedLokiAddon>(args.Holder());
+            // return info object
+            args.GetReturnValue().Set(addon->getAddonInfo(isolate));
+         }
+         else
+         {
+            // if parameter validation failed for whatever reason, report the error
+            isolate->ThrowException(Exception::Error(String::NewFromUtf8(isolate, error_string.c_str())));
+         }
       }
 
       protected:

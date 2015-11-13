@@ -37,7 +37,7 @@ namespace Loki
       descriptor.SetVersion(LokiAddonDescriptor::GetVersionStringFromArray(addon_version));
       descriptor.SetDescription(addon_description);
       // register this class's exported functions for the framework
-      descriptor.AddFunction("captureScreen", CaptureScreen, "Takes a screenshot via the Windows API.", NO_PARAMETERS, RETURNS_A BUFFER);
+      descriptor.AddFunction("captureScreen", CaptureScreen, "Takes a screenshot via the Windows API.", {LOKI_PARAMETER(ParameterType::FUNCTION, "callback")});
       // Register addon with Node
       Register(target);
    }
@@ -46,50 +46,52 @@ namespace Loki
    void ScreenshotAddon::CaptureScreen(const FunctionCallbackInfo<Value>& args)
    {
       auto isolate = args.GetIsolate();
+      HandleScope scope(isolate);
 
       // set default return value
       args.GetReturnValue().Set(Undefined(isolate));
 
       try
       {
-         if (args.Length() != 1)
+         // validate parameters
+         std::string error_string;
+         if (descriptor.ValidateParameters(CaptureScreen, args, error_string))
          {
-            throw std::exception("Invalid parameter count. Expected one function parameter.");
-         }
-         if (!args [0]->IsFunction())
-         {
-            throw std::exception("The parameter must be a function.");
-         }
+            // unwrap object so we can call the correct function on the instance
+            auto screenshot_addon = ObjectWrap::Unwrap<ScreenshotAddon>(args.Holder());
 
-         // unwrap object so we can call the correct function on the instance
-         auto screenshot_addon = ObjectWrap::Unwrap<ScreenshotAddon>(args.Holder());
-
-         // the screen buffer
-         std::vector<uint8_t> screen_buffer;
-         // if it doesn't work, report the error
-         if (!screenshot_addon->captureScreen(screen_buffer))
-         {
-            std::string error = "Unable to capture screenshot";
-            std::string last_error_string;
-            if (screenshot_addon->GetLastErrorString(last_error_string))
+            // the screen buffer
+            std::vector<uint8_t> screen_buffer;
+            // if it doesn't work, report the error
+            if (!screenshot_addon->captureScreen(screen_buffer))
             {
-               // append more specific error message
-               error += ": ";
-               error += last_error_string;
-               throw std::exception(error.c_str());
+               std::string error = "Unable to capture screenshot";
+               std::string last_error_string;
+               if (screenshot_addon->GetLastErrorString(last_error_string))
+               {
+                  // append more specific error message
+                  error += ": ";
+                  error += last_error_string;
+                  throw std::exception(error.c_str());
+               }
             }
+            // hand screen buffer back to JavaScript
+            auto screen_data = node::Buffer::Copy(isolate, reinterpret_cast<const char*>(screen_buffer.data()), screen_buffer.size()).ToLocalChecked();
+
+            // Assemble the argument array for the callback
+            const unsigned argc = 1;
+            Local<Value> argv [argc] = {screen_data};
+
+            // Get the callback
+            Local<Function> callback = Local <Function>::Cast(args [0]);
+            // Call it
+            callback->Call(isolate->GetCurrentContext()->Global(), argc, argv);
          }
-         // hand screen buffer back to JavaScript
-         auto screen_data = node::Buffer::Copy(isolate, reinterpret_cast<const char*>(screen_buffer.data()), screen_buffer.size()).ToLocalChecked();
-
-         // Assemble the argument array for the callback
-         const unsigned argc = 1;
-         Local<Value> argv [argc] = {screen_data};
-
-         // Get the callback
-         Local<Function> callback = Local <Function>::Cast(args [0]);
-         // Call it
-         callback->Call(isolate->GetCurrentContext()->Global(), argc, argv);
+         else
+         {
+            // if parameter validation failed for whatever reason, report the error
+            throw std::exception(error_string.c_str());
+         }
       }
       catch (std::exception& exception)
       {

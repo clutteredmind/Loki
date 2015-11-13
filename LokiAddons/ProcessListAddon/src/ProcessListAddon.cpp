@@ -44,16 +44,28 @@ namespace Loki
    // Gets a list of all running processes with their associated PIDs. Exposed to JavaScript.
    void ProcessListAddon::GetProcesses(const FunctionCallbackInfo<Value>& args)
    {
-      // unwrap object so we can call the correct function on the instance
-      auto process_list_addon = ObjectWrap::Unwrap<ProcessListAddon>(args.Holder());
-      // return process list to caller
-      args.GetReturnValue().Set(process_list_addon->getProcesses());
+      auto isolate = args.GetIsolate();
+      HandleScope scope(isolate);
+
+      // validate parameters
+      std::string error_string;
+      if (descriptor.ValidateParameters(GetProcesses, args, error_string))
+      {
+         // unwrap object so we can call the correct function on the instance
+         auto process_list_addon = ObjectWrap::Unwrap<ProcessListAddon>(args.Holder());
+         // return process list to caller
+         args.GetReturnValue().Set(process_list_addon->getProcesses(isolate));
+      }
+      else
+      {
+         // if parameter validation failed for whatever reason, report the error
+         isolate->ThrowException(Exception::Error(String::NewFromUtf8(isolate, error_string.c_str())));
+      }
    }
 
    // Gets a list of all running processes with their associated PIDs.
-   Local<Array> ProcessListAddon::getProcesses()
+   Local<Array> ProcessListAddon::getProcesses(Isolate* isolate)
    {
-      auto isolate = Isolate::GetCurrent();
       HandleScope scope(isolate);
 
       // the array of processes to return to JavaScript

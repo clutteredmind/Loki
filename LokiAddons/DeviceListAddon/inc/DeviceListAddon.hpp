@@ -22,6 +22,6 @@ namespace Loki
 
       protected:
       // Gets a list of all installed devices.
-      v8::Local<v8::Array> getDevices();
+      v8::Local<v8::Array> getDevices(v8::Isolate* isolate);
    };
 }
