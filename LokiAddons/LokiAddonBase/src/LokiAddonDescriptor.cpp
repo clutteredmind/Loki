@@ -164,25 +164,25 @@ namespace Loki
       else
       {
          // verify number of parameters
-         if (args.Length() != (*function_iterator).parameters.size())
+         if (args.Length() != function_iterator->parameters.size())
          {
-            error_message = (*function_iterator).name +
-               ": Expected " +
-               std::to_string((*function_iterator).parameters.size()) +
-               " parameter" +
-               ((*function_iterator).parameters.size() != 1 ? "s" : "") +
-               " and got " +
-               std::to_string(args.Length()) +
-               ".";
+            error_message = function_iterator->name
+               + ": Expected "
+               + std::to_string(function_iterator->parameters.size())
+               + " parameter"
+               + (function_iterator->parameters.size() != 1 ? "s" : "")
+               + " and got "
+               + std::to_string(args.Length())
+               + ".";
             parameters_are_valid = false;
          }
          else
          {
             // verify types of parameters
             int arg_index = 0;
-            for (auto iterator = (*function_iterator).parameters.begin(); iterator != (*function_iterator).parameters.end() && parameters_are_valid; iterator++)
+            for (auto iterator = function_iterator->parameters.begin(); iterator != function_iterator->parameters.end() && parameters_are_valid; iterator++)
             {
-               auto expected_parameter = (*iterator).parameter.first;
+               auto expected_parameter = iterator->parameter.first;
                std::string parameter_article = "";
                switch (expected_parameter)
                {
@@ -253,16 +253,16 @@ namespace Loki
                if (!parameters_are_valid)
                {
                   // construct error message
-                  auto parameter_name = (*iterator).parameter.second;
-                  error_message = (*function_iterator).name +
-                     ": Expected parameter " +
-                     std::to_string(arg_index) +
-                     " (" +
-                     parameter_name +
-                     ") to be " +
-                     parameter_article +
-                     LokiAddonDescriptor::ConvertParameterTypeToString(expected_parameter) +
-                     ".";
+                  auto parameter_name = iterator->parameter.second;
+                  error_message = function_iterator->name
+                     + ": Expected parameter "
+                     + std::to_string(arg_index)
+                     + " ("
+                     + parameter_name
+                     + ") to be "
+                     + parameter_article
+                     + LokiAddonDescriptor::ConvertParameterTypeToString(expected_parameter)
+                     + ".";
                }
                arg_index++;
             }
