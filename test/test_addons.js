@@ -38,7 +38,7 @@ describe('addon tests', function () {
 							process_list_addon.getAddonInfo.should.be.a('function');
 						});
 						it('should throw if called with any parameters', function () {
-							expect(function () { process_list_addon.getAddonInfo(0); }).to.throw("Expected 0 parameters and got 1.");
+							expect(function () { process_list_addon.getAddonInfo(0); }).to.throw("getAddonInfo: Expected 0 parameters and got 1.");
 						});
 						describe('return value', function () {
 							var return_value;
@@ -78,7 +78,7 @@ describe('addon tests', function () {
 							(process_list_addon.getProcesses()).should.be.an('array');
 						});
 						it('should throw if called with any parameters', function () {
-							expect(function () { process_list_addon.getProcesses(0); }).to.throw("Expected 0 parameters and got 1.");
+							expect(function () { process_list_addon.getProcesses(0); }).to.throw("getProcesses: Expected 0 parameters and got 1.");
 						});
 					});
 				});
@@ -115,7 +115,7 @@ describe('addon tests', function () {
 							device_list_addon.getAddonInfo.should.be.a('function');
 						});
 						it('should throw if called with any parameters', function () {
-							expect(function () { device_list_addon.getAddonInfo(0); }).to.throw("Expected 0 parameters and got 1.");
+							expect(function () { device_list_addon.getAddonInfo(0); }).to.throw("getAddonInfo: Expected 0 parameters and got 1.");
 						});
 						describe('return value', function () {
 							var return_value;
@@ -155,7 +155,7 @@ describe('addon tests', function () {
 							expect(device_list_addon.getDevices()).to.be.an('array');
 						});
 						it('should throw if called with any parameters', function () {
-							expect(function () { device_list_addon.getDevices(0); }).to.throw("Expected 0 parameters and got 1.");
+							expect(function () { device_list_addon.getDevices(0); }).to.throw("getDevices: Expected 0 parameters and got 1.");
 						});
 					});
 				});
@@ -192,7 +192,7 @@ describe('addon tests', function () {
 							screenshot_addon.getAddonInfo.should.be.a('function');
 						});
 						it('should throw if called with any parameters', function () {
-							expect(function () { screenshot_addon.getAddonInfo(0); }).to.throw("Expected 0 parameters and got 1.");
+							expect(function () { screenshot_addon.getAddonInfo(0); }).to.throw("getAddonInfo: Expected 0 parameters and got 1.");
 						});
 						describe('return value', function () {
 							var return_value;
@@ -229,13 +229,13 @@ describe('addon tests', function () {
 							screenshot_addon.captureScreen.should.be.a('function');
 						});
 						it('should throw if called with no parameters', function () {
-							expect(function () { screenshot_addon.captureScreen(); }).to.throw("Expected 1 parameter and got 0.");
+							expect(function () { screenshot_addon.captureScreen(); }).to.throw("captureScreen: Expected 1 parameter and got 0.");
 						});
 						it('should throw if called with more than one parameter', function () {
-							expect(function () { screenshot_addon.captureScreen(function () {}, false); }).to.throw("Expected 1 parameter and got 2.");
+							expect(function () { screenshot_addon.captureScreen(function () {}, false); }).to.throw("captureScreen: Expected 1 parameter and got 2.");
 						});
 						it('should throw if called with a parameter that is not a function', function () {
-							expect(function () { screenshot_addon.captureScreen(0); }).to.throw("Expected parameter 0 (callback) to be a function.");
+							expect(function () { screenshot_addon.captureScreen(0); }).to.throw("captureScreen: Expected parameter 0 (callback) to be a function.");
 						});
 					});
 				});
