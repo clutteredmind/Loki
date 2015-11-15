@@ -4,6 +4,8 @@
 
 #include "gtest/gtest.h"
 
+#include "libplatform\libplatform.h"
+#include "v8.h"
 #include "node_version.h"
 #include "LokiAddonDescriptor.hpp"
 
@@ -31,6 +33,8 @@ class LokiAddonDescriptorTest : public testing::Test
    const std::string function_first_parameter_name = "a_string";
    const ParameterType function_return_type = ParameterType::BOOLEAN;
    static void StubCallback(const v8::FunctionCallbackInfo<v8::Value>& args) {}
+   static void StubCallbackTwo(const v8::FunctionCallbackInfo<v8::Value>& args) {}
+   static void StubCallbackThree(const v8::FunctionCallbackInfo<v8::Value>& args) {}
 };
 
 TEST_F(LokiAddonDescriptorTest, NameShouldBeBlankWhenDescriptorIsCreated)
@@ -84,7 +88,7 @@ TEST_F(LokiAddonDescriptorTest, SetDescriptionShouldSetTheDescription)
 
 TEST_F(LokiAddonDescriptorTest, AddFunctionWithAConstructedFunctionShouldAddAFunction)
 {
-   LokiFunction function(function_name, StubCallback, function_description, {{std::make_pair(function_first_parameter_type, function_first_parameter_name)}}, function_return_type);
+   LokiFunction function(function_name, StubCallback, function_description, {LOKI_PARAMETER(function_first_parameter_type, function_first_parameter_name)}, function_return_type);
    ASSERT_EQ(0, descriptor.GetFunctions().size());
    EXPECT_TRUE(descriptor.AddFunction(function));
    ASSERT_EQ(1, descriptor.GetFunctions().size());
@@ -109,20 +113,63 @@ TEST_F(LokiAddonDescriptorTest, AddFunctionWithParametersShouldAddAFunction)
    EXPECT_EQ(function_return_type, descriptor.GetFunctions().front().return_type);
 }
 
-// TODO:
-// add function returns a bool
-// add function with default parameter list
-// add function with default return type
-// try to add same function twice
-// remove function returns a bool
-// remove function from empty list
-// remove function at index that doesn't exist
+TEST_F(LokiAddonDescriptorTest, AddingSameFunctionTwiceShouldFail)
+{
+   ASSERT_EQ(0, descriptor.GetFunctions().size());
+   EXPECT_TRUE(descriptor.AddFunction(function_name, StubCallback, function_description, {LOKI_PARAMETER(function_first_parameter_type, function_first_parameter_name)}, function_return_type));
+   ASSERT_EQ(1, descriptor.GetFunctions().size());
+   EXPECT_FALSE(descriptor.AddFunction(function_name, StubCallback, function_description, {LOKI_PARAMETER(function_first_parameter_type, function_first_parameter_name)}, function_return_type));
+   ASSERT_EQ(1, descriptor.GetFunctions().size());
+}
+
+TEST_F(LokiAddonDescriptorTest, AddingFunctionWithNoParametersArgumentShouldAddTheDefault)
+{
+   ASSERT_EQ(0, descriptor.GetFunctions().size());
+   EXPECT_TRUE(descriptor.AddFunction(function_name, StubCallback, function_description));
+   ASSERT_EQ(1, descriptor.GetFunctions().size());
+   // should have an empty parameter list
+   EXPECT_EQ(0, descriptor.GetFunctions().front().parameters.size());
+}
+
+TEST_F(LokiAddonDescriptorTest, AddingFunctionWithNoReturnTypeArgumentShouldDefaultToUndefined)
+{
+   ASSERT_EQ(0, descriptor.GetFunctions().size());
+   EXPECT_TRUE(descriptor.AddFunction(function_name, StubCallback, function_description));
+   ASSERT_EQ(1, descriptor.GetFunctions().size());
+   ASSERT_EQ(ParameterType::UNDEFINED, descriptor.GetFunctions().front().return_type);
+}
+
+TEST_F(LokiAddonDescriptorTest, RemoveFunctionOnAnEmptyListShouldReturnFalse)
+{
+   ASSERT_EQ(0, descriptor.GetFunctions().size());
+   EXPECT_FALSE(descriptor.RemoveFunction(0));
+}
 
 TEST_F(LokiAddonDescriptorTest, RemoveFunctionShouldRemoveAFunction)
 {
    ASSERT_EQ(0, descriptor.GetFunctions().size());
-   EXPECT_TRUE(descriptor.AddFunction(function_name, StubCallback, function_description, {{std::make_pair(function_first_parameter_type, function_first_parameter_name)}}, function_return_type));
+   EXPECT_TRUE(descriptor.AddFunction(function_name, StubCallback, function_description));
    ASSERT_EQ(1, descriptor.GetFunctions().size());
    EXPECT_TRUE(descriptor.RemoveFunction(0));
    ASSERT_EQ(0, descriptor.GetFunctions().size());
+}
+
+TEST_F(LokiAddonDescriptorTest, RemoveFunctionShouldRemoveAFunctionAtSpecifiedIndex)
+{
+   ASSERT_EQ(0, descriptor.GetFunctions().size());
+   EXPECT_TRUE(descriptor.AddFunction("stubCallback", StubCallback, function_description));
+   EXPECT_TRUE(descriptor.AddFunction("stubCallbackTwo", StubCallbackTwo, function_description));
+   EXPECT_TRUE(descriptor.AddFunction("stubCallbackThree", StubCallbackThree, function_description));
+   ASSERT_EQ(3, descriptor.GetFunctions().size());
+   EXPECT_TRUE(descriptor.RemoveFunction(1));
+   EXPECT_EQ("stubCallback", descriptor.GetFunctions().front().name);
+   EXPECT_EQ("stubCallbackThree", (descriptor.GetFunctions().begin() + 1)->name);
+}
+
+TEST_F(LokiAddonDescriptorTest, RemoveFunctionAtAnInvalidIndexShouldReturnFalse)
+{
+   ASSERT_EQ(0, descriptor.GetFunctions().size());
+   EXPECT_TRUE(descriptor.AddFunction(function_name, StubCallback, function_description));
+   ASSERT_EQ(1, descriptor.GetFunctions().size());
+   EXPECT_FALSE(descriptor.RemoveFunction(15));
 }

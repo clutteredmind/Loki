@@ -182,9 +182,9 @@ namespace Loki
             int arg_index = 0;
             for (auto iterator = function_iterator->parameters.begin(); iterator != function_iterator->parameters.end() && parameters_are_valid; iterator++)
             {
-               auto expected_parameter = iterator->parameter.first;
+               auto expected_parameter_type = iterator->parameter.first;
                std::string parameter_article = "";
-               switch (expected_parameter)
+               switch (expected_parameter_type)
                {
                   case ParameterType::UNDEFINED:
                      if (!args[arg_index]->IsUndefined())
@@ -261,7 +261,7 @@ namespace Loki
                      + parameter_name
                      + ") to be "
                      + parameter_article
-                     + LokiAddonDescriptor::ConvertParameterTypeToString(expected_parameter)
+                     + LokiAddonDescriptor::ConvertParameterTypeToString(expected_parameter_type)
                      + ".";
                }
                arg_index++;
