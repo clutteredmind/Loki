@@ -19,8 +19,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\..\gtest\gtest\src\gtest-all.cc" />
-    <ClCompile Include="..\..\..\..\gtest\gtest\src\gtest_main.cc" />
+    <ClCompile Include="..\..\..\..\gtest\gtest-1.7.0\src\gtest-all.cc" />
+    <ClCompile Include="..\..\..\..\gtest\gtest-1.7.0\src\gtest_main.cc" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{033284D2-4E49-4B34-B823-37CB75FDB542}</ProjectGuid>
@@ -74,10 +74,16 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>D:\gtest\gtest\include;D:\gtest\gtest;$(IncludePath)</IncludePath>
+    <IncludePath>D:\gtest\gtest-1.7.0\include;D:\gtest\gtest-1.7.0;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>D:\gtest\gtest\include;D:\gtest\gtest;$(IncludePath)</IncludePath>
+    <IncludePath>D:\gtest\gtest-1.7.0\include;D:\gtest\gtest-1.7.0;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <IncludePath>D:\gtest\gtest-1.7.0\include;D:\gtest\gtest-1.7.0;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <IncludePath>D:\gtest\gtest-1.7.0\include;D:\gtest\gtest-1.7.0;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
