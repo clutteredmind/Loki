@@ -105,7 +105,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)LokiAddonBase\inc;$(SolutionDir)DeviceListAddon\inc;$(SolutionDir)ProcessListAddon\inc;$(SolutionDir)ScreenshotAddon\inc;D:\Node sources\node\src;D:\Node sources\node\deps\v8\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)LokiAddonBase\inc;$(SolutionDir)DeviceListAddon\inc;$(SolutionDir)ProcessListAddon\inc;$(SolutionDir)ScreenshotAddon\inc;D:\Node sources\node\src;D:\Node sources\node\deps\v8;D:\Node sources\node\deps\v8\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

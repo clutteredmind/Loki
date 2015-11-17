@@ -2,7 +2,8 @@
 // LokiAddonBaseTests.cpp : Defines tests for the LokiAddonBase class
 //
 
-#include "gtest/gtest.h"
+#include "gtest\gtest.h"
+
 #include "LokiAddonBase.hpp"
 
 using namespace Loki;

@@ -2,9 +2,10 @@
 // LokiAddonDescriptorTests.cpp : Defines tests for the LokiAddonBase class
 //
 
-#include "gtest/gtest.h"
+#include "gtest\gtest.h"
 
 #include "node_version.h"
+
 #include "LokiAddonDescriptor.hpp"
 
 using namespace Loki;
