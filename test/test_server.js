@@ -4,8 +4,8 @@ require = require('really-need');
 
 var uuid = require('node-uuid');
 var request = require('supertest');
-
 var chai = require('chai');
+
 chai.use(require('chai-string'));
 var expect = chai.expect;
 
