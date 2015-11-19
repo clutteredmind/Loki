@@ -7,7 +7,7 @@
     "routes_folder_name": "routes",
     "static_files_folder_name": "public",
     "module_directories": [],
-    "favicon_file_name": "favicon.ico"
+    "favicon_file_name": "favicon.png"
   },
   "private": true,
   "scripts": {
