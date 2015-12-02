@@ -74,5 +74,6 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
-# Visual Studio Code definitions directory
+# Visual Studio Code
+.vscode
 typings
