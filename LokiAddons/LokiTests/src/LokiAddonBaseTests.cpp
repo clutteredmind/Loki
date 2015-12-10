@@ -1,47 +1,47 @@
 //
-// LokiAddonBaseTests.cpp : Defines tests for the LokiAddonBase class
+// LokiModuleBaseTests.cpp : Defines tests for the LokiModuleBase class
 //
 
 #include "gtest\gtest.h"
 
-#include "LokiAddonBase.hpp"
+#include "LokiModuleBase.hpp"
 
 using namespace Loki;
 
-TEST(LokiAddonBaseTests, Instantiation)
+TEST(LokiModuleBaseTests, Instantiation)
 {
-   LokiAddonBase base_class;
+   LokiModuleBase base_class;
 }
 
-class LokiAddonBaseTest : public ::testing::Test
+class LokiModuleBaseTest : public ::testing::Test
 {
    public:
-   class DerivedLokiAddonBase : public LokiAddonBase
+   class DerivedLokiModuleBase : public LokiModuleBase
    {
       public:
       // accessor for protected SetLastErrorString method
       bool SetLastError(std::string& error_string) { return SetLastErrorString(error_string); }
    };
-   DerivedLokiAddonBase test_class;
+   DerivedLokiModuleBase test_class;
 };
 
-TEST_F(LokiAddonBaseTest, GetLastErrorStringShouldReturnFalseWhenObjectIsFirstInitialized)
+TEST_F(LokiModuleBaseTest, GetLastErrorStringShouldReturnFalseWhenObjectIsFirstInitialized)
 {
    std::string error_string;
    EXPECT_FALSE(test_class.GetLastErrorString(error_string));
 }
 
-TEST_F(LokiAddonBaseTest, SetLastErrorStringShouldReturnFalseWithEmptyArgument)
+TEST_F(LokiModuleBaseTest, SetLastErrorStringShouldReturnFalseWithEmptyArgument)
 {
    EXPECT_FALSE(test_class.SetLastError(std::string("")));
 }
 
-TEST_F(LokiAddonBaseTest, SetLastErrorStringShouldReturnTrueWithANonEmptyStringArgument)
+TEST_F(LokiModuleBaseTest, SetLastErrorStringShouldReturnTrueWithANonEmptyStringArgument)
 {
    EXPECT_TRUE(test_class.SetLastError(std::string("Some arbitrary error string.")));
 }
 
-TEST_F(LokiAddonBaseTest, GetLastErrorStringShouldReturnTrueAfterErrorStringHasBeenSet)
+TEST_F(LokiModuleBaseTest, GetLastErrorStringShouldReturnTrueAfterErrorStringHasBeenSet)
 {
    std::string test_error_string = "Some arbitrary error string.";
    test_class.SetLastError(test_error_string);
@@ -49,7 +49,7 @@ TEST_F(LokiAddonBaseTest, GetLastErrorStringShouldReturnTrueAfterErrorStringHasB
    EXPECT_TRUE(test_class.GetLastErrorString(retrieved_error_string));
 }
 
-TEST_F(LokiAddonBaseTest, GetLastErrorStringShouldReturnTheErrorStringAfterBeingSet)
+TEST_F(LokiModuleBaseTest, GetLastErrorStringShouldReturnTheErrorStringAfterBeingSet)
 {
    std::string test_error_string = "Some arbitrary error string.";
    test_class.SetLastError(test_error_string);

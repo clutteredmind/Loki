@@ -1,30 +1,30 @@
 //
-// LokiAddonDescriptorTests.cpp : Defines tests for the LokiAddonBase class
+// LokiModuleDescriptorTests.cpp : Defines tests for the LokiModuleBase class
 //
 
 #include "gtest\gtest.h"
 
 #include "node_version.h"
 
-#include "LokiAddonDescriptor.hpp"
+#include "LokiModuleDescriptor.hpp"
 
 using namespace Loki;
 
-TEST(LokiAddonDescriptorTests, Instantiation)
+TEST(LokiModuleDescriptorTests, Instantiation)
 {
-   LokiAddonDescriptor descriptor;
+   LokiModuleDescriptor descriptor;
 }
 
-class LokiAddonDescriptorTest : public testing::Test
+class LokiModuleDescriptorTest : public testing::Test
 {
    public:
    // the descriptor to test
-   LokiAddonDescriptor descriptor;
-   // stub addon values
-   const std::string addon_name = "Descriptor Name";
-   const std::string addon_version = "1.2.3";
-   const std::string addon_description = "Addon description string.";
-   const int addon_version_number_array [3] = {3, 2, 1};
+   LokiModuleDescriptor descriptor;
+   // stub module values
+   const std::string module_name = "Descriptor Name";
+   const std::string module_version = "1.2.3";
+   const std::string module_description = "Module description string.";
+   const int module_version_number_array [3] = {3, 2, 1};
    // stub function values
    const std::string function_name = "stubCallback";
    const std::string function_description = "A description of the stub function.";
@@ -36,56 +36,56 @@ class LokiAddonDescriptorTest : public testing::Test
    static void StubCallbackThree(const v8::FunctionCallbackInfo<v8::Value>& args) {}
 };
 
-TEST_F(LokiAddonDescriptorTest, NameShouldBeBlankWhenDescriptorIsCreated)
+TEST_F(LokiModuleDescriptorTest, NameShouldBeBlankWhenDescriptorIsCreated)
 {
    EXPECT_EQ(0, descriptor.GetName().length());
 }
 
-TEST_F(LokiAddonDescriptorTest, VersionShouldBeBlankWhenDescriptorIsCreated)
+TEST_F(LokiModuleDescriptorTest, VersionShouldBeBlankWhenDescriptorIsCreated)
 {
    EXPECT_EQ("", descriptor.GetVersion());
 }
 
-TEST_F(LokiAddonDescriptorTest, DescriptionShouldBeBlankWhenDescriptorIsCreated)
+TEST_F(LokiModuleDescriptorTest, DescriptionShouldBeBlankWhenDescriptorIsCreated)
 {
    EXPECT_EQ(0, descriptor.GetDescription().length());
 }
 
-TEST_F(LokiAddonDescriptorTest, NodeVersionShouldBePulledFromNodeHeaderFile)
+TEST_F(LokiModuleDescriptorTest, NodeVersionShouldBePulledFromNodeHeaderFile)
 {
    std::string node_version = std::to_string(NODE_MAJOR_VERSION) + '.' + std::to_string(NODE_MINOR_VERSION) + '.' + std::to_string(NODE_PATCH_VERSION);
    EXPECT_EQ(node_version, descriptor.GetNodeVersion());
 }
 
-TEST_F(LokiAddonDescriptorTest, FunctionListShouldBeEmptyWhenDescriptorIsCreated)
+TEST_F(LokiModuleDescriptorTest, FunctionListShouldBeEmptyWhenDescriptorIsCreated)
 {
    EXPECT_EQ(0, descriptor.GetFunctions().size());
 }
 
-TEST_F(LokiAddonDescriptorTest, SetNameShouldSetTheName)
+TEST_F(LokiModuleDescriptorTest, SetNameShouldSetTheName)
 {
-   descriptor.SetName(addon_name);
-   EXPECT_EQ(addon_name, descriptor.GetName());
+   descriptor.SetName(module_name);
+   EXPECT_EQ(module_name, descriptor.GetName());
 }
 
-TEST_F(LokiAddonDescriptorTest, SetVersionShouldSetTheVersion)
+TEST_F(LokiModuleDescriptorTest, SetVersionShouldSetTheVersion)
 {
-   descriptor.SetVersion(addon_version);
-   EXPECT_EQ(addon_version, descriptor.GetVersion());
+   descriptor.SetVersion(module_version);
+   EXPECT_EQ(module_version, descriptor.GetVersion());
 }
 
-TEST_F(LokiAddonDescriptorTest, GetVersionStringFromArrayShouldConvertAnArrayToAString)
+TEST_F(LokiModuleDescriptorTest, GetVersionStringFromArrayShouldConvertAnArrayToAString)
 {
-   EXPECT_EQ("3.2.1", LokiAddonDescriptor::GetVersionStringFromArray(addon_version_number_array));
+   EXPECT_EQ("3.2.1", LokiModuleDescriptor::GetVersionStringFromArray(module_version_number_array));
 }
 
-TEST_F(LokiAddonDescriptorTest, SetDescriptionShouldSetTheDescription)
+TEST_F(LokiModuleDescriptorTest, SetDescriptionShouldSetTheDescription)
 {
-   descriptor.SetDescription(addon_description);
-   EXPECT_EQ(addon_description, descriptor.GetDescription());
+   descriptor.SetDescription(module_description);
+   EXPECT_EQ(module_description, descriptor.GetDescription());
 }
 
-TEST_F(LokiAddonDescriptorTest, AddFunctionWithAConstructedFunctionShouldAddAFunction)
+TEST_F(LokiModuleDescriptorTest, AddFunctionWithAConstructedFunctionShouldAddAFunction)
 {
    LokiFunction function(function_name, StubCallback, function_description, {LOKI_PARAMETER(function_first_parameter_type, function_first_parameter_name)}, function_return_type);
    ASSERT_EQ(0, descriptor.GetFunctions().size());
@@ -99,7 +99,7 @@ TEST_F(LokiAddonDescriptorTest, AddFunctionWithAConstructedFunctionShouldAddAFun
    EXPECT_EQ(function_return_type, descriptor.GetFunctions().front().return_type);
 }
 
-TEST_F(LokiAddonDescriptorTest, AddFunctionWithParametersShouldAddAFunction)
+TEST_F(LokiModuleDescriptorTest, AddFunctionWithParametersShouldAddAFunction)
 {
    ASSERT_EQ(0, descriptor.GetFunctions().size());
    EXPECT_TRUE(descriptor.AddFunction(function_name, StubCallback, function_description, {LOKI_PARAMETER(function_first_parameter_type, function_first_parameter_name)}, function_return_type));
@@ -112,7 +112,7 @@ TEST_F(LokiAddonDescriptorTest, AddFunctionWithParametersShouldAddAFunction)
    EXPECT_EQ(function_return_type, descriptor.GetFunctions().front().return_type);
 }
 
-TEST_F(LokiAddonDescriptorTest, AddingSameFunctionTwiceShouldFail)
+TEST_F(LokiModuleDescriptorTest, AddingSameFunctionTwiceShouldFail)
 {
    ASSERT_EQ(0, descriptor.GetFunctions().size());
    EXPECT_TRUE(descriptor.AddFunction(function_name, StubCallback, function_description, {LOKI_PARAMETER(function_first_parameter_type, function_first_parameter_name)}, function_return_type));
@@ -121,7 +121,7 @@ TEST_F(LokiAddonDescriptorTest, AddingSameFunctionTwiceShouldFail)
    ASSERT_EQ(1, descriptor.GetFunctions().size());
 }
 
-TEST_F(LokiAddonDescriptorTest, AddingFunctionWithNoParametersArgumentShouldAddTheDefault)
+TEST_F(LokiModuleDescriptorTest, AddingFunctionWithNoParametersArgumentShouldAddTheDefault)
 {
    ASSERT_EQ(0, descriptor.GetFunctions().size());
    EXPECT_TRUE(descriptor.AddFunction(function_name, StubCallback, function_description));
@@ -130,7 +130,7 @@ TEST_F(LokiAddonDescriptorTest, AddingFunctionWithNoParametersArgumentShouldAddT
    EXPECT_EQ(0, descriptor.GetFunctions().front().parameters.size());
 }
 
-TEST_F(LokiAddonDescriptorTest, AddingFunctionWithNoReturnTypeArgumentShouldDefaultToUndefined)
+TEST_F(LokiModuleDescriptorTest, AddingFunctionWithNoReturnTypeArgumentShouldDefaultToUndefined)
 {
    ASSERT_EQ(0, descriptor.GetFunctions().size());
    EXPECT_TRUE(descriptor.AddFunction(function_name, StubCallback, function_description));
@@ -138,13 +138,13 @@ TEST_F(LokiAddonDescriptorTest, AddingFunctionWithNoReturnTypeArgumentShouldDefa
    ASSERT_EQ(ParameterType::UNDEFINED, descriptor.GetFunctions().front().return_type);
 }
 
-TEST_F(LokiAddonDescriptorTest, RemoveFunctionOnAnEmptyListShouldReturnFalse)
+TEST_F(LokiModuleDescriptorTest, RemoveFunctionOnAnEmptyListShouldReturnFalse)
 {
    ASSERT_EQ(0, descriptor.GetFunctions().size());
    EXPECT_FALSE(descriptor.RemoveFunction(0));
 }
 
-TEST_F(LokiAddonDescriptorTest, RemoveFunctionShouldRemoveAFunction)
+TEST_F(LokiModuleDescriptorTest, RemoveFunctionShouldRemoveAFunction)
 {
    ASSERT_EQ(0, descriptor.GetFunctions().size());
    EXPECT_TRUE(descriptor.AddFunction(function_name, StubCallback, function_description));
@@ -153,7 +153,7 @@ TEST_F(LokiAddonDescriptorTest, RemoveFunctionShouldRemoveAFunction)
    ASSERT_EQ(0, descriptor.GetFunctions().size());
 }
 
-TEST_F(LokiAddonDescriptorTest, RemoveFunctionShouldRemoveAFunctionAtSpecifiedIndex)
+TEST_F(LokiModuleDescriptorTest, RemoveFunctionShouldRemoveAFunctionAtSpecifiedIndex)
 {
    ASSERT_EQ(0, descriptor.GetFunctions().size());
    EXPECT_TRUE(descriptor.AddFunction("stubCallback", StubCallback, function_description));
@@ -165,7 +165,7 @@ TEST_F(LokiAddonDescriptorTest, RemoveFunctionShouldRemoveAFunctionAtSpecifiedIn
    EXPECT_EQ("stubCallbackThree", (descriptor.GetFunctions().begin() + 1)->name);
 }
 
-TEST_F(LokiAddonDescriptorTest, RemoveFunctionAtAnInvalidIndexShouldReturnFalse)
+TEST_F(LokiModuleDescriptorTest, RemoveFunctionAtAnInvalidIndexShouldReturnFalse)
 {
    ASSERT_EQ(0, descriptor.GetFunctions().size());
    EXPECT_TRUE(descriptor.AddFunction(function_name, StubCallback, function_description));

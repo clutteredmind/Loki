@@ -1,10 +1,10 @@
 //
-// LokiFunctionTests.cpp : Defines tests for the LokiAddonBase class
+// LokiFunctionTests.cpp : Defines tests for the LokiModuleBase class
 //
 
 #include "gtest\gtest.h"
 
-#include "LokiAddonDescriptor.hpp"
+#include "LokiModuleDescriptor.hpp"
 
 using namespace Loki;
 
