@@ -67,6 +67,12 @@ namespace Loki
       this->name = name;
    }
 
+   // setter for the module's display name
+   void LokiModuleDescriptor::SetDisplayName (const std::string& display_name)
+   {
+      this->display_name = display_name;
+   }
+
    // Setter for the module's version number
    void LokiModuleDescriptor::SetVersion(const std::string& version)
    {
@@ -123,6 +129,12 @@ namespace Loki
    std::string LokiModuleDescriptor::GetName()
    {
       return name;
+   }
+
+   // Accessor for the module's display name
+   std::string LokiModuleDescriptor::GetDisplayName ()
+   {
+      return display_name;
    }
 
    // Accessor for the module's version number

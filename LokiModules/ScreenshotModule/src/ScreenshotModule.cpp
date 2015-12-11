@@ -26,6 +26,7 @@ namespace Loki
 
    // module metadata
    const std::string module_name = "ScreenshotModule";
+   const std::string module_display_name = "Screenshot";
    const int module_version [3] {1 /*major*/, 0 /*minor*/, 0 /*patch*/};
    const std::string module_description = "Grabs a screenshot of the display via the Windows API.";
 
@@ -34,6 +35,7 @@ namespace Loki
    {
       // set module metadata
       descriptor.SetName(module_name);
+      descriptor.SetDisplayName(module_display_name);
       descriptor.SetVersion(LokiModuleDescriptor::GetVersionStringFromArray(module_version));
       descriptor.SetDescription(module_description);
       // register this class's exported functions for the framework

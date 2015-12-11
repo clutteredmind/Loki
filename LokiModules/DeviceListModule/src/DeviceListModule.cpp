@@ -30,6 +30,7 @@ namespace Loki
 
    // module metadata
    const std::string module_name = "DeviceListModule";
+   const std::string module_display_name = "Device List";
    const int module_version [3] {1 /*major*/, 0 /*minor*/, 0 /*patch*/};
    const std::string module_description = "Retrieves a list of installed devices via the Windows API";
 
@@ -38,6 +39,7 @@ namespace Loki
    {
       // set module metadata
       descriptor.SetName(module_name);
+      descriptor.SetDisplayName(module_display_name);
       descriptor.SetVersion(LokiModuleDescriptor::GetVersionStringFromArray(module_version));
       descriptor.SetDescription(module_description);
       // register this class's exported functions for the framework
@@ -148,7 +150,7 @@ namespace Loki
 
                         // save device instance ID
                         std::wstring device_instance_id_string(device_instance_id);
-                        device->Set(String::NewFromUtf8(isolate, "device_instance_id"), String::NewFromUtf8(isolate, std::string(device_instance_id_string.begin(), device_instance_id_string.end()).c_str()));
+                        device->Set(String::NewFromUtf8(isolate, "deviceInstanceId"), String::NewFromUtf8(isolate, std::string(device_instance_id_string.begin(), device_instance_id_string.end()).c_str()));
 
                         BYTE* buffer;
                         DWORD property_size = 0;
@@ -163,7 +165,7 @@ namespace Loki
                         SetupDiGetDeviceRegistryProperty(device_info, &device_info_data, SPDRP_FRIENDLYNAME, NULL, buffer, property_size, NULL);
                         // save friendly name
                         std::wstring friendly_name(reinterpret_cast<wchar_t*>(buffer));
-                        device->Set(String::NewFromUtf8(isolate, "friendly_name"), String::NewFromUtf8(isolate, std::string(friendly_name.begin(), friendly_name.end()).c_str()));
+                        device->Set(String::NewFromUtf8(isolate, "friendlyName"), String::NewFromUtf8(isolate, std::string(friendly_name.begin(), friendly_name.end()).c_str()));
                         // release buffer memory
                         delete [] buffer;
 
@@ -177,7 +179,7 @@ namespace Loki
                         SetupDiGetDeviceRegistryProperty(device_info, &device_info_data, SPDRP_CLASS, NULL, buffer, property_size, NULL);
                         // save class
                         std::wstring class_name(reinterpret_cast<wchar_t*>(buffer));
-                        device->Set(String::NewFromUtf8(isolate, "class_name"), String::NewFromUtf8(isolate, std::string(class_name.begin(), class_name.end()).c_str()));
+                        device->Set(String::NewFromUtf8(isolate, "className"), String::NewFromUtf8(isolate, std::string(class_name.begin(), class_name.end()).c_str()));
                         // release buffer memory
                         delete [] buffer;
 
@@ -191,7 +193,7 @@ namespace Loki
                         SetupDiGetDeviceRegistryProperty(device_info, &device_info_data, SPDRP_HARDWAREID, NULL, buffer, property_size, NULL);
                         // save hardware id
                         std::wstring hardware_id(reinterpret_cast<wchar_t*>(buffer));
-                        device->Set(String::NewFromUtf8(isolate, "hardware_id"), String::NewFromUtf8(isolate, std::string(hardware_id.begin(), hardware_id.end()).c_str()));
+                        device->Set(String::NewFromUtf8(isolate, "hardwareId"), String::NewFromUtf8(isolate, std::string(hardware_id.begin(), hardware_id.end()).c_str()));
                         // release buffer memory
                         delete [] buffer;
 

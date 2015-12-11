@@ -102,9 +102,10 @@ namespace Loki
          // create array to hold module information
          auto descriptor_object = v8::Object::New(isolate);
          descriptor_object->Set(v8::String::NewFromUtf8(isolate, "name"), v8::String::NewFromUtf8(isolate, descriptor.GetName().c_str()));
+         descriptor_object->Set (v8::String::NewFromUtf8 (isolate, "displayName"), v8::String::NewFromUtf8 (isolate, descriptor.GetDisplayName ().c_str ()));
          descriptor_object->Set(v8::String::NewFromUtf8(isolate, "version"), v8::String::NewFromUtf8(isolate, descriptor.GetVersion().c_str()));
          descriptor_object->Set(v8::String::NewFromUtf8(isolate, "description"), v8::String::NewFromUtf8(isolate, descriptor.GetDescription().c_str()));
-         descriptor_object->Set(v8::String::NewFromUtf8(isolate, "node_version"), v8::String::NewFromUtf8(isolate, descriptor.GetNodeVersion().c_str()));
+         descriptor_object->Set(v8::String::NewFromUtf8(isolate, "nodeVersion"), v8::String::NewFromUtf8(isolate, descriptor.GetNodeVersion().c_str()));
          int function_counter = 0;
          auto exported_functions = v8::Array::New(isolate);
          for (auto function : descriptor.GetFunctions())
@@ -129,7 +130,7 @@ namespace Loki
             exported_function->Set(v8::String::NewFromUtf8(isolate, "parameters"), parameters);
 
             // return type
-            exported_function->Set(v8::String::NewFromUtf8(isolate, "return_type"), v8::String::NewFromUtf8(isolate, LokiModuleDescriptor::ConvertParameterTypeToString(function.return_type).c_str()));
+            exported_function->Set(v8::String::NewFromUtf8(isolate, "returnType"), v8::String::NewFromUtf8(isolate, LokiModuleDescriptor::ConvertParameterTypeToString(function.return_type).c_str()));
 
             exported_functions->Set(function_counter, exported_function);
             function_counter++;

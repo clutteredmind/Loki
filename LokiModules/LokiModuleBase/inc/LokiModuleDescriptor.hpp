@@ -76,6 +76,8 @@ namespace Loki
       static std::string ConvertParameterTypeToString(const ParameterType parameter_type);
       // Setter for the module's name
       void SetName(const std::string& name);
+      // setter for the module's display name
+      void SetDisplayName(const std::string& display_name);
       // Setter for the module's version number
       void SetVersion(const std::string& version);
       // Setter for the module's description
@@ -92,6 +94,8 @@ namespace Loki
       bool RemoveFunction(const unsigned index);
       // Accessor for the module's name
       std::string GetName();
+      // Accessor for the module's display name
+      std::string GetDisplayName();
       // Accessor for the module's version number
       std::string GetVersion();
       // Accessor for the module's description
@@ -106,6 +110,8 @@ namespace Loki
       private:
       // The module's name
       std::string name;
+      // The module's display name
+      std::string display_name;
       // The module's version number
       std::string version;
       // The module's description

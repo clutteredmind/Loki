@@ -21,7 +21,8 @@ class LokiModuleDescriptorTest : public testing::Test
    // the descriptor to test
    LokiModuleDescriptor descriptor;
    // stub module values
-   const std::string module_name = "Descriptor Name";
+   const std::string module_name = "DescriptorName";
+   const std::string module_display_name = "Descriptor Name";
    const std::string module_version = "1.2.3";
    const std::string module_description = "Module description string.";
    const int module_version_number_array [3] = {3, 2, 1};
@@ -66,6 +67,12 @@ TEST_F(LokiModuleDescriptorTest, SetNameShouldSetTheName)
 {
    descriptor.SetName(module_name);
    EXPECT_EQ(module_name, descriptor.GetName());
+}
+
+TEST_F (LokiModuleDescriptorTest, SetDisplayNameShouldSetTheDisplayName)
+{
+   descriptor.SetDisplayName (module_display_name);
+   EXPECT_EQ (module_display_name, descriptor.GetDisplayName ());
 }
 
 TEST_F(LokiModuleDescriptorTest, SetVersionShouldSetTheVersion)

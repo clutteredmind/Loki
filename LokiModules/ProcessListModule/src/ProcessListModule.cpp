@@ -25,6 +25,7 @@ namespace Loki
 
    // module metadata
    const std::string module_name = "ProcessListModule";
+   const std::string module_display_name = "Process List";
    const int module_version [3] {1 /*major*/, 0 /*minor*/, 0 /*patch*/};
    const std::string module_description = "Retrieves a list of running processes via the Windows API";
 
@@ -33,6 +34,7 @@ namespace Loki
    {
       // set module metadata
       descriptor.SetName(module_name);
+      descriptor.SetDisplayName(module_display_name);
       descriptor.SetVersion(LokiModuleDescriptor::GetVersionStringFromArray(module_version));
       descriptor.SetDescription(module_description);
       // register this class's exported functions for the framework
@@ -103,16 +105,16 @@ namespace Loki
 
                   // save process name
                   std::wstring process_name(process_entry.szExeFile);
-                  process->Set(String::NewFromUtf8(isolate, "process_name"), String::NewFromUtf8(isolate, std::string(process_name.begin(), process_name.end()).c_str()));
+                  process->Set(String::NewFromUtf8(isolate, "processName"), String::NewFromUtf8(isolate, std::string(process_name.begin(), process_name.end()).c_str()));
 
                   // save process ID
-                  process->Set(String::NewFromUtf8(isolate, "process_process_id"), Integer::New(isolate, process_entry.th32ProcessID));
+                  process->Set(String::NewFromUtf8(isolate, "processProcessId"), Integer::New(isolate, process_entry.th32ProcessID));
                   // save thread count
-                  process->Set(String::NewFromUtf8(isolate, "process_thread_count"), Integer::New(isolate, process_entry.cntThreads));
+                  process->Set(String::NewFromUtf8(isolate, "processThreadCount"), Integer::New(isolate, process_entry.cntThreads));
                   // save parent process ID
-                  process->Set(String::NewFromUtf8(isolate, "process_parent_process_id"), Integer::New(isolate, process_entry.th32ParentProcessID));
+                  process->Set(String::NewFromUtf8(isolate, "processParentProcessId"), Integer::New(isolate, process_entry.th32ParentProcessID));
                   // save priority base
-                  process->Set(String::NewFromUtf8(isolate, "process_priority_base"), Integer::New(isolate, process_entry.pcPriClassBase));
+                  process->Set(String::NewFromUtf8(isolate, "processPriorityBase"), Integer::New(isolate, process_entry.pcPriClassBase));
 
                   // add process to list
                   processes->Set(Integer::New(isolate, counter), process);
