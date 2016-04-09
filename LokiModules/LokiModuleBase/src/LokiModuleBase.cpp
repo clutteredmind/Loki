@@ -7,17 +7,17 @@
 namespace Loki
 {
    // Constructor
-   LokiModuleBase::LokiModuleBase() :
-      last_error_string()
+   LokiModuleBase::LokiModuleBase () :
+      last_error_string ()
    {
    }
 
    // Get the last error string
-   bool LokiModuleBase::GetLastErrorString(std::string& error_string)
+   bool LokiModuleBase::GetLastErrorString (std::string& error_string)
    {
       bool result = false;
 
-      if (!last_error_string.empty())
+      if (!last_error_string.empty ())
       {
          error_string = last_error_string;
          result = true;
@@ -27,11 +27,11 @@ namespace Loki
    }
 
    // Set the last error string
-   bool LokiModuleBase::SetLastErrorString(std::string& error_string)
+   bool LokiModuleBase::SetLastErrorString (std::string& error_string)
    {
       bool result = false;
 
-      if (!error_string.empty())
+      if (!error_string.empty ())
       {
          last_error_string = error_string;
          result = true;

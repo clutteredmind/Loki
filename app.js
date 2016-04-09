@@ -13,7 +13,7 @@ var app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, process.env.npm_package_config_views_folder_name));
-app.set('view engine', 'jade');
+app.set('view engine', 'pug');
 // basic setup
 app.use(favicon(path.join(__dirname, process.env.npm_package_config_static_files_folder_name, process.env.npm_package_config_favicon_file_name)));
 app.use(logger('dev'));

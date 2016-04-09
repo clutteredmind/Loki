@@ -12,16 +12,16 @@ namespace Loki
    {
       public:
       // Constructor
-      DeviceListModule() = default;
+      DeviceListModule () = default;
       // destructor
-      virtual ~DeviceListModule() override = default;
+      virtual ~DeviceListModule () override = default;
       // Initialization function used by Node to set up this module.
-      static void Initialize(v8::Handle <v8::Object> target);
+      static void Initialize (v8::Handle <v8::Object> target);
       // Gets a list of all installed devices. Exposed to JavaScript.
-      static void GetDevices(const v8::FunctionCallbackInfo<v8::Value>& args);
+      static void GetDevices (const v8::FunctionCallbackInfo<v8::Value>& args);
 
       protected:
       // Gets a list of all installed devices.
-      v8::Local<v8::Array> getDevices(v8::Isolate* isolate);
+      v8::Local<v8::Array> getDevices (v8::Isolate* isolate);
    };
 }

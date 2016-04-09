@@ -77,3 +77,6 @@ $RECYCLE.BIN/
 # Visual Studio Code
 .vscode
 typings
+LokiModules/LokiModules.VC.db
+LokiModules/LokiModules.VC.VC.opendb
+node.exe

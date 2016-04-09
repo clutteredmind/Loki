@@ -43,12 +43,12 @@ namespace Loki
    // Represents a single function exposed to JavaScript by a Loki module
    struct LokiFunction
    {
-      LokiFunction(const std::string& name,
+      LokiFunction (const std::string& name,
          const v8::FunctionCallback callback,
          const std::string& description,
          const std::vector<Parameter> parameters,
          const ParameterType return_type) :
-         name(name), callback(callback), description(description), parameters(parameters), return_type(return_type)
+         name (name), callback (callback), description (description), parameters (parameters), return_type (return_type)
       {
       }
       // the name of the function
@@ -67,45 +67,45 @@ namespace Loki
    {
       public:
       // Constructor
-      LokiModuleDescriptor();
+      LokiModuleDescriptor ();
       // Destructor
-      ~LokiModuleDescriptor() = default;
+      ~LokiModuleDescriptor () = default;
       // Converts an array of integers to a version number string
-      static std::string GetVersionStringFromArray(const int version_numbers [3]);
+      static std::string GetVersionStringFromArray (const int version_numbers [3]);
       // Returns the string representation of a parameter type
-      static std::string ConvertParameterTypeToString(const ParameterType parameter_type);
+      static std::string ConvertParameterTypeToString (const ParameterType parameter_type);
       // Setter for the module's name
-      void SetName(const std::string& name);
+      void SetName (const std::string& name);
       // setter for the module's display name
-      void SetDisplayName(const std::string& display_name);
+      void SetDisplayName (const std::string& display_name);
       // Setter for the module's version number
-      void SetVersion(const std::string& version);
+      void SetVersion (const std::string& version);
       // Setter for the module's description
-      void SetDescription(const std::string& description);
+      void SetDescription (const std::string& description);
       // Adds an exported function description
-      bool AddFunction(const LokiFunction new_function);
+      bool AddFunction (const LokiFunction new_function);
       // Adds an exported function description
-      bool AddFunction(const std::string& name,
+      bool AddFunction (const std::string& name,
          const v8::FunctionCallback callback,
          const std::string& description,
          const std::vector<Parameter> parameters = NO_PARAMETERS,
          const ParameterType return_type = ParameterType::UNDEFINED);
       // Removes a function description by index
-      bool RemoveFunction(const unsigned index);
+      bool RemoveFunction (const unsigned index);
       // Accessor for the module's name
-      std::string GetName();
+      std::string GetName ();
       // Accessor for the module's display name
-      std::string GetDisplayName();
+      std::string GetDisplayName ();
       // Accessor for the module's version number
-      std::string GetVersion();
+      std::string GetVersion ();
       // Accessor for the module's description
-      std::string GetDescription();
+      std::string GetDescription ();
       // Accessor for the Node version against which this module was built
-      std::string GetNodeVersion();
+      std::string GetNodeVersion ();
       // Accessor for the function list
-      std::vector<LokiFunction> GetFunctions();
+      std::vector<LokiFunction> GetFunctions ();
       // Validates the type and number of parameters passed to a function
-      bool ValidateParameters(const v8::FunctionCallback callback, const v8::FunctionCallbackInfo<v8::Value>& args, std::string& error_message);
+      bool ValidateParameters (const v8::FunctionCallback callback, const v8::FunctionCallbackInfo<v8::Value>& args, std::string& error_message);
 
       private:
       // The module's name

@@ -13,15 +13,15 @@ namespace Loki
    {
       public:
       // constructor
-      LokiModuleBase();
+      LokiModuleBase ();
       // destructor
-      virtual ~LokiModuleBase() = default;
+      virtual ~LokiModuleBase () = default;
       // Get the last error string
-      bool GetLastErrorString(std::string& error_string);
+      bool GetLastErrorString (std::string& error_string);
 
       protected:
       // Set the last error string
-      bool SetLastErrorString(std::string& error_string);
+      bool SetLastErrorString (std::string& error_string);
 
       private:
       // The last error message
