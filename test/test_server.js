@@ -21,7 +21,7 @@ describe('base server functionality', function () {
 		request(server).get('/').expect(200, done);
 	});
 
-	it('returns a 404 reponse code for invalid URLs', function (done) {
+	it('returns a 404 response code for invalid URLs', function (done) {
 		// use node-uuid to generate a basically-random URL that will fail
 		request(server).get('/' + uuid.v1()).expect(404, done);
 	});
