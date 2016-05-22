@@ -7,7 +7,7 @@ var expect = chai.expect;
 chai.should();
 
 describe('addon tests', function () {
-	var base_addon_path = '../LokiAddons/x64/Debug/';
+	var base_addon_path = '../LokiModules/x64/Release/';
 
 	describe('ProcessListAddon', function () {
 		var addon_name = 'ProcessListAddon';
