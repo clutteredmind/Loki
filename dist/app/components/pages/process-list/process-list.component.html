@@ -1,3 +1,18 @@
 <div class="container-fluid">
-    PROCESS LIST
+    <error-display [errors]="errors"></error-display>
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            <h3 class="panel-title pull-left">Process List</h3>
+            <a class="btn btn-default pull-right" role="button" (click)="getProcessList()">Get Processes</a>
+            <div class="clearfix"></div>
+        </div>
+        <div class="panel-body">
+            <div *ngIf="processes">
+                <div *ngFor="let process of processes">
+                    <!-- TODO: make a table out of this -->
+                    {{process.processProcessId}} - {{process.processName}}
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

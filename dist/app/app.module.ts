@@ -6,10 +6,13 @@ import { AppComponent }             from './app.component';
 import { routing }                  from './app.routing';
 
 import { NavbarComponent }          from './components/navbar/navbar.component';
+import { ErrorDisplayComponent }    from './components/error-display/error-display.component';
 import { DeviceListComponent }      from './components/pages/device-list/device-list.component';
 import { HomeComponent }            from './components/pages/home/home.component';
 import { ProcessListComponent }     from './components/pages/process-list/process-list.component';
 import { ScreenshotComponent }      from './components/pages/screenshot/screenshot.component';
+
+import { SocketService }            from './services/socket.service';
 
 @NgModule({
     imports: [
@@ -20,6 +23,7 @@ import { ScreenshotComponent }      from './components/pages/screenshot/screensh
         AppComponent,
         NavbarComponent,
         HomeComponent,
+        ErrorDisplayComponent,
         DeviceListComponent,
         ProcessListComponent,
         ScreenshotComponent
@@ -28,6 +32,7 @@ import { ScreenshotComponent }      from './components/pages/screenshot/screensh
         AppComponent
     ],
     providers: [
+        SocketService
     ]
 })
 export class AppModule {

@@ -9,9 +9,31 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 var core_1 = require("@angular/core");
+var socket_service_1 = require("../../../services/socket.service");
 var ScreenshotComponent = (function () {
-    function ScreenshotComponent() {
+    function ScreenshotComponent(socketService) {
+        this.socketService = socketService;
+        this.category = 'screenshot';
+        this.errors = new Array();
+        socketService.register(this);
     }
+    ScreenshotComponent.prototype.getScreenshot = function () {
+        this.socketService.sendMessage({
+            category: 'screenshot',
+            action: 'captureScreen',
+            data: undefined
+        });
+    };
+    ScreenshotComponent.prototype.processMessage = function (message) {
+        switch (message.action) {
+            case 'error':
+                this.errors.push(message.data);
+                break;
+        }
+    };
+    ScreenshotComponent.prototype.ngOnDestroy = function () {
+        this.socketService.unregister(this);
+    };
     return ScreenshotComponent;
 }());
 ScreenshotComponent = __decorate([
@@ -20,7 +42,7 @@ ScreenshotComponent = __decorate([
         selector: 'screenshot',
         templateUrl: './screenshot.component.html'
     }),
-    __metadata("design:paramtypes", [])
+    __metadata("design:paramtypes", [socket_service_1.SocketService])
 ], ScreenshotComponent);
 exports.ScreenshotComponent = ScreenshotComponent;
 //# sourceMappingURL=screenshot.component.js.map

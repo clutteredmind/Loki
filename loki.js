@@ -90,7 +90,7 @@ socket_server.on('connection', (socket) => {
         var message_object = JSON.parse(message);
         // handle system message
         if(message_object.category == 'system') {
-            // register and unregister messages will come in here and can be used for tool use tracking
+            // register and unregister messages will come in here and can be used for user tracking
             switch(message_object.action) {
                 case 'register':
                 break;
