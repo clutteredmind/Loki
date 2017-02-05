@@ -11,7 +11,8 @@ export class SocketService implements OnDestroy {
     constructor() {
         this.addons = new Array<Addon>();
         // connect to the server
-        this.connectToServer('ws://' + location.host.substr(0, location.host.indexOf(':')) + ':8889');
+        var host_string = location.host.indexOf(':') ? location.host.substr(0, location.host.indexOf(':')) : location.host ;
+        this.connectToServer('ws://' + host_string + ':8889');
     }
 
     register(addon: Addon): void {

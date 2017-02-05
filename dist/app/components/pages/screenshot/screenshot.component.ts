@@ -46,7 +46,9 @@ export class ScreenshotComponent implements OnInit, OnDestroy, Addon {
                 });
                 break;
             case 'getScreenshotList':
-                this.images = message.data.image_list;
+                if(message.data) {
+                    this.images = message.data.image_list;
+                }
                 break;
             case 'error':
                 this.errors.push(message.data);

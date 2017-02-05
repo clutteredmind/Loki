@@ -12,7 +12,8 @@ var core_1 = require("@angular/core");
 var SocketService = (function () {
     function SocketService() {
         this.addons = new Array();
-        this.connectToServer('ws://' + location.host.substr(0, location.host.indexOf(':')) + ':8889');
+        var host_string = location.host.indexOf(':') ? location.host.substr(0, location.host.indexOf(':')) : location.host;
+        this.connectToServer('ws://' + host_string + ':8889');
     }
     SocketService.prototype.register = function (addon) {
         var index = this.addons.push(addon);
