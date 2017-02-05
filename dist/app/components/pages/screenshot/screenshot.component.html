@@ -2,12 +2,31 @@
     <error-display [errors]="errors"></error-display>
     <div class="panel panel-primary">
         <div class="panel-heading">
-            <h3 class="panel-title pull-left">Screenshot</h3>
             <a class="btn btn-default pull-right" role="button" (click)="getScreenshot()">Get Screenshot</a>
             <div class="clearfix"></div>
         </div>
         <div class="panel-body">
-            <!-- TODO: make this page -->
+            <div *ngIf="screenshot_loading">
+                <spinner [visible]="screenshot_loading"></spinner>
+            </div>
+            <div *ngIf="image_name">
+                <a href="/images/{{image_name}}" target="_blank"><img class="img-responsive" src="/images/{{image_name}}" alt="screenshot"></a>
+            </div>
+        </div>
+    </div>
+    <div *ngIf="images != undefined && images.length > 0">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <h3 class="panel-title pull-left">Screenshots</h3>
+                <div class="clearfix"></div>
+            </div>
+            <div class="panel-body">
+                <div class="col-md-3">
+                    <div *ngFor="let image of images" class="thumbnail">
+                        <a href="/images/{{image}}" target="_blank"><img src="/images/{{image}}" class="img-thumbnail" alt="screenshot"></a>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>

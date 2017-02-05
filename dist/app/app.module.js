@@ -11,6 +11,7 @@ var app_component_1 = require("./app.component");
 var app_routing_1 = require("./app.routing");
 var navbar_component_1 = require("./components/navbar/navbar.component");
 var error_display_component_1 = require("./components/error-display/error-display.component");
+var spinner_component_1 = require("./components/spinner/spinner.component");
 var device_list_component_1 = require("./components/pages/device-list/device-list.component");
 var home_component_1 = require("./components/pages/home/home.component");
 var process_list_component_1 = require("./components/pages/process-list/process-list.component");
@@ -30,6 +31,7 @@ AppModule = __decorate([
         declarations: [
             app_component_1.AppComponent,
             navbar_component_1.NavbarComponent,
+            spinner_component_1.SpinnerComponent,
             home_component_1.HomeComponent,
             error_display_component_1.ErrorDisplayComponent,
             device_list_component_1.DeviceListComponent,

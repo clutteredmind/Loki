@@ -15,9 +15,12 @@ var ScreenshotComponent = (function () {
         this.socketService = socketService;
         this.category = 'screenshot';
         this.errors = new Array();
+        this.image_name = undefined;
+        this.images = new Array();
         socketService.register(this);
     }
     ScreenshotComponent.prototype.getScreenshot = function () {
+        this.screenshot_loading = true;
         this.socketService.sendMessage({
             category: 'screenshot',
             action: 'captureScreen',
@@ -26,10 +29,29 @@ var ScreenshotComponent = (function () {
     };
     ScreenshotComponent.prototype.processMessage = function (message) {
         switch (message.action) {
+            case 'captureScreen':
+                this.image_name = message.data.image_name;
+                this.screenshot_loading = false;
+                this.socketService.sendMessage({
+                    category: 'screenshot',
+                    action: 'getScreenshotList',
+                    data: undefined
+                });
+                break;
+            case 'getScreenshotList':
+                this.images = message.data.image_list;
+                break;
             case 'error':
                 this.errors.push(message.data);
                 break;
         }
+    };
+    ScreenshotComponent.prototype.ngOnInit = function () {
+        this.socketService.sendMessage({
+            category: 'screenshot',
+            action: 'getScreenshotList',
+            data: undefined
+        });
     };
     ScreenshotComponent.prototype.ngOnDestroy = function () {
         this.socketService.unregister(this);

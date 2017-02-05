@@ -7,6 +7,7 @@ import { routing }                  from './app.routing';
 
 import { NavbarComponent }          from './components/navbar/navbar.component';
 import { ErrorDisplayComponent }    from './components/error-display/error-display.component';
+import { SpinnerComponent }         from './components/spinner/spinner.component';
 import { DeviceListComponent }      from './components/pages/device-list/device-list.component';
 import { HomeComponent }            from './components/pages/home/home.component';
 import { ProcessListComponent }     from './components/pages/process-list/process-list.component';
@@ -22,6 +23,7 @@ import { SocketService }            from './services/socket.service';
     declarations: [
         AppComponent,
         NavbarComponent,
+        SpinnerComponent,
         HomeComponent,
         ErrorDisplayComponent,
         DeviceListComponent,

@@ -7,10 +7,26 @@
             <div class="clearfix"></div>
         </div>
         <div class="panel-body">
-            <div *ngIf="devices">
-                <div *ngFor="let device of devices">
-                    <!-- TODO: make a table out of this -->
-                    {{device.className}} - {{device.deviceInstanceId}}
+            <div *ngIf="devices != undefined && devices.length > 0">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Class Name</th>
+                                <th>Instance ID</th>
+                                <th>Friendly Name</th>
+                                <th>Hardware ID</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let device of devices">
+                                <td>{{device.className}}</td>
+                                <td>{{device.deviceInstanceId}}</td>
+                                <td>{{device.friendlyName}}</td>
+                                <td>{{device.hardwareId}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
