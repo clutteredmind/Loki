@@ -10,5 +10,5 @@ module.exports = {
     handler_file_directory_name: 'message_handlers',
     // TODO: you'll want to update this to the location to which the modules are being built
     module_file_path: './LokiModules/x64/Debug/',
-    module_glob_string: '**/*.node',
+    module_glob_string: '**/*.node'
 }
