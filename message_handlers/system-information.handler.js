@@ -10,6 +10,9 @@ module.exports.handle_message = (addon, message) => {
         case 'getMemoryInfo':
             return addon.getMemoryInformation();
             break;
+        case "getModuleInfo":
+            return addon.getModuleInfo();
+            break;
         default:
             throw 'No handler for ' + message.action;
             break;
