@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 
 import { Addon }                        from '../../../interfaces/addon.interface';
 import { SocketMessage }                from '../../../interfaces/socket-message.interface';
@@ -40,10 +40,9 @@ export class SystemInformationComponent implements OnInit, OnDestroy, Addon {
     }
 
     ngOnInit() {
-        // query for a list of existing screenshots on startup
         this.socketService.sendMessage({
-            category: 'screenshot',
-            action: 'getScreenshotList',
+            category: 'system-information',
+            action: 'getMemoryInfo',
             data: undefined
         });
     }

@@ -35,6 +35,13 @@ var ProcessListComponent = (function () {
                 break;
         }
     };
+    ProcessListComponent.prototype.ngOnInit = function () {
+        this.socketService.sendMessage({
+            category: 'process-list',
+            action: 'getProcesses',
+            data: undefined
+        });
+    };
     ProcessListComponent.prototype.ngOnDestroy = function () {
         this.socketService.unregister(this);
     };

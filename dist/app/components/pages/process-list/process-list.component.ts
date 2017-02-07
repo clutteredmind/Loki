@@ -1,17 +1,17 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 
-import { Addon }                from '../../../interfaces/addon.interface';
-import { Process }              from '../../../interfaces/process.interface';
-import { SocketMessage }        from '../../../interfaces/socket-message.interface';
+import { Addon }                        from '../../../interfaces/addon.interface';
+import { Process }                      from '../../../interfaces/process.interface';
+import { SocketMessage }                from '../../../interfaces/socket-message.interface';
 
-import { SocketService }        from '../../../services/socket.service';
+import { SocketService }                from '../../../services/socket.service';
 
 @Component({
     moduleId: module.id,
     selector: 'process-list',
     templateUrl: './process-list.component.html'
 })
-export class ProcessListComponent implements OnDestroy, Addon {
+export class ProcessListComponent implements OnInit, OnDestroy, Addon {
     category = 'process-list';
     errors: Array<string>;
     processes: Array<Process>;
@@ -39,6 +39,14 @@ export class ProcessListComponent implements OnDestroy, Addon {
                 this.errors.push(message.data);
                 break;
         }
+    }
+
+    ngOnInit() {
+        this.socketService.sendMessage({
+            category: 'process-list',
+            action: 'getProcesses',
+            data: undefined
+        });
     }
 
     ngOnDestroy() {

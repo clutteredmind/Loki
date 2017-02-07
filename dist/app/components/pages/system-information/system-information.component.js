@@ -37,8 +37,8 @@ var SystemInformationComponent = (function () {
     };
     SystemInformationComponent.prototype.ngOnInit = function () {
         this.socketService.sendMessage({
-            category: 'screenshot',
-            action: 'getScreenshotList',
+            category: 'system-information',
+            action: 'getMemoryInfo',
             data: undefined
         });
     };

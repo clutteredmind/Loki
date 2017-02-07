@@ -1,17 +1,17 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 
-import { Addon }                from '../../../interfaces/addon.interface';
-import { Device }               from '../../../interfaces/device.interface';
-import { SocketMessage }        from '../../../interfaces/socket-message.interface';
+import { Addon }                        from '../../../interfaces/addon.interface';
+import { Device }                       from '../../../interfaces/device.interface';
+import { SocketMessage }                from '../../../interfaces/socket-message.interface';
 
-import { SocketService }        from '../../../services/socket.service';
+import { SocketService }                from '../../../services/socket.service';
 
 @Component({
     moduleId: module.id,
     selector: 'device-list',
     templateUrl: './device-list.component.html'
 })
-export class DeviceListComponent implements OnDestroy, Addon {
+export class DeviceListComponent implements OnInit, OnDestroy, Addon {
     category = 'device-list';
     errors: Array<string>;
     devices: Array<Device>;
@@ -39,6 +39,14 @@ export class DeviceListComponent implements OnDestroy, Addon {
                 this.errors.push(message.data);
                 break;
         }
+    }
+
+    ngOnInit() {
+        this.socketService.sendMessage({
+            category: 'device-list',
+            action: 'getDevices',
+            data: undefined
+        });
     }
 
     ngOnDestroy() {

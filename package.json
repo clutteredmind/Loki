@@ -2,7 +2,7 @@
   "name": "loki",
   "version": "4.0.0",
   "private": true,
-  "author": "IGT",
+  "author": "Me!",
   "scripts": {
     "start": "node loki.js"
   },

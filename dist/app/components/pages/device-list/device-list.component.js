@@ -35,6 +35,13 @@ var DeviceListComponent = (function () {
                 break;
         }
     };
+    DeviceListComponent.prototype.ngOnInit = function () {
+        this.socketService.sendMessage({
+            category: 'device-list',
+            action: 'getDevices',
+            data: undefined
+        });
+    };
     DeviceListComponent.prototype.ngOnDestroy = function () {
         this.socketService.unregister(this);
     };
