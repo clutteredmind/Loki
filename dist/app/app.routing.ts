@@ -5,6 +5,7 @@ import { DeviceListComponent }          from './components/pages/device-list/dev
 import { HomeComponent }                from './components/pages/home/home.component';
 import { ProcessListComponent }         from './components/pages/process-list/process-list.component';
 import { ScreenshotComponent }          from './components/pages/screenshot/screenshot.component';
+import { SystemInformationComponent }   from './components/pages/system-information/system-information.component';
 
 const appRoutes: Routes = [
     {
@@ -22,6 +23,10 @@ const appRoutes: Routes = [
     {
         path: 'screenshot',
         component: ScreenshotComponent
+    },
+    {
+        path: 'system-information',
+        component: SystemInformationComponent
     },
     {
         path: '**',

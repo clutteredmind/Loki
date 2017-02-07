@@ -4,6 +4,7 @@ var device_list_component_1 = require("./components/pages/device-list/device-lis
 var home_component_1 = require("./components/pages/home/home.component");
 var process_list_component_1 = require("./components/pages/process-list/process-list.component");
 var screenshot_component_1 = require("./components/pages/screenshot/screenshot.component");
+var system_information_component_1 = require("./components/pages/system-information/system-information.component");
 var appRoutes = [
     {
         path: '',
@@ -20,6 +21,10 @@ var appRoutes = [
     {
         path: 'screenshot',
         component: screenshot_component_1.ScreenshotComponent
+    },
+    {
+        path: 'system-information',
+        component: system_information_component_1.SystemInformationComponent
     },
     {
         path: '**',

@@ -1,9 +1,9 @@
 // load dependencies
 const fs            = require('fs');
-const glob          = require('glob');
 const http          = require('http');
 const path          = require('path');
 const express       = require('express');
+const finder        = require('fs-finder');
 const bodyParser    = require('body-parser');
 const colors        = require('colors/safe');
 
@@ -44,6 +44,7 @@ try {
                 handlers.push(handler);
             } catch(error) {
                 console.log(colors.red('Unable to require file: ' + files[index]));
+                console.log(error);
             }
         }
     }
@@ -52,10 +53,8 @@ try {
     console.log(error);
 }
 
-// create glob path
-const module_path_base = config.module_file_path + config.module_glob_string;
 // get a list of modules in the specified directory
-var module_files = glob.sync(module_path_base);
+var module_files = finder.from(config.module_file_path).findFiles('*.node');
 
 if(module_files.length > 0) {
     // for each module, look for a corresponding handler

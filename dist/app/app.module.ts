@@ -1,19 +1,20 @@
-import { NgModule }                 from '@angular/core';
-import { BrowserModule }            from '@angular/platform-browser';
+import { NgModule }                     from '@angular/core';
+import { BrowserModule }                from '@angular/platform-browser';
 
-import { AppComponent }             from './app.component';
+import { AppComponent }                 from './app.component';
 
-import { routing }                  from './app.routing';
+import { routing }                      from './app.routing';
 
-import { NavbarComponent }          from './components/navbar/navbar.component';
-import { ErrorDisplayComponent }    from './components/error-display/error-display.component';
-import { SpinnerComponent }         from './components/spinner/spinner.component';
-import { DeviceListComponent }      from './components/pages/device-list/device-list.component';
-import { HomeComponent }            from './components/pages/home/home.component';
-import { ProcessListComponent }     from './components/pages/process-list/process-list.component';
-import { ScreenshotComponent }      from './components/pages/screenshot/screenshot.component';
+import { NavbarComponent }              from './components/navbar/navbar.component';
+import { ErrorDisplayComponent }        from './components/error-display/error-display.component';
+import { SpinnerComponent }             from './components/spinner/spinner.component';
+import { DeviceListComponent }          from './components/pages/device-list/device-list.component';
+import { HomeComponent }                from './components/pages/home/home.component';
+import { ProcessListComponent }         from './components/pages/process-list/process-list.component';
+import { ScreenshotComponent }          from './components/pages/screenshot/screenshot.component';
+import { SystemInformationComponent }   from './components/pages/system-information/system-information.component';
 
-import { SocketService }            from './services/socket.service';
+import { SocketService }                from './services/socket.service';
 
 @NgModule({
     imports: [
@@ -28,7 +29,8 @@ import { SocketService }            from './services/socket.service';
         ErrorDisplayComponent,
         DeviceListComponent,
         ProcessListComponent,
-        ScreenshotComponent
+        ScreenshotComponent,
+        SystemInformationComponent
     ],
     bootstrap: [
         AppComponent

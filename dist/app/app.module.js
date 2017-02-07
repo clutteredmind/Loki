@@ -16,6 +16,7 @@ var device_list_component_1 = require("./components/pages/device-list/device-lis
 var home_component_1 = require("./components/pages/home/home.component");
 var process_list_component_1 = require("./components/pages/process-list/process-list.component");
 var screenshot_component_1 = require("./components/pages/screenshot/screenshot.component");
+var system_information_component_1 = require("./components/pages/system-information/system-information.component");
 var socket_service_1 = require("./services/socket.service");
 var AppModule = (function () {
     function AppModule() {
@@ -36,7 +37,8 @@ AppModule = __decorate([
             error_display_component_1.ErrorDisplayComponent,
             device_list_component_1.DeviceListComponent,
             process_list_component_1.ProcessListComponent,
-            screenshot_component_1.ScreenshotComponent
+            screenshot_component_1.ScreenshotComponent,
+            system_information_component_1.SystemInformationComponent
         ],
         bootstrap: [
             app_component_1.AppComponent
