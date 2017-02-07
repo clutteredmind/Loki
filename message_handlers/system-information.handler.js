@@ -10,6 +10,9 @@ module.exports.handle_message = (addon, message) => {
         case 'getMemoryInfo':
             return addon.getMemoryInformation();
             break;
+        case 'getCpuInfo':
+            return addon.getCpuInformation();
+            break;
         case "getModuleInfo":
             return addon.getModuleInfo();
             break;

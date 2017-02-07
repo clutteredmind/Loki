@@ -20,4 +20,16 @@
             </div>
         </div>
     </div>
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            <a class="btn btn-default pull-right" role="button" (click)="getCpuInfo()">Get CPU Info</a>
+            <div class="clearfix"></div>
+        </div>
+        <div *ngIf="cpuInfo.numberOfProcessors != undefined" class="panel-body">
+            <ul class="list-group">
+                <li class="list-group-item">Number Of Processors: {{cpuInfo.numberOfProcessors}}</li>
+                <li class="list-group-item">Processor Architecture: {{cpuInfo.processorArchitecture}}</li>
+            </ul>
+        </div>
+    </div>
 </div>

@@ -14,6 +14,7 @@ export class SystemInformationComponent implements OnInit, OnDestroy, Addon {
     category = 'system-information';
     errors: Array<string>;
     memoryInfo = {};
+    cpuInfo = {};
 
     constructor(private socketService: SocketService) {
         this.errors = new Array<string>();
@@ -23,7 +24,10 @@ export class SystemInformationComponent implements OnInit, OnDestroy, Addon {
     processMessage(message: SocketMessage): void {
         switch(message.action) {
             case 'getMemoryInfo':
-                this.memoryInfo = message.data
+                this.memoryInfo = message.data;
+                break;
+            case 'getCpuInfo':
+                this.cpuInfo = message.data;
                 break;
             case 'error':
                 this.errors.push(message.data);
@@ -39,10 +43,23 @@ export class SystemInformationComponent implements OnInit, OnDestroy, Addon {
         });
     }
 
+    getCpuInfo() {
+        this.socketService.sendMessage({
+            category: 'system-information',
+            action: 'getCpuInfo',
+            data: undefined
+        });
+    }
+
     ngOnInit() {
         this.socketService.sendMessage({
             category: 'system-information',
             action: 'getMemoryInfo',
+            data: undefined
+        });
+        this.socketService.sendMessage({
+            category: 'system-information',
+            action: 'getCpuInfo',
             data: undefined
         });
     }

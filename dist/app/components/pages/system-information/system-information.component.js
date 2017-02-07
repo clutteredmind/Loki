@@ -15,6 +15,7 @@ var SystemInformationComponent = (function () {
         this.socketService = socketService;
         this.category = 'system-information';
         this.memoryInfo = {};
+        this.cpuInfo = {};
         this.errors = new Array();
         socketService.register(this);
     }
@@ -22,6 +23,9 @@ var SystemInformationComponent = (function () {
         switch (message.action) {
             case 'getMemoryInfo':
                 this.memoryInfo = message.data;
+                break;
+            case 'getCpuInfo':
+                this.cpuInfo = message.data;
                 break;
             case 'error':
                 this.errors.push(message.data);
@@ -35,10 +39,22 @@ var SystemInformationComponent = (function () {
             data: undefined
         });
     };
+    SystemInformationComponent.prototype.getCpuInfo = function () {
+        this.socketService.sendMessage({
+            category: 'system-information',
+            action: 'getCpuInfo',
+            data: undefined
+        });
+    };
     SystemInformationComponent.prototype.ngOnInit = function () {
         this.socketService.sendMessage({
             category: 'system-information',
             action: 'getMemoryInfo',
+            data: undefined
+        });
+        this.socketService.sendMessage({
+            category: 'system-information',
+            action: 'getCpuInfo',
             data: undefined
         });
     };
