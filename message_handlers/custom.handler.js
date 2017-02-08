@@ -4,23 +4,24 @@ var uuid = require('uuid/v1');
 
 var function_map = new Map();
 
-function_map.set('captureScreen', function (addons) {
+function_map.set('captureScreen', (addons, paremeters) => {
     // using UUID here to give the image a basically-random name
     var image_name = uuid() + '.jpg';
+    var image_file_folder = './dist/images';
     addons.forEach((addon) => {
         for(var key in addon) {
             if(key == 'captureScreen') {
                 // check to see if image directory exists
                 try {
-                    fs.readdirSync('./dist/images');
+                    fs.readdirSync(image_file_folder);
                 } catch (error) {
                     if (error.code == 'ENOENT') {
                         // the directory does not exist, so create it
-                        fs.mkdirSync('./dist/images');
+                        fs.mkdirSync(image_file_folder);
                     }
                 }
                 addon.captureScreen((data) => {
-                    fs.writeFileSync(path.join('./dist/images', image_name), data);
+                    fs.writeFileSync(path.join(image_file_folder, image_name), data);
                 });
             }
         }
@@ -28,7 +29,7 @@ function_map.set('captureScreen', function (addons) {
     return { image_name: image_name };
 });
 
-function_map.set('getScreenshotList', function () {
+function_map.set('getScreenshotList', (addons, parameters) => {
     return { image_list: fs.readdirSync('./dist/images') }
 });
 

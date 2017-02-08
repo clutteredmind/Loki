@@ -94,7 +94,7 @@ socket_server.on('connection', (socket) => {
                 socket.send(JSON.stringify({
                     category: message_object.category,
                     action: message_object.action,
-                    data: func(addons)
+                    data: func(addons, message_object.parameters)
                 }),
                 (error) => {
                     if(error) {
@@ -108,32 +108,17 @@ socket_server.on('connection', (socket) => {
                 for(var key in addon) {
                     if(key == message_object.action) {
                         if(!handled) {
-                            if(!message_object.parameters) {
-                                socket.send(JSON.stringify({
-                                    category: message_object.category,
-                                    action: message_object.action,
-                                    data: addon[message_object.action]()
-                                }),
-                                (error) => {
-                                    if(error) {
-                                        console.log(colors.red('Unable to send socket message.'));
-                                        console.log('The error was: ' + error);
-                                    }
-                                });
-                            } else {
-                                // TODO: I'm not totally sure this will work, and it needs to be tested
-                                socket.send(JSON.stringify({
-                                    category: message_object.category,
-                                    action: message_object.action,
-                                    data: addon[message_object.action](message_object.parameters)
-                                }),
-                                (error) => {
-                                    if(error) {
-                                        console.log(colors.red('Unable to send socket message.'));
-                                        console.log('The error was: ' + error);
-                                    }
-                                });
-                            }
+                            socket.send(JSON.stringify({
+                                category: message_object.category,
+                                action: message_object.action,
+                                data: addon[message_object.action]()
+                            }),
+                            (error) => {
+                                if(error) {
+                                    console.log(colors.red('Unable to send socket message.'));
+                                    console.log('The error was: ' + error);
+                                }
+                            });
                             handled = true;
                         }
                     }
