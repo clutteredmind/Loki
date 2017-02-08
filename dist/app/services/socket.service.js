@@ -12,24 +12,25 @@ var core_1 = require("@angular/core");
 var SocketService = (function () {
     function SocketService() {
         this.addons = new Array();
+        this.pending_messages = new Array();
         var host_string = location.host.indexOf(':') ? location.host.substr(0, location.host.indexOf(':')) : location.host;
         this.connectToServer('ws://' + host_string + ':8889');
     }
     SocketService.prototype.register = function (addon) {
         var index = this.addons.push(addon);
-        this.socket.send(JSON.stringify({
+        this.sendMessage({
             category: 'system',
             action: 'register',
             data: addon.category
-        }));
+        });
     };
     SocketService.prototype.unregister = function (addonToRemove) {
         var _this = this;
-        this.socket.send(JSON.stringify({
+        this.sendMessage({
             category: 'system',
             action: 'unregister',
             data: addonToRemove.category
-        }));
+        });
         this.addons.forEach(function (addon, index) {
             if (addonToRemove == addon) {
                 _this.addons.splice(index, 1);
@@ -37,7 +38,22 @@ var SocketService = (function () {
         });
     };
     SocketService.prototype.sendMessage = function (message) {
-        this.socket.send(JSON.stringify(message));
+        var self = this;
+        if (this.socket.readyState != WebSocket.OPEN) {
+            this.pending_messages.push(message);
+            setTimeout(function () { self.clearPendingMessageQueue(); }, 500);
+        }
+        else {
+            this.socket.send(JSON.stringify(message));
+        }
+    };
+    SocketService.prototype.clearPendingMessageQueue = function () {
+        var _this = this;
+        if (this.pending_messages.length > 0 && this.socket.readyState == WebSocket.OPEN) {
+            this.pending_messages.forEach(function (message) {
+                _this.socket.send(JSON.stringify(message));
+            });
+        }
     };
     SocketService.prototype.ngOnDestroy = function () {
         this.socket.close();

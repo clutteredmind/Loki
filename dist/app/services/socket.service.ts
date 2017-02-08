@@ -7,9 +7,12 @@ import { SocketMessage }            from '../interfaces/socket-message.interface
 export class SocketService implements OnDestroy {
     socket: WebSocket;
     addons: Array<Addon>;
+    pending_messages: Array<SocketMessage>;
 
     constructor() {
         this.addons = new Array<Addon>();
+        this.pending_messages = new Array<SocketMessage>();
+
         // connect to the server
         var host_string = location.host.indexOf(':') ? location.host.substr(0, location.host.indexOf(':')) : location.host ;
         this.connectToServer('ws://' + host_string + ':8889');
@@ -17,19 +20,19 @@ export class SocketService implements OnDestroy {
 
     register(addon: Addon): void {
         var index = this.addons.push(addon);
-        this.socket.send(JSON.stringify({
+        this.sendMessage({
             category: 'system',
             action: 'register',
             data: addon.category
-        }));
+        });
     }
 
     unregister(addonToRemove: Addon): void {
-        this.socket.send(JSON.stringify({
+        this.sendMessage({
             category: 'system',
             action: 'unregister',
             data: addonToRemove.category
-        }));
+        });
         this.addons.forEach((addon, index) => {
             if(addonToRemove == addon) {
                 this.addons.splice(index, 1);
@@ -38,7 +41,24 @@ export class SocketService implements OnDestroy {
     }
 
     sendMessage(message: SocketMessage): void {
-        this.socket.send(JSON.stringify(message));
+        var self = this;
+        if(this.socket.readyState != WebSocket.OPEN) {
+            // enqueue message so it can be sent later, when the socket is open
+            this.pending_messages.push(message);
+            // set a timer to clear the message queue in half a second
+            setTimeout(() => { self.clearPendingMessageQueue(); }, 500);
+        } else {
+            this.socket.send(JSON.stringify(message));
+        }
+    }
+
+    clearPendingMessageQueue() {
+        // only clear the queue if there are messages to send and the socket is ready
+        if(this.pending_messages.length > 0 && this.socket.readyState == WebSocket.OPEN) {
+            this.pending_messages.forEach((message) => {
+                this.socket.send(JSON.stringify(message));
+            });
+        }
     }
 
     // close socket when the service is destroyed

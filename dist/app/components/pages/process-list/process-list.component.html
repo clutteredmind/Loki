@@ -1,35 +1,33 @@
-<div class="container-fluid">
-    <error-display [errors]="errors"></error-display>
-    <div class="panel panel-primary">
-        <div class="panel-heading">
-            <h3 class="panel-title pull-left">Process List</h3>
-            <a class="btn btn-default pull-right" role="button" (click)="getProcessList()">Get Processes</a>
-            <div class="clearfix"></div>
-        </div>
-        <div class="panel-body">
-            <div *ngIf="processes != undefined && processes.length > 0">
-                <div class="table-responsive">
-                    <table class="table table-condensed table-hover">
-                        <thead>
-                            <tr>
-                                <th>Process Name</th>
-                                <th>Process ID</th>
-                                <th>Thread Count</th>
-                                <th>Parent Process ID</th>
-                                <th>Priority Base</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr *ngFor="let process of processes">
-                                <td>{{process.processName}}</td>
-                                <td>{{process.processProcessId}}</td>
-                                <td>{{process.processThreadCount}}</td>
-                                <td>{{process.processParentProcessId}}</td>
-                                <td>{{process.processPriorityBase}}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+<error-display [errors]="errors"></error-display>
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <h3 class="panel-title pull-left">Process List</h3>
+        <a class="btn btn-default pull-right" role="button" (click)="getProcessList()">Get Processes</a>
+        <div class="clearfix"></div>
+    </div>
+    <div class="panel-body">
+        <div *ngIf="processes != undefined && processes.length > 0">
+            <div class="table-responsive">
+                <table class="table table-condensed table-hover">
+                    <thead>
+                        <tr>
+                            <th>Process Name</th>
+                            <th>Process ID</th>
+                            <th>Thread Count</th>
+                            <th>Parent Process ID</th>
+                            <th>Priority Base</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let process of processes">
+                            <td>{{process.processName}}</td>
+                            <td>{{process.processProcessId}}</td>
+                            <td>{{process.processThreadCount}}</td>
+                            <td>{{process.processParentProcessId}}</td>
+                            <td>{{process.processPriorityBase}}</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>

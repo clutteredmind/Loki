@@ -14,7 +14,7 @@ module.exports.handle_message = (addon, message) => {
             return addon.getModuleInfo();
             break;
         default:
-            return { error: 'No handler for ' + message.action };
+            throw 'No handler for ' + message.action;
             break;
     }
 };

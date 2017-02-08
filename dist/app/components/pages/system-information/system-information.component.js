@@ -17,7 +17,6 @@ var SystemInformationComponent = (function () {
         this.memoryInfo = {};
         this.cpuInfo = {};
         this.errors = new Array();
-        socketService.register(this);
     }
     SystemInformationComponent.prototype.processMessage = function (message) {
         switch (message.action) {
@@ -47,6 +46,7 @@ var SystemInformationComponent = (function () {
         });
     };
     SystemInformationComponent.prototype.ngOnInit = function () {
+        this.socketService.register(this);
         this.socketService.sendMessage({
             category: 'system-information',
             action: 'getMemoryInfo',

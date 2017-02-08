@@ -18,7 +18,6 @@ export class SystemInformationComponent implements OnInit, OnDestroy, Addon {
 
     constructor(private socketService: SocketService) {
         this.errors = new Array<string>();
-        socketService.register(this);
     }
 
     processMessage(message: SocketMessage): void {
@@ -52,6 +51,7 @@ export class SystemInformationComponent implements OnInit, OnDestroy, Addon {
     }
 
     ngOnInit() {
+        this.socketService.register(this);
         this.socketService.sendMessage({
             category: 'system-information',
             action: 'getMemoryInfo',

@@ -1,33 +1,31 @@
-<div class="container-fluid">
-    <error-display [errors]="errors"></error-display>
-    <div class="panel panel-primary">
-        <div class="panel-heading">
-            <h3 class="panel-title pull-left">Device List</h3>
-            <a class="btn btn-default pull-right" role="button" (click)="getDeviceList()">Get Devices</a>
-            <div class="clearfix"></div>
-        </div>
-        <div class="panel-body">
-            <div *ngIf="devices != undefined && devices.length > 0">
-                <div class="table-responsive">
-                    <table class="table table-condensed table-hover">
-                        <thead>
-                            <tr>
-                                <th>Class Name</th>
-                                <th>Instance ID</th>
-                                <th>Friendly Name</th>
-                                <th>Hardware ID</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr *ngFor="let device of devices">
-                                <td>{{device.className}}</td>
-                                <td>{{device.deviceInstanceId}}</td>
-                                <td>{{device.friendlyName}}</td>
-                                <td>{{device.hardwareId}}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+<error-display [errors]="errors"></error-display>
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <h3 class="panel-title pull-left">Device List</h3>
+        <a class="btn btn-default pull-right" role="button" (click)="getDeviceList()">Get Devices</a>
+        <div class="clearfix"></div>
+    </div>
+    <div class="panel-body">
+        <div *ngIf="devices != undefined && devices.length > 0">
+            <div class="table-responsive">
+                <table class="table table-condensed table-hover">
+                    <thead>
+                        <tr>
+                            <th>Class Name</th>
+                            <th>Instance ID</th>
+                            <th>Friendly Name</th>
+                            <th>Hardware ID</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let device of devices">
+                            <td>{{device.className}}</td>
+                            <td>{{device.deviceInstanceId}}</td>
+                            <td>{{device.friendlyName}}</td>
+                            <td>{{device.hardwareId}}</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
