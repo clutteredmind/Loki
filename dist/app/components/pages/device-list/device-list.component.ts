@@ -42,11 +42,7 @@ export class DeviceListComponent implements OnInit, OnDestroy, Addon {
     }
 
     ngOnInit() {
-        this.socketService.sendMessage({
-            category: 'device-list',
-            action: 'getDevices',
-            data: undefined
-        });
+        this.getDeviceList();
     }
 
     ngOnDestroy() {

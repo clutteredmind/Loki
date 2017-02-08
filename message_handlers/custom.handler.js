@@ -4,7 +4,7 @@ var uuid = require('uuid/v1');
 
 var function_map = new Map();
 
-function_map.set('captureScreen', (addons, paremeters) => {
+function_map.set('captureScreen', (addons, parameters) => {
     // using UUID here to give the image a basically-random name
     var image_name = uuid() + '.jpg';
     var image_file_folder = './dist/images';
@@ -30,7 +30,12 @@ function_map.set('captureScreen', (addons, paremeters) => {
 });
 
 function_map.set('getScreenshotList', (addons, parameters) => {
-    return { image_list: fs.readdirSync('./dist/images') }
+    return { image_list: fs.readdirSync('./dist/images') };
+});
+
+function_map.set('getProcessModules', (addons, parameters) => {
+    // TODO: implement this
+    throw new Error('Getting modules for process ' + parameters[0] + ' not implemented yet');
 });
 
 module.exports = function_map;

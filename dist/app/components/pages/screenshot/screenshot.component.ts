@@ -33,17 +33,21 @@ export class ScreenshotComponent implements OnInit, OnDestroy, Addon {
         });
     }
 
+    getScreenshotList(): void {
+        this.socketService.sendMessage({
+            category: 'screenshot',
+            action: 'getScreenshotList',
+            data: undefined
+        });
+    }
+
     processMessage(message: SocketMessage): void {
         switch(message.action) {
             case 'captureScreen':
                 this.image_name = message.data.image_name;
                 this.screenshot_loading = false;
                 // refresh screenshot list
-                this.socketService.sendMessage({
-                    category: 'screenshot',
-                    action: 'getScreenshotList',
-                    data: undefined
-                });
+                this.getScreenshotList();
                 break;
             case 'getScreenshotList':
                 if(message.data) {
@@ -58,11 +62,7 @@ export class ScreenshotComponent implements OnInit, OnDestroy, Addon {
 
     ngOnInit() {
         // query for a list of existing screenshots on startup
-        this.socketService.sendMessage({
-            category: 'screenshot',
-            action: 'getScreenshotList',
-            data: undefined
-        });
+        this.getScreenshotList();
     }
 
     ngOnDestroy() {

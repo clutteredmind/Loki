@@ -86,28 +86,43 @@ socket_server.on('connection', (socket) => {
                     break;
             }
         } else {
-            // see if the function can be called
             var handled = false;
             // check to see if there is a custom handler for this action
             var func = custom_handler_map.get(message_object.action);
             if(func) {
-                socket.send(JSON.stringify({
-                    category: message_object.category,
-                    action: message_object.action,
-                    data: func(addons, message_object.parameters)
-                }),
-                (error) => {
-                    if(error) {
-                        console.log(colors.red('Unable to send socket message.'));
-                        console.log(error);
-                    }
-                });
+                try {
+                    socket.send(JSON.stringify({
+                        category: message_object.category,
+                        action: message_object.action,
+                        data: func(addons, message_object.parameters)
+                    }),
+                    (error) => {
+                        if(error) {
+                            console.log(colors.red('Unable to send socket message.'));
+                            console.log(error);
+                        }
+                    });
+                } catch (error) {
+                    socket.send(JSON.stringify({
+                        category: message_object.category,
+                        action: 'error',
+                        data: error.message
+                    }),
+                    (error) => {
+                        if(error) {
+                            console.log(colors.red('Unable to send socket message.'));
+                            console.log(error);
+                        }
+                    });
+                }
+                // there was a function, so this was handled, whether or not it failed
                 handled = true;
             }
-            addons.forEach((addon) => {
-                for(var key in addon) {
-                    if(key == message_object.action) {
-                        if(!handled) {
+            // look for a default handler
+            if(!handled) {
+                addons.forEach((addon) => {
+                    for(var key in addon) {
+                        if(!handled && key == message_object.action) {
                             socket.send(JSON.stringify({
                                 category: message_object.category,
                                 action: message_object.action,
@@ -122,8 +137,9 @@ socket_server.on('connection', (socket) => {
                             handled = true;
                         }
                     }
-                }
-            });
+                });
+            }
+            // if it's still unhandled, there was a problem
             if(!handled) {
                 socket.send(JSON.stringify({
                     category: message_object.category,

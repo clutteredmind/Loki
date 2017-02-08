@@ -21,7 +21,7 @@
                     <tbody>
                         <tr *ngFor="let process of processes">
                             <td>{{process.processName}}</td>
-                            <td>{{process.processProcessId}}</td>
+                            <td><a class="get-modules-link" (click)="getProcessModules(process.processProcessId)">{{process.processProcessId}}</a></td>
                             <td>{{process.processThreadCount}}</td>
                             <td>{{process.processParentProcessId}}</td>
                             <td>{{process.processPriorityBase}}</td>

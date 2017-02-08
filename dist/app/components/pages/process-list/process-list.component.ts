@@ -9,7 +9,8 @@ import { SocketService }                from '../../../services/socket.service';
 @Component({
     moduleId: module.id,
     selector: 'process-list',
-    templateUrl: './process-list.component.html'
+    templateUrl: './process-list.component.html',
+    styles: ['.get-modules-link { cursor: pointer; }']
 })
 export class ProcessListComponent implements OnInit, OnDestroy, Addon {
     category = 'process-list';
@@ -30,6 +31,16 @@ export class ProcessListComponent implements OnInit, OnDestroy, Addon {
         });
     }
 
+    getProcessModules(processId: number): void {
+        console.log('process id: ' + processId);
+        this.socketService.sendMessage({
+            category: 'process-list',
+            action: 'getProcessModules',
+            data: undefined,
+            parameters: [processId]
+        });
+    }
+
     processMessage(message: SocketMessage): void {
         switch(message.action) {
             case 'getProcesses':
@@ -42,11 +53,7 @@ export class ProcessListComponent implements OnInit, OnDestroy, Addon {
     }
 
     ngOnInit() {
-        this.socketService.sendMessage({
-            category: 'process-list',
-            action: 'getProcesses',
-            data: undefined
-        });
+        this.getProcessList();
     }
 
     ngOnDestroy() {
