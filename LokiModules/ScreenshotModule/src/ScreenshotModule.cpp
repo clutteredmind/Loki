@@ -27,7 +27,7 @@ namespace Loki
    // module metadata
    const std::string MODULE_NAME = "ScreenshotModule";
    const std::string MODULE_DISPLAY_NAME = "Screenshot";
-   const int MODULE_VERSION [3] {1 /*major*/, 0 /*minor*/, 0 /*patch*/};
+   const int MODULE_VERSION[3]{ 1 /*major*/, 0 /*minor*/, 0 /*patch*/ };
    const std::string MODULE_DESCRIPTION = "Grabs a screenshot of the display via the Windows API.";
 
    // Initialization function used by Node to set up this module.
@@ -39,7 +39,7 @@ namespace Loki
       descriptor.SetVersion (LokiModuleDescriptor::GetVersionStringFromArray (MODULE_VERSION));
       descriptor.SetDescription (MODULE_DESCRIPTION);
       // register this class's exported functions for the framework
-      descriptor.AddFunction ("captureScreen", CaptureScreen, "Takes a screenshot via the Windows API.", {LOKI_PARAMETER (ParameterType::FUNCTION, "callback")});
+      descriptor.AddFunction ("captureScreen", CaptureScreen, "Takes a screenshot via the Windows API.", { LOKI_PARAMETER (ParameterType::FUNCTION, "callback") });
       // Register module with Node
       Register (target);
    }
@@ -82,10 +82,10 @@ namespace Loki
 
             // Assemble the argument array for the callback
             const unsigned argc = 1;
-            Local<Value> argv [argc] = {screen_data};
+            Local<Value> argv[argc] = { screen_data };
 
             // Get the callback
-            Local<Function> callback = Local <Function>::Cast (args [0]);
+            Local<Function> callback = Local <Function>::Cast (args[0]);
             // Call it
             callback->Call (isolate->GetCurrentContext ()->Global (), argc, argv);
          }
@@ -161,7 +161,7 @@ namespace Loki
          }
 
          // Reserve memory for bitmap info (BITMAPINFOHEADER + largest possible palette):
-         bitmap_info = reinterpret_cast<LPBITMAPINFO> (new char [sizeof (BITMAPINFOHEADER) + 256 * sizeof (RGBQUAD)]);
+         bitmap_info = reinterpret_cast<LPBITMAPINFO> (new char[sizeof (BITMAPINFOHEADER) + 256 * sizeof (RGBQUAD)]);
          if (bitmap_info == NULL)
          {
             throw std::exception ("captureScreen: Failed to allocate memory for bitmap");
@@ -181,7 +181,7 @@ namespace Loki
          raw_screen_buffer.resize (screen_width * screen_height * 4); // Width * Pixels * 4 bytes per pixel, RGB + alpha
                                                                      // Now that we have all of the bitmap's information, we pass a pointer to the beginning of
                                                                      // raw_screen_buffer for GetDIBits to fill it in with bitmap data
-         if (!GetDIBits (compatible_device_context, bitmap_handle, 0, screen_height, &raw_screen_buffer [0], bitmap_info, DIB_RGB_COLORS))
+         if (!GetDIBits (compatible_device_context, bitmap_handle, 0, screen_height, &raw_screen_buffer[0], bitmap_info, DIB_RGB_COLORS))
          {
             throw std::exception ("captureScreen: Unable to copy screen capture bitmap");
          }
@@ -189,11 +189,11 @@ namespace Loki
          // calculate the size that the image buffers need to be
          int buffer_size = screen_width * screen_height * 3;
          // image_data needs to be big enough to hold all the bitmap data
-         image_data = new uint8_t [buffer_size];
+         image_data = new uint8_t[buffer_size];
          // image_data_compressed only needs to be big enough for the compressed version of the image,
          // but we can't know how big that will be until after compression has been performed.
          // So we're allocating more space than will be needed in the end.
-         image_data_compressed = new uint8_t [buffer_size];
+         image_data_compressed = new uint8_t[buffer_size];
          // The final screen buffer. This will omit the alpha channel, so we allocate a bit less space
          std::vector<uint8_t> final_screen_buffer;
          final_screen_buffer.resize (buffer_size);
@@ -204,9 +204,9 @@ namespace Loki
             {
                int raw_pixel = (line * screen_width) + column;
                int final_pixel = ((screen_height - line - 1) * screen_width) + column;
-               image_data [final_pixel * 3 + 2] = final_screen_buffer [final_pixel * 3] = raw_screen_buffer [raw_pixel * 4];
-               image_data [final_pixel * 3 + 1] = final_screen_buffer [final_pixel * 3 + 1] = raw_screen_buffer [raw_pixel * 4 + 1];
-               image_data [final_pixel * 3] = final_screen_buffer [final_pixel * 3 + 2] = raw_screen_buffer [raw_pixel * 4 + 2];
+               image_data[final_pixel * 3 + 2] = final_screen_buffer[final_pixel * 3] = raw_screen_buffer[raw_pixel * 4];
+               image_data[final_pixel * 3 + 1] = final_screen_buffer[final_pixel * 3 + 1] = raw_screen_buffer[raw_pixel * 4 + 1];
+               image_data[final_pixel * 3] = final_screen_buffer[final_pixel * 3 + 2] = raw_screen_buffer[raw_pixel * 4 + 2];
             }
          }
          // compress_image_to_jpeg_file_in_memory will reset buffer_size to the size of the compressed data if it is successful

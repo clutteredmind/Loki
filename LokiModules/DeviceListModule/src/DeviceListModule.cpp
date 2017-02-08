@@ -31,7 +31,7 @@ namespace Loki
    // module metadata
    const std::string MODULE_NAME = "DeviceListModule";
    const std::string MODULE_DISPLAY_NAME = "Device List";
-   const int MODULE_VERSION [3] {1 /*major*/, 0 /*minor*/, 0 /*patch*/};
+   const int MODULE_VERSION[3]{ 1 /*major*/, 0 /*minor*/, 0 /*patch*/ };
    const std::string MODULE_DESCRIPTION = "Retrieves a list of installed devices via the Windows API";
 
    // Pre-initialization.
@@ -129,7 +129,7 @@ namespace Loki
                }
                else
                {
-                  TCHAR device_instance_id [MAX_DEVICE_ID_LEN];
+                  TCHAR device_instance_id[MAX_DEVICE_ID_LEN];
                   // reset device_info_data
                   ZeroMemory (&device_info_data, sizeof (SP_DEVINFO_DATA));
                   device_info_data.cbSize = sizeof (SP_DEVINFO_DATA);
@@ -159,7 +159,7 @@ namespace Loki
                         SetupDiGetDeviceRegistryProperty (device_info, &device_info_data, SPDRP_FRIENDLYNAME, NULL, NULL, 0, &property_size);
                         property_size = property_size > 1 ? property_size : 1;
                         // set buffer size and zero it out
-                        buffer = new BYTE [property_size];
+                        buffer = new BYTE[property_size];
                         ZeroMemory (buffer, property_size);
                         // get friendly name
                         SetupDiGetDeviceRegistryProperty (device_info, &device_info_data, SPDRP_FRIENDLYNAME, NULL, buffer, property_size, NULL);
@@ -167,13 +167,13 @@ namespace Loki
                         std::wstring friendly_name (reinterpret_cast<wchar_t*>(buffer));
                         device->Set (String::NewFromUtf8 (isolate, "friendlyName"), String::NewFromUtf8 (isolate, std::string (friendly_name.begin (), friendly_name.end ()).c_str ()));
                         // release buffer memory
-                        delete [] buffer;
+                        delete[] buffer;
 
                         // get class size
                         SetupDiGetDeviceRegistryProperty (device_info, &device_info_data, SPDRP_CLASS, NULL, NULL, 0, &property_size);
                         property_size = property_size > 1 ? property_size : 1;
                         // set buffer size and zero it out
-                        buffer = new BYTE [property_size];
+                        buffer = new BYTE[property_size];
                         ZeroMemory (buffer, property_size);
                         // get class
                         SetupDiGetDeviceRegistryProperty (device_info, &device_info_data, SPDRP_CLASS, NULL, buffer, property_size, NULL);
@@ -181,13 +181,13 @@ namespace Loki
                         std::wstring class_name (reinterpret_cast<wchar_t*>(buffer));
                         device->Set (String::NewFromUtf8 (isolate, "className"), String::NewFromUtf8 (isolate, std::string (class_name.begin (), class_name.end ()).c_str ()));
                         // release buffer memory
-                        delete [] buffer;
+                        delete[] buffer;
 
                         // get hardware id size
                         SetupDiGetDeviceRegistryProperty (device_info, &device_info_data, SPDRP_HARDWAREID, NULL, NULL, 0, &property_size);
                         property_size = property_size > 1 ? property_size : 1;
                         // set buffer size and zero it out
-                        buffer = new BYTE [property_size];
+                        buffer = new BYTE[property_size];
                         ZeroMemory (buffer, property_size);
                         // get hardware id
                         SetupDiGetDeviceRegistryProperty (device_info, &device_info_data, SPDRP_HARDWAREID, NULL, buffer, property_size, NULL);
@@ -195,7 +195,7 @@ namespace Loki
                         std::wstring hardware_id (reinterpret_cast<wchar_t*>(buffer));
                         device->Set (String::NewFromUtf8 (isolate, "hardwareId"), String::NewFromUtf8 (isolate, std::string (hardware_id.begin (), hardware_id.end ()).c_str ()));
                         // release buffer memory
-                        delete [] buffer;
+                        delete[] buffer;
 
                         // save device
                         devices->Set (Integer::New (isolate, counter), device);

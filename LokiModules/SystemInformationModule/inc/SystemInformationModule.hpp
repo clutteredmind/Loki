@@ -10,13 +10,13 @@ namespace Loki
 {
    class SystemInformationModule : public LokiModule<SystemInformationModule>
    {
-      public:
+   public:
       // Constructor
-      SystemInformationModule() = default;
+      SystemInformationModule () = default;
       // destructor
-      virtual ~SystemInformationModule() override = default;
+      virtual ~SystemInformationModule () override = default;
       // Initialization function used by Node to set up this module.
-      static void Initialize(v8::Handle <v8::Object> target);
+      static void Initialize (v8::Handle <v8::Object> target);
       // Gets memory information. Exposed to JavaScript.
       static void GetMemoryInformation (const v8::FunctionCallbackInfo<v8::Value>& args);
       // Gets CPU information. Exposed to JavaScript.

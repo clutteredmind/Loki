@@ -35,7 +35,15 @@ function_map.set('getScreenshotList', (addons, parameters) => {
 
 function_map.set('getProcessModules', (addons, parameters) => {
     // TODO: implement this
-    throw new Error('Getting modules for process ' + parameters[0] + ' not implemented yet');
+    var result;
+    addons.forEach((addon) => {
+        for(var key in addon) {
+            if(key == 'getProcessModules') {
+                result = addon.getProcessModules(parameters[0]);
+            }
+        }
+    });
+    return result;
 });
 
 module.exports = function_map;

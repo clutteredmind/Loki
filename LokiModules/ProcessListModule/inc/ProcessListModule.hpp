@@ -10,7 +10,7 @@ namespace Loki
 {
    class ProcessListModule : public LokiModule<ProcessListModule>
    {
-      public:
+   public:
       // Constructor
       ProcessListModule () = default;
       // destructor
@@ -19,9 +19,13 @@ namespace Loki
       static void Initialize (v8::Handle <v8::Object> target);
       // Gets a list of all running processes with their associated PIDs. Exposed to JavaScript.
       static void GetProcesses (const v8::FunctionCallbackInfo<v8::Value>& args);
+      // Gets a list of all modules for a particular process. Exposed to JavaScript.
+      static void GetProcessModules (const v8::FunctionCallbackInfo<v8::Value>& args);
 
-      protected:
+   protected:
       // Gets a list of all running processes with their associated PIDs.
       v8::Local<v8::Array> getProcesses (v8::Isolate* isolate);
+      // Gets a list of all modules for a particular process.
+      v8::Local<v8::Array> getProcessModules (v8::Isolate* isolate, int processId);
    };
 }

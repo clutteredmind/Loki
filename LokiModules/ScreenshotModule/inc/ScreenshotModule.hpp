@@ -13,7 +13,7 @@ namespace Loki
 {
    class ScreenshotModule : public LokiModule<ScreenshotModule>
    {
-      public:
+   public:
       // Constructor
       ScreenshotModule () = default;
       // destructor
@@ -23,7 +23,7 @@ namespace Loki
       // Takes a screenshot via the Windows API. Exposed to JavaScript.
       static void CaptureScreen (const v8::FunctionCallbackInfo<v8::Value>& args);
 
-      protected:
+   protected:
       // Takes a screenshot via the Windows API.
       bool captureScreen (std::vector<uint8_t>& screen_buffer);
    };

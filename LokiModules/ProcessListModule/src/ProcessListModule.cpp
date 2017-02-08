@@ -26,7 +26,7 @@ namespace Loki
    // module metadata
    const std::string MODULE_NAME = "ProcessListModule";
    const std::string MODULE_DISPLAY_NAME = "Process List";
-   const int MODULE_VERSION [3] {1 /*major*/, 0 /*minor*/, 0 /*patch*/};
+   const int MODULE_VERSION[3]{ 1 /*major*/, 0 /*minor*/, 0 /*patch*/ };
    const std::string MODULE_DESCRIPTION = "Retrieves a list of running processes via the Windows API";
 
    // Pre-initialization.
@@ -39,6 +39,7 @@ namespace Loki
       descriptor.SetDescription (MODULE_DESCRIPTION);
       // register this class's exported functions for the framework
       descriptor.AddFunction ("getProcesses", GetProcesses, "Gets a list of all running processes.", NO_PARAMETERS, RETURNS_AN OBJECT);
+      descriptor.AddFunction ("getProcessModules", GetProcessModules, "Gets a list of modules loaded by a particular process.", { LOKI_PARAMETER (ParameterType::NUMBER, "processId") }, RETURNS_AN OBJECT);
       // Register module with Node
       Register (target);
    }
@@ -57,6 +58,28 @@ namespace Loki
          auto process_list_module = ObjectWrap::Unwrap<ProcessListModule> (args.Holder ());
          // return process list to caller
          args.GetReturnValue ().Set (process_list_module->getProcesses (isolate));
+      }
+      else
+      {
+         // if parameter validation failed for whatever reason, report the error
+         isolate->ThrowException (Exception::Error (String::NewFromUtf8 (isolate, error_string.c_str ())));
+      }
+   }
+
+   // Gets a list of all modules for a particular process. Exposed to JavaScript.
+   void ProcessListModule::GetProcessModules (const FunctionCallbackInfo<Value>& args)
+   {
+      auto isolate = args.GetIsolate ();
+      HandleScope scope (isolate);
+
+      // validate parameters
+      std::string error_string;
+      if (descriptor.ValidateParameters (GetProcessModules, args, error_string))
+      {
+         // unwrap object so we can call the correct function on the instance
+         auto process_list_module = ObjectWrap::Unwrap<ProcessListModule> (args.Holder ());
+         // return module list to caller
+         args.GetReturnValue ().Set (process_list_module->getProcessModules (isolate, args[0]->Uint32Value ()));
       }
       else
       {
@@ -135,5 +158,21 @@ namespace Loki
 
       // return processes array, which may be empty if there were failures above
       return processes;
+   }
+
+   // Gets a list of all modules for a particular process.
+   Local<Array> ProcessListModule::getProcessModules (Isolate* isolate, int processId)
+   {
+      HandleScope scope (isolate);
+
+      // the array of processes to return to JavaScript
+      auto modules = Array::New (isolate);
+
+      // TODO: implement this
+      std::string error_message = "getProcessModules has not been implemented yet. Process ID was: " + std::to_string (processId);
+      isolate->ThrowException (Exception::Error (String::NewFromUtf8 (isolate, error_message.c_str ())));
+
+      // return list of modules
+      return modules;
    }
 }
