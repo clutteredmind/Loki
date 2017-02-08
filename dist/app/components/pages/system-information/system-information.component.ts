@@ -52,16 +52,8 @@ export class SystemInformationComponent implements OnInit, OnDestroy, Addon {
 
     ngOnInit() {
         this.socketService.register(this);
-        this.socketService.sendMessage({
-            category: 'system-information',
-            action: 'getMemoryInfo',
-            data: undefined
-        });
-        this.socketService.sendMessage({
-            category: 'system-information',
-            action: 'getCpuInfo',
-            data: undefined
-        });
+        this.getMemoryInfo();
+        this.getCpuInfo();
     }
 
     ngOnDestroy() {

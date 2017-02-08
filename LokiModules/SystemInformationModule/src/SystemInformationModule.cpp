@@ -123,7 +123,9 @@ namespace Loki
       // the array of devices to return to JavaScript
       auto cpuInfo = Object::New (isolate);
 
+      cpuInfo->Set (String::NewFromUtf8 (isolate, "pageSize"), Integer::New (isolate, info.dwPageSize));
       cpuInfo->Set (String::NewFromUtf8 (isolate, "numberOfProcessors"), Integer::New (isolate, info.dwNumberOfProcessors));
+
       std::string cpuArchitecture;
       switch (info.wProcessorArchitecture)
       {
@@ -145,8 +147,6 @@ namespace Loki
       }
 
       cpuInfo->Set (String::NewFromUtf8 (isolate, "processorArchitecture"), String::NewFromUtf8 (isolate, cpuArchitecture.c_str ()));
-
-      // TODO: grab more information from the SYSTEM_INFO struct
 
       return cpuInfo;
    }
