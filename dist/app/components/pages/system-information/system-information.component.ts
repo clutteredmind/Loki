@@ -22,10 +22,10 @@ export class SystemInformationComponent implements OnInit, OnDestroy, Addon {
 
     processMessage(message: SocketMessage): void {
         switch(message.action) {
-            case 'getMemoryInfo':
+            case 'getMemoryInformation':
                 this.memoryInfo = message.data;
                 break;
-            case 'getCpuInfo':
+            case 'getCpuInformation':
                 this.cpuInfo = message.data;
                 break;
             case 'error':
@@ -37,7 +37,7 @@ export class SystemInformationComponent implements OnInit, OnDestroy, Addon {
     getMemoryInfo() {
         this.socketService.sendMessage({
             category: 'system-information',
-            action: 'getMemoryInfo',
+            action: 'getMemoryInformation',
             data: undefined
         });
     }
@@ -45,7 +45,7 @@ export class SystemInformationComponent implements OnInit, OnDestroy, Addon {
     getCpuInfo() {
         this.socketService.sendMessage({
             category: 'system-information',
-            action: 'getCpuInfo',
+            action: 'getCpuInformation',
             data: undefined
         });
     }

@@ -56,27 +56,16 @@ try {
 // get a list of modules in the specified directory
 var module_files = finder.from(config.module_file_path).findFiles('*.node');
 
-if(module_files.length > 0) {
-    // for each module, look for a corresponding handler
-    module_files.forEach((module_file) => {
-        handlers.forEach((handler) => {
-            if(handler.addon == undefined && module_file.indexOf(handler.module_name) >= 0) {
-                try {
-                    var module = require(module_file);
-                    handler.addon = new module[handler.module_name]();
-                } catch (error) {
-                    console.log(colors.red('Unable to load module for ' + handler.module_name));
-                    console.log(error);
-                }
-            } else if(handler.module_name == undefined) {
-                // set the addon to an empty object because this module does not require one
-                handler.addon = {};
-            }
-        });
-    });
-} else {
-    console.log(colors.red('No module files found!'));
-}
+var addons = [];
+module_files.forEach((module_file) => {
+    var module = require(module_file);
+    for(var key in module) {
+        addons.push(new module[key]());
+    }
+});
+
+// bring in custom handler functions
+var custom_handler_map = require('./message_handlers/custom.handler.js');
 
 // create and open the websocket server
 var WebSocketServer = require('ws').Server
@@ -92,60 +81,77 @@ socket_server.on('connection', (socket) => {
             // register and unregister messages will come in here and can be used for user tracking
             switch(message_object.action) {
                 case 'register':
-                break;
+                    break;
                 case 'unregister':
-                break;
+                    break;
             }
         } else {
-            // look for a handler
-            handlers.forEach((handler) => {
-                if(handler.message_category == message_object.category) {
-                    if(handler.addon != undefined) {
-                        try {
-                            var result = handler.handle_message(handler.addon, message_object);
-                            socket.send(JSON.stringify({
-                                category: message_object.category,
-                                action: message_object.action,
-                                data: result
-                            }),
-                            (error) => {
-                                if(error) {
-                                    console.log(colors.red('Unable to send socket message.'));
-                                    console.log(error);
-                                }
-                            });
-                        } catch(error) {
-                            var error_message = 'Failure in the ' + message_object.category + ' module\'s process_message method.'
-                            // attempt to send the error to anyone listening
-                            socket.send(JSON.stringify({
-                                category: message_object.category,
-                                action: 'error',
-                                data: error_message
-                            }),
-                            (error) => {
-                                if(error) {
-                                    console.log(colors.red('Unable to send socket message.'));
-                                    console.log(error);
-                                }
-                            });
-                            console.log(colors.red(error_message));
-                            console.log(error);
-                        }
-                    } else {
-                        socket.send(JSON.stringify({
-                            category: message_object.category,
-                            action: 'error',
-                            data: 'Could not handle "' + message_object.category + '" message. Module not loaded.'
-                        }),
-                        (error) => {
-                            if(error) {
-                                console.log(colors.red('Unable to send socket message.'));
-                                console.log(error);
+            // see if the function can be called
+            var handled = false;
+            // check to see if there is a custom handler for this action
+            var func = custom_handler_map.get(message_object.action);
+            if(func) {
+                socket.send(JSON.stringify({
+                    category: message_object.category,
+                    action: message_object.action,
+                    data: func(addons)
+                }),
+                (error) => {
+                    if(error) {
+                        console.log(colors.red('Unable to send socket message.'));
+                        console.log(error);
+                    }
+                });
+                handled = true;
+            }
+            addons.forEach((addon) => {
+                for(var key in addon) {
+                    if(key == message_object.action) {
+                        if(!handled) {
+                            if(!message_object.parameters) {
+                                socket.send(JSON.stringify({
+                                    category: message_object.category,
+                                    action: message_object.action,
+                                    data: addon[message_object.action]()
+                                }),
+                                (error) => {
+                                    if(error) {
+                                        console.log(colors.red('Unable to send socket message.'));
+                                        console.log('The error was: ' + error);
+                                    }
+                                });
+                            } else {
+                                // TODO: I'm not totally sure this will work, and it needs to be tested
+                                socket.send(JSON.stringify({
+                                    category: message_object.category,
+                                    action: message_object.action,
+                                    data: addon[message_object.action](message_object.parameters)
+                                }),
+                                (error) => {
+                                    if(error) {
+                                        console.log(colors.red('Unable to send socket message.'));
+                                        console.log('The error was: ' + error);
+                                    }
+                                });
                             }
-                        });
+                            handled = true;
+                        }
                     }
                 }
             });
+            if(!handled) {
+                socket.send(JSON.stringify({
+                    category: message_object.category,
+                    action: 'error',
+                    data: 'No handler for ' + message_object.action
+                }),
+                (error) => {
+                    if(error) {
+                        console.log(colors.red('Unable to send socket message.'));
+                        console.log(error);
+                    }
+                });
+            }
         }
     });
 
