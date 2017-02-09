@@ -21,9 +21,10 @@ namespace Loki
    LokiModuleDescriptor SystemInformationModule::descriptor;
 
    // module metadata
-   const std::string module_name = "SystemInformationModule";
-   const int module_version[3]{ 1 /*major*/, 0 /*minor*/, 0 /*patch*/ };
-   const std::string module_description = "System Information Module";
+   const std::string MODULE_NAME = "SystemInformationModule";
+   const std::string MODULE_DISPLAY_NAME = "System Information";
+   const int MODULE_VERSION[3]{ 1 /*major*/, 0 /*minor*/, 0 /*patch*/ };
+   const std::string MODULE_DESCRIPTION = "System Information Module";
 
    // for converting bytes into kilobytes
    const int DIVISOR = 1024;
@@ -32,9 +33,7 @@ namespace Loki
    void SystemInformationModule::Initialize (Handle<Object> target)
    {
       // set module metadata
-      descriptor.SetName (module_name);
-      descriptor.SetVersion (LokiModuleDescriptor::GetVersionStringFromArray (module_version));
-      descriptor.SetDescription (module_description);
+      descriptor.SetMetadata (MODULE_NAME, MODULE_DISPLAY_NAME, LokiModuleDescriptor::GetVersionStringFromArray (MODULE_VERSION), MODULE_DESCRIPTION);
       // register this class's exported functions for the framework
       descriptor.AddFunction ("getMemoryInformation", GetMemoryInformation, "Queries Windows for memory information.", NO_PARAMETERS, RETURNS_AN OBJECT);
       descriptor.AddFunction ("getCpuInformation", GetCpuInformation, "Queries Windows for CPU information.", NO_PARAMETERS, RETURNS_AN OBJECT);

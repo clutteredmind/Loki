@@ -38,10 +38,7 @@ namespace Loki
    void DeviceListModule::Initialize (Handle<Object> target)
    {
       // set module metadata
-      descriptor.SetName (MODULE_NAME);
-      descriptor.SetDisplayName (MODULE_DISPLAY_NAME);
-      descriptor.SetVersion (LokiModuleDescriptor::GetVersionStringFromArray (MODULE_VERSION));
-      descriptor.SetDescription (MODULE_DESCRIPTION);
+      descriptor.SetMetadata (MODULE_NAME, MODULE_DISPLAY_NAME, LokiModuleDescriptor::GetVersionStringFromArray (MODULE_VERSION), MODULE_DESCRIPTION);
       // register this class's exported functions for the framework
       descriptor.AddFunction ("getDevices", GetDevices, "Gets a list of all installed devices.", NO_PARAMETERS, RETURNS_AN OBJECT);
       // Register module with Node

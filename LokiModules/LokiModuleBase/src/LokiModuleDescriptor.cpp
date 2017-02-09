@@ -20,9 +20,9 @@ namespace Loki
    }
 
    // Converts an array of integers to a version number string
-   std::string LokiModuleDescriptor::GetVersionStringFromArray (const int version_numbers [3])
+   std::string LokiModuleDescriptor::GetVersionStringFromArray (const int version_numbers[3])
    {
-      return (std::to_string (version_numbers [0]) + '.' + std::to_string (version_numbers [1]) + '.' + std::to_string (version_numbers [2]));
+      return (std::to_string (version_numbers[0]) + '.' + std::to_string (version_numbers[1]) + '.' + std::to_string (version_numbers[2]));
    }
 
    // Converts a ParameterType to its string representation
@@ -32,30 +32,30 @@ namespace Loki
 
       switch (parameter_type)
       {
-         case ParameterType::BOOLEAN:
-            type_as_string = "bool";
-            break;
-         case ParameterType::STRING:
-            type_as_string = "string";
-            break;
-         case ParameterType::NUMBER:
-            type_as_string = "number";
-            break;
-         case ParameterType::FUNCTION:
-            type_as_string = "function";
-            break;
-         case ParameterType::ARRAY:
-            type_as_string = "array";
-            break;
-         case ParameterType::OBJECT:
-            type_as_string = "object";
-            break;
-         case ParameterType::DATE:
-            type_as_string = "date";
-            break;
-         case ParameterType::BUFFER:
-            type_as_string = "buffer";
-            break;
+      case ParameterType::BOOLEAN:
+         type_as_string = "bool";
+         break;
+      case ParameterType::STRING:
+         type_as_string = "string";
+         break;
+      case ParameterType::NUMBER:
+         type_as_string = "number";
+         break;
+      case ParameterType::FUNCTION:
+         type_as_string = "function";
+         break;
+      case ParameterType::ARRAY:
+         type_as_string = "array";
+         break;
+      case ParameterType::OBJECT:
+         type_as_string = "object";
+         break;
+      case ParameterType::DATE:
+         type_as_string = "date";
+         break;
+      case ParameterType::BUFFER:
+         type_as_string = "buffer";
+         break;
       }
 
       return type_as_string;
@@ -85,12 +85,21 @@ namespace Loki
       this->description = description;
    }
 
+   // Setter for all module metadata
+   void LokiModuleDescriptor::SetMetadata (const std::string& name, const std::string& display_name, const std::string& version, const std::string& description)
+   {
+      SetName (name);
+      SetDisplayName (display_name);
+      SetVersion (version);
+      SetDescription (description);
+   }
+
    // Adds an exported function description
    bool LokiModuleDescriptor::AddFunction (const LokiFunction new_function)
    {
       bool result = false;
       // only add the function if it's not already in the list
-      auto iterator = std::find_if (functions.begin (), functions.end (), [&new_function] (const LokiFunction& function)->bool { return new_function.name.compare (function.name) == 0; });
+      auto iterator = std::find_if (functions.begin (), functions.end (), [&new_function](const LokiFunction& function)->bool { return new_function.name.compare (function.name) == 0; });
       if (iterator == functions.end ())
       {
          functions.push_back (new_function);
@@ -167,7 +176,7 @@ namespace Loki
       auto parameters_are_valid = true;
 
       // find the correct function
-      auto function_iterator = std::find_if (functions.begin (), functions.end (), [&callback] (const LokiFunction& function)->bool { return callback == function.callback; });
+      auto function_iterator = std::find_if (functions.begin (), functions.end (), [&callback](const LokiFunction& function)->bool { return callback == function.callback; });
       if (function_iterator == functions.end ())
       {
          error_message = "Could not validate parameters. Callback not found.";
@@ -198,69 +207,69 @@ namespace Loki
                std::string parameter_article = "";
                switch (expected_parameter_type)
                {
-                  case ParameterType::UNDEFINED:
-                     if (!args [arg_index]->IsUndefined ())
-                     {
-                        parameter_article = "";
-                        parameters_are_valid = false;
-                     }
-                     break;
-                  case ParameterType::BOOLEAN:
-                     if (!args [arg_index]->IsBoolean ())
-                     {
-                        parameter_article = "a ";
-                        parameters_are_valid = false;
-                     }
-                     break;
-                  case ParameterType::STRING:
-                     if (!args [arg_index]->IsString ())
-                     {
-                        parameter_article = "a ";
-                        parameters_are_valid = false;
-                     }
-                     break;
-                  case ParameterType::NUMBER:
-                     if (!args [arg_index]->IsNumber ())
-                     {
-                        parameter_article = "a ";
-                        parameters_are_valid = false;
-                     }
-                     break;
-                  case ParameterType::FUNCTION:
-                     if (!args [arg_index]->IsFunction ())
-                     {
-                        parameter_article = "a ";
-                        parameters_are_valid = false;
-                     }
-                     break;
-                  case ParameterType::ARRAY:
-                     if (!args [arg_index]->IsArray ())
-                     {
-                        parameter_article = "an ";
-                        parameters_are_valid = false;
-                     }
-                     break;
-                  case ParameterType::OBJECT:
-                     if (!args [arg_index]->IsObject ())
-                     {
-                        parameter_article = "an ";
-                        parameters_are_valid = false;
-                     }
-                     break;
-                  case ParameterType::DATE:
-                     if (!args [arg_index]->IsDate ())
-                     {
-                        parameter_article = "a ";
-                        parameters_are_valid = false;
-                     }
-                     break;
-                  case ParameterType::BUFFER:
-                     if (!args [arg_index]->IsArrayBuffer ())
-                     {
-                        parameter_article = "a ";
-                        parameters_are_valid = false;
-                     }
-                     break;
+               case ParameterType::UNDEFINED:
+                  if (!args[arg_index]->IsUndefined ())
+                  {
+                     parameter_article = "";
+                     parameters_are_valid = false;
+                  }
+                  break;
+               case ParameterType::BOOLEAN:
+                  if (!args[arg_index]->IsBoolean ())
+                  {
+                     parameter_article = "a ";
+                     parameters_are_valid = false;
+                  }
+                  break;
+               case ParameterType::STRING:
+                  if (!args[arg_index]->IsString ())
+                  {
+                     parameter_article = "a ";
+                     parameters_are_valid = false;
+                  }
+                  break;
+               case ParameterType::NUMBER:
+                  if (!args[arg_index]->IsNumber ())
+                  {
+                     parameter_article = "a ";
+                     parameters_are_valid = false;
+                  }
+                  break;
+               case ParameterType::FUNCTION:
+                  if (!args[arg_index]->IsFunction ())
+                  {
+                     parameter_article = "a ";
+                     parameters_are_valid = false;
+                  }
+                  break;
+               case ParameterType::ARRAY:
+                  if (!args[arg_index]->IsArray ())
+                  {
+                     parameter_article = "an ";
+                     parameters_are_valid = false;
+                  }
+                  break;
+               case ParameterType::OBJECT:
+                  if (!args[arg_index]->IsObject ())
+                  {
+                     parameter_article = "an ";
+                     parameters_are_valid = false;
+                  }
+                  break;
+               case ParameterType::DATE:
+                  if (!args[arg_index]->IsDate ())
+                  {
+                     parameter_article = "a ";
+                     parameters_are_valid = false;
+                  }
+                  break;
+               case ParameterType::BUFFER:
+                  if (!args[arg_index]->IsArrayBuffer ())
+                  {
+                     parameter_article = "a ";
+                     parameters_are_valid = false;
+                  }
+                  break;
                }
                if (!parameters_are_valid)
                {

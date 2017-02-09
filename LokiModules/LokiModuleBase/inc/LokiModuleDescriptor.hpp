@@ -65,13 +65,13 @@ namespace Loki
 
    class LokiModuleDescriptor
    {
-      public:
+   public:
       // Constructor
       LokiModuleDescriptor ();
       // Destructor
       ~LokiModuleDescriptor () = default;
       // Converts an array of integers to a version number string
-      static std::string GetVersionStringFromArray (const int version_numbers [3]);
+      static std::string GetVersionStringFromArray (const int version_numbers[3]);
       // Returns the string representation of a parameter type
       static std::string ConvertParameterTypeToString (const ParameterType parameter_type);
       // Setter for the module's name
@@ -82,6 +82,8 @@ namespace Loki
       void SetVersion (const std::string& version);
       // Setter for the module's description
       void SetDescription (const std::string& description);
+      // Setter for all module metadata
+      void SetMetadata (const std::string& name, const std::string& display_name, const std::string& version, const std::string& description);
       // Adds an exported function description
       bool AddFunction (const LokiFunction new_function);
       // Adds an exported function description
@@ -107,7 +109,7 @@ namespace Loki
       // Validates the type and number of parameters passed to a function
       bool ValidateParameters (const v8::FunctionCallback callback, const v8::FunctionCallbackInfo<v8::Value>& args, std::string& error_message);
 
-      private:
+   private:
       // The module's name
       std::string name;
       // The module's display name

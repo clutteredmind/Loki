@@ -34,10 +34,7 @@ namespace Loki
    void ScreenshotModule::Initialize (Handle<Object> target)
    {
       // set module metadata
-      descriptor.SetName (MODULE_NAME);
-      descriptor.SetDisplayName (MODULE_DISPLAY_NAME);
-      descriptor.SetVersion (LokiModuleDescriptor::GetVersionStringFromArray (MODULE_VERSION));
-      descriptor.SetDescription (MODULE_DESCRIPTION);
+      descriptor.SetMetadata (MODULE_NAME, MODULE_DISPLAY_NAME, LokiModuleDescriptor::GetVersionStringFromArray (MODULE_VERSION), MODULE_DESCRIPTION);
       // register this class's exported functions for the framework
       descriptor.AddFunction ("captureScreen", CaptureScreen, "Takes a screenshot via the Windows API.", { LOKI_PARAMETER (ParameterType::FUNCTION, "callback") });
       // Register module with Node

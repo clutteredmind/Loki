@@ -19,7 +19,7 @@ namespace Loki
    class LokiModule : public node::ObjectWrap,
       public LokiModuleBase
    {
-      public:
+   public:
       // Registers this module with Node
       static void Register (v8::Handle <v8::Object> target)
       {
@@ -61,7 +61,7 @@ namespace Loki
          {
             // invoked as a plain function 'Object(...)', turn into function call
             const int argc = 1;
-            v8::Local<v8::Value> argv [argc] = {args [0]};
+            v8::Local<v8::Value> argv[argc] = { args[0] };
             auto ctor = v8::Local<v8::Function>::New (isolate, constructor);
             args.GetReturnValue ().Set (ctor->NewInstance (argc, argv));
          }
@@ -89,7 +89,7 @@ namespace Loki
          }
       }
 
-      protected:
+   protected:
       // the v8 constructor
       static v8::Persistent<v8::Function> constructor;
       // This module's descriptor

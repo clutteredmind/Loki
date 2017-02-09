@@ -11,7 +11,7 @@ namespace Loki
 {
    class LokiModuleBase
    {
-      public:
+   public:
       // constructor
       LokiModuleBase ();
       // destructor
@@ -19,11 +19,11 @@ namespace Loki
       // Get the last error string
       bool GetLastErrorString (std::string& error_string);
 
-      protected:
+   protected:
       // Set the last error string
       bool SetLastErrorString (std::string& error_string);
 
-      private:
+   private:
       // The last error message
       std::string last_error_string;
    };

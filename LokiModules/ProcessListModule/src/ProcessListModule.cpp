@@ -36,10 +36,7 @@ namespace Loki
    void ProcessListModule::Initialize (Handle<Object> target)
    {
       // set module metadata
-      descriptor.SetName (MODULE_NAME);
-      descriptor.SetDisplayName (MODULE_DISPLAY_NAME);
-      descriptor.SetVersion (LokiModuleDescriptor::GetVersionStringFromArray (MODULE_VERSION));
-      descriptor.SetDescription (MODULE_DESCRIPTION);
+      descriptor.SetMetadata (MODULE_NAME, MODULE_DISPLAY_NAME, LokiModuleDescriptor::GetVersionStringFromArray (MODULE_VERSION), MODULE_DESCRIPTION);
       // register this class's exported functions for the framework
       descriptor.AddFunction ("getProcesses", GetProcesses, "Gets a list of all running processes.", NO_PARAMETERS, RETURNS_AN OBJECT);
       descriptor.AddFunction ("getProcessModules", GetProcessModules, "Gets a list of modules loaded by a particular process.", { LOKI_PARAMETER (ParameterType::NUMBER, "processId") }, RETURNS_AN OBJECT);
