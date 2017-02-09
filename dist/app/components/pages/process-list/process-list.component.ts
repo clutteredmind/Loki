@@ -32,7 +32,6 @@ export class ProcessListComponent implements OnInit, OnDestroy, Addon {
     }
 
     getProcessModules(processId: number): void {
-        console.log('process id: ' + processId);
         this.socketService.sendMessage({
             category: 'process-list',
             action: 'getProcessModules',
@@ -45,6 +44,9 @@ export class ProcessListComponent implements OnInit, OnDestroy, Addon {
         switch(message.action) {
             case 'getProcesses':
                 this.processes = message.data;
+                break;
+            case 'getProcessModules':
+                // do nothing with this message
                 break;
             case 'error':
                 this.errors.push(message.data);

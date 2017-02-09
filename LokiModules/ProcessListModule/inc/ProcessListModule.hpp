@@ -26,6 +26,6 @@ namespace Loki
       // Gets a list of all running processes with their associated PIDs.
       v8::Local<v8::Array> getProcesses (v8::Isolate* isolate);
       // Gets a list of all modules for a particular process.
-      v8::Local<v8::Array> getProcessModules (v8::Isolate* isolate, int processId);
+      v8::Local<v8::Array> getProcessModules (v8::Isolate* isolate, int process_id);
    };
 }

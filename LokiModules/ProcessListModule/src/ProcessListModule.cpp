@@ -6,8 +6,11 @@
 
 // Windows API headers
 #include <Windows.h>
+#include <Psapi.h>
 #include <tlhelp32.h> // for CreateToolhelp32Snapshot and some other things
+
 #include <string>
+#include <sstream>
 
 // use the v8 namespace so we don't have to have v8:: everywhere
 using namespace v8;
@@ -161,16 +164,60 @@ namespace Loki
    }
 
    // Gets a list of all modules for a particular process.
-   Local<Array> ProcessListModule::getProcessModules (Isolate* isolate, int processId)
+   Local<Array> ProcessListModule::getProcessModules (Isolate* isolate, int process_id)
    {
       HandleScope scope (isolate);
 
       // the array of processes to return to JavaScript
       auto modules = Array::New (isolate);
 
-      // TODO: implement this
-      std::string error_message = "getProcessModules has not been implemented yet. Process ID was: " + std::to_string (processId);
-      isolate->ThrowException (Exception::Error (String::NewFromUtf8 (isolate, error_message.c_str ())));
+      try
+      {
+         HANDLE process_handle = OpenProcess (PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, FALSE, process_id);
+         if (NULL == process_handle)
+         {
+            isolate->ThrowException (Exception::Error (String::NewFromUtf8 (isolate, "Could not retrieve process handle.")));
+         }
+
+         HMODULE module_handles[1024];
+         DWORD bytes_needed;
+
+         if (EnumProcessModulesEx (process_handle, module_handles, sizeof (module_handles), &bytes_needed, LIST_MODULES_ALL))
+         {
+            int counter = 0;
+            for (unsigned int index = 0; index < (bytes_needed / sizeof (HMODULE)); index++)
+            {
+               auto module = Object::New (isolate);
+
+               char module_name[MAX_PATH];
+               // Get the full path to the module's file.
+               if (GetModuleFileNameExA (process_handle, module_handles[index], module_name, sizeof (module_name)))
+               {
+                  module->Set (String::NewFromUtf8 (isolate, "moduleName"), String::NewFromUtf8 (isolate, module_name));
+                  std::ostringstream handle_value;
+                  handle_value << "0x" << std::hex << module_handles[index];
+                  module->Set (String::NewFromUtf8 (isolate, "moduleHandle"), String::NewFromUtf8 (isolate, handle_value.str ().c_str ()));
+
+                  // save module
+                  modules->Set (Integer::New (isolate, counter), module);
+                  counter++;
+               }
+            }
+         }
+         else
+         {
+            std::string error_message = "EnumProcessModules failed with error code: " + std::to_string (GetLastError ());
+            isolate->ThrowException (Exception::Error (String::NewFromUtf8 (isolate, error_message.c_str ())));
+         }
+
+         CloseHandle (process_handle);
+      }
+      catch (std::exception& exception)
+      {
+         std::string error_message = "Error while enumerating modules: ";
+         error_message += exception.what ();
+         isolate->ThrowException (Exception::Error (String::NewFromUtf8 (isolate, error_message.c_str ())));
+      }
 
       // return list of modules
       return modules;
