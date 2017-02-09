@@ -32,27 +32,6 @@ app.set('port', port);
 // create HTTP server
 const server = http.createServer(app);
 
-var handlers = [];
-// get all the JavaScript files in the routes directory
-try {
-    var files = fs.readdirSync(config.handler_file_directory_name);
-    for (var index in files) {
-        if (files[index].toLowerCase().indexOf('.js') > -1) {
-            try {
-                // bring in handler and store a reference to it
-                var handler = require(path.join(__dirname, config.handler_file_directory_name, files[index]));
-                handlers.push(handler);
-            } catch(error) {
-                console.log(colors.red('Unable to require file: ' + files[index]));
-                console.log(error);
-            }
-        }
-    }
-} catch(error) {
-    console.log(colors.red('Failure while enumerating handler files.'));
-    console.log(error);
-}
-
 // get a list of modules in the specified directory
 var module_files = finder.from(config.module_file_path).findFiles('*.node');
 
@@ -126,7 +105,7 @@ socket_server.on('connection', (socket) => {
                             socket.send(JSON.stringify({
                                 category: message_object.category,
                                 action: message_object.action,
-                                data: addon[message_object.action]()
+                                data: addon[key]()
                             }),
                             (error) => {
                                 if(error) {
