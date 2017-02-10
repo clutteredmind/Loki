@@ -22,14 +22,13 @@ app.use(bodyParser.urlencoded({ extended: false }));
 // point static path to dist
 app.use(express.static(path.join(__dirname, config.static_folder_name)));
 
-// catch all routes and return the index file
+// catch all routes and return the Angular app's index file
 app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, config.static_folder_name, config.index_file_name));
 });
 
 // get port from environment or config file and store in Express
-const port = process.env.PORT || config.http_server_port;
-app.set('port', port);
+app.set('port', process.env.PORT || config.http_server_port);
 
 // create HTTP server
 const server = http.createServer(app);
@@ -92,10 +91,11 @@ const socket_server = new WebSocketServer({ port: config.websocket_server_port }
 
 socket_server.on('connection', (socket) => {
     socket.on('message', (message) => {
+        // messages come in as a JSON string, so parse that into an object
         var message_object = JSON.parse(message);
         // handle system message
         if(message_object.component == 'system') {
-            // register and unregister messages will come in here and can be used for user tracking
+            // register and unregister messages will come in here and can be used for telemetry
             switch(message_object.action) {
                 case 'register':
                     break;
@@ -198,9 +198,9 @@ socket_server.on('connection', (socket) => {
 });
 
 // listen on provided port, on all network interfaces.
-server.listen(port, () => {
+server.listen(app.get('port'), () => {
     // report PID for developers
-    console.log(colors.green("Process ID is: " + process.pid));
-    // display port, just as a reminder
-    console.log(colors.green('Server running on port: ' + port));
+    console.log("Process ID is: " + process.pid);
+    // display http port, just as a reminder
+    console.log('HTTP server running on port: ' + app.get('port'));
 });
