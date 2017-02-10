@@ -65,7 +65,7 @@ if(addons.length < 1) {
 }
 
 // bring in custom handler files
-var handler_files = finder.from('./message_handlers').findFiles('*.handler.js');
+var handler_files = finder.from(path.join(__dirname, config.handler_file_directory_name)).findFiles('*.handler.js');
 // get handler objects
 var handlers = [];
 handler_files.forEach((handler_file) => {

@@ -20,7 +20,6 @@ export class ProcessListComponent implements OnInit, OnDestroy, Addon {
     constructor(private socketService: SocketService) {
         this.errors = new Array<string>();
         this.processes = new Array<Process>();
-        socketService.register(this);
     }
 
     getProcessList(): void {
@@ -57,6 +56,7 @@ export class ProcessListComponent implements OnInit, OnDestroy, Addon {
     }
 
     ngOnInit() {
+        this.socketService.register(this);
         this.getProcessList();
     }
 

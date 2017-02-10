@@ -1,3 +1,4 @@
+<error-display [errors]="errors"></error-display>
 <div class="panel panel-primary">
     <div class="panel-heading">
         <h3 class="panel-title">Welcome to Loki!</h3>
@@ -10,5 +11,6 @@
             <a class="list-group-item"><i class="fa fa-cog" aria-hidden="true"></i>  Possibly update <code>module_file_path</code> in <code>config.js</code></a>
             <a class="list-group-item"><i class="fa fa-cog" aria-hidden="true"></i>  Install (with <code>npm install</code>) packages both in the root and in the dist folder.</a>
         </ul>
+        <p *ngIf="version.length > 0">This is version {{version}} of Loki.</p>
     </div>
 </div>

@@ -21,7 +21,6 @@ export class ScreenshotComponent implements OnInit, OnDestroy, Addon {
         this.errors = new Array<string>();
         this.image_name = undefined;
         this.images = new Array<string>();
-        socketService.register(this);
     }
 
     getScreenshot(): void {
@@ -63,6 +62,7 @@ export class ScreenshotComponent implements OnInit, OnDestroy, Addon {
     }
 
     ngOnInit() {
+        this.socketService.register(this);
         // query for a list of existing screenshots on startup
         this.getScreenshotList();
     }

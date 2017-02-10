@@ -19,7 +19,6 @@ export class DeviceListComponent implements OnInit, OnDestroy, Addon {
     constructor(private socketService: SocketService) {
         this.errors = new Array<string>();
         this.devices = new Array<Device>();
-        socketService.register(this);
     }
 
     getDeviceList(): void {
@@ -43,6 +42,7 @@ export class DeviceListComponent implements OnInit, OnDestroy, Addon {
     }
 
     ngOnInit() {
+        this.socketService.register(this);
         this.getDeviceList();
     }
 
