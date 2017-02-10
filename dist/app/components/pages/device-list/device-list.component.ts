@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 
-import { Addon }                        from '../../../interfaces/addon.interface';
+import { LokiComponent }                from '../../../interfaces/loki-component.interface';
 import { Device }                       from '../../../interfaces/device.interface';
 import { SocketMessage }                from '../../../interfaces/socket-message.interface';
 
@@ -11,7 +11,7 @@ import { SocketService }                from '../../../services/socket.service';
     selector: 'device-list',
     templateUrl: './device-list.component.html'
 })
-export class DeviceListComponent implements OnInit, OnDestroy, Addon {
+export class DeviceListComponent implements OnInit, OnDestroy, LokiComponent {
     component = 'device-list';
     errors: Array<string>;
     devices: Array<Device>;

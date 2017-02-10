@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 
-import { Addon }                        from '../../../interfaces/addon.interface';
+import { LokiComponent }                from '../../../interfaces/loki-component.interface';
 import { SocketMessage }                from '../../../interfaces/socket-message.interface';
 
 import { SocketService }                from '../../../services/socket.service';
@@ -10,7 +10,7 @@ import { SocketService }                from '../../../services/socket.service';
     selector: 'system-information',
     templateUrl: './system-information.component.html'
 })
-export class SystemInformationComponent implements OnInit, OnDestroy, Addon {
+export class SystemInformationComponent implements OnInit, OnDestroy, LokiComponent {
     component = 'system-information';
     errors: Array<string>;
     memoryInfo = {};

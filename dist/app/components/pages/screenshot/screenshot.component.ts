@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 
-import { Addon }                        from '../../../interfaces/addon.interface';
+import { LokiComponent }                from '../../../interfaces/loki-component.interface';
 import { SocketMessage }                from '../../../interfaces/socket-message.interface';
 
 import { SocketService }                from '../../../services/socket.service';
@@ -10,7 +10,7 @@ import { SocketService }                from '../../../services/socket.service';
     selector: 'screenshot',
     templateUrl: './screenshot.component.html'
 })
-export class ScreenshotComponent implements OnInit, OnDestroy, Addon {
+export class ScreenshotComponent implements OnInit, OnDestroy, LokiComponent {
     component = 'screenshot';
     errors: Array<string>;
     image_name: string;

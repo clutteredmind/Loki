@@ -1,16 +1,16 @@
 import { Injectable, OnDestroy }    from '@angular/core';
 
-import { Addon }                    from '../interfaces/addon.interface';
+import { LokiComponent }            from '../interfaces/loki-component.interface';
 import { SocketMessage }            from '../interfaces/socket-message.interface';
 
 @Injectable()
 export class SocketService implements OnDestroy {
     socket: WebSocket;
-    addons: Array<Addon>;
+    addons: Array<LokiComponent>;
     pending_messages: Array<SocketMessage>;
 
     constructor() {
-        this.addons = new Array<Addon>();
+        this.addons = new Array<LokiComponent>();
         this.pending_messages = new Array<SocketMessage>();
 
         // connect to the server
@@ -18,7 +18,7 @@ export class SocketService implements OnDestroy {
         this.connectToServer('ws://' + host_string + ':8889');
     }
 
-    register(addon: Addon): void {
+    register(addon: LokiComponent): void {
         var index = this.addons.push(addon);
         this.sendMessage({
             component: 'system',
@@ -28,7 +28,7 @@ export class SocketService implements OnDestroy {
         });
     }
 
-    unregister(addonToRemove: Addon): void {
+    unregister(addonToRemove: LokiComponent): void {
         this.sendMessage({
             component: 'system',
             specifier: undefined,

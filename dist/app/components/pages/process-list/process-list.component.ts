@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 
-import { Addon }                        from '../../../interfaces/addon.interface';
+import { LokiComponent }                from '../../../interfaces/loki-component.interface';
 import { Process }                      from '../../../interfaces/process.interface';
 import { SocketMessage }                from '../../../interfaces/socket-message.interface';
 
@@ -12,7 +12,7 @@ import { SocketService }                from '../../../services/socket.service';
     templateUrl: './process-list.component.html',
     styles: ['.get-modules-link { cursor: pointer; }']
 })
-export class ProcessListComponent implements OnInit, OnDestroy, Addon {
+export class ProcessListComponent implements OnInit, OnDestroy, LokiComponent {
     component = 'process-list';
     errors: Array<string>;
     processes: Array<Process>;
