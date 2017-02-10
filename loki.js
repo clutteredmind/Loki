@@ -58,7 +58,6 @@ module_files.forEach((module_file) => {
 
 // no addons is potentially a problem
 if(addons.length < 1) {
-    console.log(colors.red('No module files found!'));
 } else {
     console.log(colors.green('Loaded ' + addons.length + ' addon' + (addons.length > 1 ? 's' : '') + '.'));
 }
@@ -78,7 +77,7 @@ handler_files.forEach((handler_file) => {
 
 // no handlers is potentially a problem
 if(handlers.length < 1) {
-    console.log(colors.red('No handler files found!'));
+    console.log(colors.red('No custom handlers found!'));
 } else {
     console.log(colors.green('Loaded ' + handlers.length + ' custom handler' + (handlers.length > 1 ? 's' : '') + '.'));
 }
