@@ -1,5 +1,6 @@
 export interface SocketMessage {
-    category: string;
+    component: string;
+    specifier: string;
     action: string;
     data: any;
     parameters?: [any];

@@ -13,7 +13,7 @@ import { SocketService }                from '../../../services/socket.service';
     styles: ['.get-modules-link { cursor: pointer; }']
 })
 export class ProcessListComponent implements OnInit, OnDestroy, Addon {
-    category = 'process-list';
+    component = 'process-list';
     errors: Array<string>;
     processes: Array<Process>;
 
@@ -25,7 +25,8 @@ export class ProcessListComponent implements OnInit, OnDestroy, Addon {
 
     getProcessList(): void {
         this.socketService.sendMessage({
-            category: 'process-list',
+            component: this.component,
+            specifier: undefined,
             action: 'getProcesses',
             data: undefined
         });
@@ -33,7 +34,8 @@ export class ProcessListComponent implements OnInit, OnDestroy, Addon {
 
     getProcessModules(processId: number): void {
         this.socketService.sendMessage({
-            category: 'process-list',
+            component: this.component,
+            specifier: undefined,
             action: 'getProcessModules',
             data: undefined,
             parameters: [processId]

@@ -21,17 +21,19 @@ export class SocketService implements OnDestroy {
     register(addon: Addon): void {
         var index = this.addons.push(addon);
         this.sendMessage({
-            category: 'system',
+            component: 'system',
+            specifier: undefined,
             action: 'register',
-            data: addon.category
+            data: addon.component
         });
     }
 
     unregister(addonToRemove: Addon): void {
         this.sendMessage({
-            category: 'system',
+            component: 'system',
+            specifier: undefined,
             action: 'unregister',
-            data: addonToRemove.category
+            data: addonToRemove.component
         });
         this.addons.forEach((addon, index) => {
             if(addonToRemove == addon) {
@@ -78,7 +80,7 @@ export class SocketService implements OnDestroy {
                 var data = JSON.parse(event.data);
                 // look for a handler for the message
                 self.addons.forEach((addon) => {
-                    if(addon.category == data.category) {
+                    if(addon.component == data.component) {
                         addon.processMessage(data);
                     }
                 });

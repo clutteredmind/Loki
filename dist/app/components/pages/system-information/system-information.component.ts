@@ -11,7 +11,7 @@ import { SocketService }                from '../../../services/socket.service';
     templateUrl: './system-information.component.html'
 })
 export class SystemInformationComponent implements OnInit, OnDestroy, Addon {
-    category = 'system-information';
+    component = 'system-information';
     errors: Array<string>;
     memoryInfo = {};
     cpuInfo = {};
@@ -36,7 +36,8 @@ export class SystemInformationComponent implements OnInit, OnDestroy, Addon {
 
     getMemoryInfo() {
         this.socketService.sendMessage({
-            category: 'system-information',
+            component: this.component,
+            specifier: undefined,
             action: 'getMemoryInformation',
             data: undefined
         });
@@ -44,7 +45,8 @@ export class SystemInformationComponent implements OnInit, OnDestroy, Addon {
 
     getCpuInfo() {
         this.socketService.sendMessage({
-            category: 'system-information',
+            component: this.component,
+            specifier: undefined,
             action: 'getCpuInformation',
             data: undefined
         });

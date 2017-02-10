@@ -12,7 +12,7 @@ import { SocketService }                from '../../../services/socket.service';
     templateUrl: './device-list.component.html'
 })
 export class DeviceListComponent implements OnInit, OnDestroy, Addon {
-    category = 'device-list';
+    component = 'device-list';
     errors: Array<string>;
     devices: Array<Device>;
 
@@ -24,7 +24,8 @@ export class DeviceListComponent implements OnInit, OnDestroy, Addon {
 
     getDeviceList(): void {
         this.socketService.sendMessage({
-            category: 'device-list',
+            component: this.component,
+            specifier: undefined,
             action: 'getDevices',
             data: undefined
         });

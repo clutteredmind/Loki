@@ -11,7 +11,7 @@ import { SocketService }                from '../../../services/socket.service';
     templateUrl: './screenshot.component.html'
 })
 export class ScreenshotComponent implements OnInit, OnDestroy, Addon {
-    category = 'screenshot';
+    component = 'screenshot';
     errors: Array<string>;
     image_name: string;
     images: Array<string>;
@@ -27,7 +27,8 @@ export class ScreenshotComponent implements OnInit, OnDestroy, Addon {
     getScreenshot(): void {
         this.screenshot_loading = true;
         this.socketService.sendMessage({
-            category: 'screenshot',
+            component: this.component,
+            specifier: 'ScreenshotModule',
             action: 'captureScreen',
             data: undefined
         });
@@ -35,7 +36,8 @@ export class ScreenshotComponent implements OnInit, OnDestroy, Addon {
 
     getScreenshotList(): void {
         this.socketService.sendMessage({
-            category: 'screenshot',
+            component: this.component,
+            specifier: 'ScreenshotModule',
             action: 'getScreenshotList',
             data: undefined
         });
