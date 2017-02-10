@@ -1,3 +1,5 @@
+'use strict';
+
 // load dependencies
 const fs            = require('fs');
 const http          = require('http');
@@ -111,12 +113,29 @@ socket_server.on('connection', (socket) => {
                                 component: message_object.component,
                                 action: message_object.action,
                                 data: handler_function.function(message_object.component, addons, socket, message_object.parameters)
-                            }));
+                            }),
+                            (error) => {
+                                if(error) {
+                                    console.log(colors.red('Unable to send socket message.'));
+                                    console.log(error);
+                                }
+                            });
                             handled = true;
                         }
                     });
                 });
             } catch(error) {
+                socket.send(JSON.stringify({
+                    component: message_object.component,
+                    action: 'error',
+                    data: error.message
+                }),
+                (error) => {
+                    if(error) {
+                        console.log(colors.red('Unable to send socket message.'));
+                        console.log(error);
+                    }
+                });
                 handled = true;
             }
             // look for a default handler if the message was not handled above
