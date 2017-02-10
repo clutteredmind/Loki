@@ -58,6 +58,7 @@ module_files.forEach((module_file) => {
 
 // no addons is potentially a problem
 if(addons.length < 1) {
+    console.log(colors.red('No addons found!'));
 } else {
     console.log(colors.green('Loaded ' + addons.length + ' addon' + (addons.length > 1 ? 's' : '') + '.'));
 }
