@@ -5,7 +5,7 @@
         <a class="btn btn-default pull-right" role="button" (click)="getMemoryInfo()">Get Memory Info</a>
         <div class="clearfix"></div>
     </div>
-    <div *ngIf="memoryInfo.memoryLoad != undefined" class="panel-body">
+    <div *ngIf="memoryInfo.memoryLoad != undefined" class="panel-body memory-info-panel-body">
         <ul class="list-group">
             <li class="list-group-item">Total Physical Memory: {{memoryInfo.totalPhysicalMemory | number}} KB</li>
             <li class="list-group-item">Free Physical Memory: {{memoryInfo.freePhysicalMemory | number}} KB</li>
@@ -26,7 +26,7 @@
         <a class="btn btn-default pull-right" role="button" (click)="getCpuInfo()">Get CPU Info</a>
         <div class="clearfix"></div>
     </div>
-    <div *ngIf="cpuInfo.numberOfProcessors != undefined" class="panel-body">
+    <div *ngIf="cpuInfo.numberOfProcessors != undefined" class="panel-body cpu-info-panel-body">
         <ul class="list-group">
             <li class="list-group-item">Number Of Processors: {{cpuInfo.numberOfProcessors}}</li>
             <li class="list-group-item">Page Size: {{cpuInfo.pageSize}}</li>
