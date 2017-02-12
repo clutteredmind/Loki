@@ -8,6 +8,10 @@ import { Component, Input } from '@angular/core';
 export class ErrorDisplayComponent {
     @Input() errors: Array<string>;
 
+    constructor() {
+        this.errors = new Array<string>();
+    }
+
     dismissError(errorId: number): void {
         this.errors.splice(errorId, 1);
     }
