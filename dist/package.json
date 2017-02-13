@@ -3,7 +3,10 @@
     "version": "1.0.0",
     "description": "The client side of the Loki application.",
     "private": true,
-    "scripts": {},
+    "scripts": {
+        "test": "karma start karma.conf.js",
+        "compile": "tsc"
+    },
     "keywords": [],
     "author": "",
     "license": "MIT",
