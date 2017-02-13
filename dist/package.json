@@ -5,7 +5,8 @@
     "private": true,
     "scripts": {
         "test": "karma start karma.conf.js",
-        "compile": "tsc"
+        "compile": "tsc",
+        "watch": "tsc -w"
     },
     "keywords": [],
     "author": "",
