@@ -108,7 +108,7 @@ socket_server.on('connection', (socket) => {
                 // look for a custom handler for this message
                 handlers.forEach((handler_functions) => {
                     handler_functions.forEach((handler_function) => {
-                        if((handler_function.specifier == message_object.specifier || !message_object.specifier) && handler_function.name == message_object.action && !handled) {
+                        if(!handled && (handler_function.specifier == message_object.specifier || !message_object.specifier) && handler_function.name == message_object.action) {
                             socket.send(JSON.stringify({
                                 component: message_object.component,
                                 action: message_object.action,
@@ -143,7 +143,7 @@ socket_server.on('connection', (socket) => {
                 try {
                     addons.forEach((addon) => {
                         addon.functions.forEach((function_name) => {
-                            if((addon.name == message_object.specifier || !message_object.specifier) && function_name == message_object.action && !handled) {
+                            if(!handled && (addon.name == message_object.specifier || !message_object.specifier) && function_name == message_object.action) {
                                 socket.send(JSON.stringify({
                                     component: message_object.component,
                                     action: message_object.action,
