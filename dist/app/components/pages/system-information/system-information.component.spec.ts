@@ -96,7 +96,6 @@ describe('SystemInformationComponent', () => {
     });
 
     it('should have no list-group-items visible at startup', () => {
-        // try to find list group items in the page's HTML
         debugElement = fixture.debugElement.query(By.css('li.list-group-item'));
         expect(debugElement).toBeNull();
     });

@@ -22,6 +22,9 @@ describe('HomeComponent', () => {
         sendMessage(message: SocketMessage): void;
     };
 
+    // version number to plug in below
+    let versionNumber: string = '1.2.3';
+
     // async beforeEach
     beforeEach(async(() => {
         socketServiceStub = {
@@ -40,7 +43,7 @@ describe('HomeComponent', () => {
                             component: 'home',
                             specifier: undefined,
                             action: 'getVersionNumber',
-                            data: '1.2.3',
+                            data: versionNumber,
                             parameters: undefined
                         });
                         break;
@@ -78,6 +81,6 @@ describe('HomeComponent', () => {
         fixture.detectChanges();
         debugElement = fixture.debugElement.query(By.css('p.version-display'));
         element = debugElement.nativeElement;
-        expect(element).not.toBeNull();
+        expect(element.innerText).toBe('This is version ' + versionNumber + ' of Loki.');
     });
 });
