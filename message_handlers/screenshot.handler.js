@@ -39,7 +39,17 @@ screenshot_custom_functions.push({
     specifier: 'ScreenshotModule',
     name: 'getScreenshotList',
     function: (component, addons, socket, parameters) => {
-        return { image_list: fs.readdirSync('./dist/images') };
+        var image_file_folder = './dist/images';
+        // check to see if image directory exists
+        try {
+            fs.readdirSync(image_file_folder);
+        } catch (error) {
+            if (error.code == 'ENOENT') {
+                // the directory does not exist, so create it
+                fs.mkdirSync(image_file_folder);
+            }
+        }
+        return { image_list: fs.readdirSync(image_file_folder) };
     }
 });
 
