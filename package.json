@@ -1,18 +1,23 @@
 {
-    "name": "loki",
-    "version": "4.0.0",
-    "private": true,
-    "author": "ClutteredMind",
-    "scripts": {
-        "start": "node loki.js"
-    },
-    "dependencies": {
-        "body-parser": "^1.16.0",
-        "colors": "^1.1.2",
-        "express": "^4.14.0",
-        "fs-finder": "^1.8.1",
-        "uuid": "^3.0.1",
-        "ws": "^2.0.1"
-    },
-    "devDependencies": {}
+  "name": "loki",
+  "version": "4.0.0",
+  "private": true,
+  "author": "ClutteredMind",
+  "scripts": {
+    "start": "node loki.js",
+    "test": "mocha",
+    "watch": "mocha -w"
+  },
+  "dependencies": {
+    "body-parser": "^1.16.0",
+    "colors": "^1.1.2",
+    "express": "^4.14.0",
+    "fs-finder": "^1.8.1",
+    "uuid": "^3.0.1",
+    "ws": "^2.0.1"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "mocha": "^3.2.0"
+  }
 }
