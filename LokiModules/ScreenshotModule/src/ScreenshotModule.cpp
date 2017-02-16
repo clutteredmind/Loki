@@ -36,7 +36,7 @@ namespace Loki
       // set module metadata
       descriptor.SetMetadata (MODULE_NAME, MODULE_DISPLAY_NAME, LokiModuleDescriptor::GetVersionStringFromArray (MODULE_VERSION), MODULE_DESCRIPTION);
       // register this class's exported functions for the framework
-      descriptor.AddFunction ("captureScreen", CaptureScreen, "Takes a screenshot via the Windows API.", { LOKI_PARAMETER (ParameterType::FUNCTION, "callback") });
+      descriptor.AddFunction ("captureScreen", CaptureScreen, "Takes a screenshot via the Windows API and saves it to disk.", { LOKI_PARAMETER (ParameterType::STRING, "full_path") });
       // Register module with Node
       Register (target);
    }
@@ -56,13 +56,21 @@ namespace Loki
          std::string error_string;
          if (descriptor.ValidateParameters (CaptureScreen, args, error_string))
          {
+            // retrieve the path
+            v8::String::Utf8Value first_parameter (args[0]->ToString ());
+            // convert it to string
+            std::string full_path = std::string (*first_parameter);
+
+            if (full_path.empty())
+            {
+               throw std::exception ("captureScreen: First parameter 'full_path' cannot be empty");
+            }
+
             // unwrap object so we can call the correct function on the instance
             auto screenshot_module = ObjectWrap::Unwrap<ScreenshotModule> (args.Holder ());
 
-            // the screen buffer
-            std::vector<uint8_t> screen_buffer;
             // if it doesn't work, report the error
-            if (!screenshot_module->captureScreen (screen_buffer))
+            if (!screenshot_module->captureScreen (full_path))
             {
                std::string error = "Unable to capture screenshot";
                std::string last_error_string;
@@ -74,17 +82,6 @@ namespace Loki
                   throw std::exception (error.c_str ());
                }
             }
-            // hand screen buffer back to JavaScript
-            auto screen_data = node::Buffer::Copy (isolate, reinterpret_cast<const char*>(screen_buffer.data ()), screen_buffer.size ()).ToLocalChecked ();
-
-            // Assemble the argument array for the callback
-            const unsigned argc = 1;
-            Local<Value> argv[argc] = { screen_data };
-
-            // Get the callback
-            Local<Function> callback = Local <Function>::Cast (args[0]);
-            // Call it
-            callback->Call (isolate->GetCurrentContext ()->Global (), argc, argv);
          }
          else
          {
@@ -99,7 +96,7 @@ namespace Loki
    }
 
    // Takes a screenshot via the Windows API.
-   bool ScreenshotModule::captureScreen (std::vector<uint8_t>& screen_buffer)
+   bool ScreenshotModule::captureScreen (const std::string full_path)
    {
       bool success = true;
 
@@ -109,18 +106,14 @@ namespace Loki
       int screen_width = GetSystemMetrics (SM_CXVIRTUALSCREEN);
       int screen_height = GetSystemMetrics (SM_CYVIRTUALSCREEN);
 
-      // clear target buffer
-      screen_buffer.clear ();
-
       // objects for working with the screen through the Windows API
       HDC screen_device_context = NULL;
       HDC compatible_device_context = NULL;
       HBITMAP bitmap_handle = NULL;
       // Bitmap format info. Used by GetDIBits.
       LPBITMAPINFO bitmap_info = NULL;
-      // memory buffers for JPEG compression
+      // memory buffer for JPEG compression
       uint8_t* image_data = NULL;
-      uint8_t* image_data_compressed = NULL;
 
       try
       {
@@ -187,10 +180,6 @@ namespace Loki
          int buffer_size = screen_width * screen_height * 3;
          // image_data needs to be big enough to hold all the bitmap data
          image_data = new uint8_t[buffer_size];
-         // image_data_compressed only needs to be big enough for the compressed version of the image,
-         // but we can't know how big that will be until after compression has been performed.
-         // So we're allocating more space than will be needed in the end.
-         image_data_compressed = new uint8_t[buffer_size];
          // The final screen buffer. This will omit the alpha channel, so we allocate a bit less space
          std::vector<uint8_t> final_screen_buffer;
          final_screen_buffer.resize (buffer_size);
@@ -206,22 +195,16 @@ namespace Loki
                image_data[final_pixel * 3] = final_screen_buffer[final_pixel * 3 + 2] = raw_screen_buffer[raw_pixel * 4 + 2];
             }
          }
-         // compress_image_to_jpeg_file_in_memory will reset buffer_size to the size of the compressed data if it is successful
-         if (!jpge::compress_image_to_jpeg_file_in_memory (image_data_compressed, buffer_size, screen_width, screen_height, 3, image_data))
+         // compress_image_to_jpeg_file will attempt to write a file to disk at the given path
+         if (!jpge::compress_image_to_jpeg_file (full_path.c_str (), screen_width, screen_height, 3, image_data))
          {
-            throw std::exception ("captureScreen: Unable to compress bitmap to JPEG");
+            throw std::exception ("captureScreen: Unable to save JPEG");
          }
-         // set size of target buffer
-         screen_buffer.resize (buffer_size);
-         // copy compressed memory into return buffer
-         std::copy (image_data_compressed, image_data_compressed + buffer_size, screen_buffer.begin ());
       }
       catch (std::exception& exception)
       {
          // save the error message
          SetLastErrorString (std::string (exception.what ()));
-         // clear the screen buffer
-         screen_buffer.clear ();
          // set failed flag
          success = false;
       }
@@ -242,10 +225,6 @@ namespace Loki
       if (NULL != image_data)
       {
          delete image_data;
-      }
-      if (NULL != image_data_compressed)
-      {
-         delete image_data_compressed;
       }
 
       return success;

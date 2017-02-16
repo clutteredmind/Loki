@@ -24,7 +24,7 @@ namespace Loki
       static void CaptureScreen (const v8::FunctionCallbackInfo<v8::Value>& args);
 
    protected:
-      // Takes a screenshot via the Windows API.
-      bool captureScreen (std::vector<uint8_t>& screen_buffer);
+      // Takes a screenshot via the Windows API and saves it to disk.
+      bool captureScreen (const std::string full_path);
    };
 }

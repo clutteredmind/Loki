@@ -25,9 +25,8 @@ screenshot_custom_functions.push({
                             fs.mkdirSync(image_file_folder);
                         }
                     }
-                    addon.addon.captureScreen((data) => {
-                        fs.writeFileSync(path.join(image_file_folder, image_name), data);
-                    });
+                    // capture screen. we need to go one directory up from where we're at before we append the final directory
+                    addon.addon.captureScreen(path.join(__dirname, '../',  image_file_folder, image_name));
                 }
             });
         });

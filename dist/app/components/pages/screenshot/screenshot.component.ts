@@ -57,6 +57,8 @@ export class ScreenshotComponent implements OnInit, OnDestroy, LokiComponent {
                 break;
             case 'error':
                 this.errors.push(message.data);
+                // clear the spinner on any error
+                this.screenshot_loading = false;
                 break;
         }
     }
