@@ -33,8 +33,21 @@ app.set('port', process.env.PORT || config.http_server_port);
 // create HTTP server
 const server = http.createServer(app);
 
-// get a list of modules in the specified directory
-var module_files = finder.from(config.module_file_path).findFiles('*.node');
+var module_files = [];
+
+try {
+    // get a list of modules in the specified directory
+    module_files = finder.from(config.module_file_path).findFiles('*.node');
+} catch (error) {
+    if (error.code == 'ENOENT') {
+        // the directory does not exist, that's a problem
+        console.log(colors.red('Module file path: `' + config.module_file_path + '` does not exist!'));
+    } else {
+        // some other error occurred
+        console.log(colors.red('Unable to load module files. The error was:'));
+        console.log(error);
+    }
+}
 
 var addons = [];
 module_files.forEach((module_file) => {
