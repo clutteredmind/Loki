@@ -19,6 +19,9 @@
             </div>
         </div>
     </div>
+    <div class="panel-footer">
+        <input type="checkbox" class="refresh-checkbox" #autoRefreshCheckbox (click)="toggleAutoRefresh(autoRefreshCheckbox.checked)">Auto-Refresh
+    </div>
 </div>
 <div class="panel panel-primary">
     <div class="panel-heading">

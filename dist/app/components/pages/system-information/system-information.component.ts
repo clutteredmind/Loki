@@ -8,6 +8,12 @@ import { SocketService }                from '../../../services/socket.service';
 @Component({
     moduleId: module.id,
     selector: 'system-information',
+    styles: [`
+        .refresh-checkbox {
+            margin-left: 10px;
+            margin-right: 2px;
+        }
+        `],
     templateUrl: './system-information.component.html'
 })
 export class SystemInformationComponent implements OnInit, OnDestroy, LokiComponent {
@@ -15,6 +21,7 @@ export class SystemInformationComponent implements OnInit, OnDestroy, LokiCompon
     errors: Array<string>;
     memoryInfo = {};
     cpuInfo = {};
+    refreshTimer: NodeJS.Timer;
 
     constructor(private socketService: SocketService) {
         this.errors = new Array<string>();
@@ -52,6 +59,23 @@ export class SystemInformationComponent implements OnInit, OnDestroy, LokiCompon
         });
     }
 
+    toggleAutoRefresh(checkState: boolean): void {
+        if(checkState) {
+            // set a timer to request memory information once per second
+            this.refreshTimer = setInterval(() => {
+                this.socketService.sendMessage({
+                    component: this.component,
+                    specifier: undefined,
+                    action: 'getMemoryInformation',
+                    data: undefined
+                });
+            }, 1000);
+        } else {
+            // cancel timer
+            clearTimeout(this.refreshTimer);
+        }
+    }
+
     ngOnInit() {
         this.socketService.register(this);
         this.getMemoryInfo();
@@ -60,5 +84,7 @@ export class SystemInformationComponent implements OnInit, OnDestroy, LokiCompon
 
     ngOnDestroy() {
         this.socketService.unregister(this);
+        // clear timer, in case it exists
+        clearTimeout(this.refreshTimer);
     }
 }
