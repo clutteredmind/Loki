@@ -6,9 +6,6 @@
 
 #include "LokiModule.hpp"
 
-// standard includes
-#include <vector>
-
 namespace Loki
 {
    class ScreenshotModule : public LokiModule<ScreenshotModule>

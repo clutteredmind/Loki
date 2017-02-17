@@ -8,8 +8,6 @@
 
 #include <Windows.h>
 
-#include <node_buffer.h>
-
 // use the v8 namespace so we don't have to have v8:: everywhere
 using namespace v8;
 
