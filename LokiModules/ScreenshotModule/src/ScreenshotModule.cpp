@@ -59,9 +59,9 @@ namespace Loki
             // convert it to string
             std::string full_path = std::string (*first_parameter);
 
-            if (full_path.empty())
+            if (full_path.empty ())
             {
-               throw std::exception ("captureScreen: First parameter 'full_path' cannot be empty");
+               throw std::exception ("captureScreen: First parameter 'full_path' cannot be empty.");
             }
 
             // unwrap object so we can call the correct function on the instance

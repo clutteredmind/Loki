@@ -78,6 +78,12 @@ describe('Screenshot addon', () => {
                     it('should throw if passed more than one parameter', () => {
                         expect(() => { screenshot_module.captureScreen(0, 1); }).to.throw("captureScreen: Expected 1 parameter and got 2.");
                     });
+                    it('should throw if the first parameter is not a string', () => {
+                        expect(() => { screenshot_module.captureScreen(true); }).to.throw("captureScreen: Expected parameter 0 (full_path) to be a string.");
+                    });
+                    it('should throw if the first parameter is an empty string', () => {
+                        expect(() => { screenshot_module.captureScreen(""); }).to.throw("captureScreen: First parameter 'full_path' cannot be empty.");
+                    });
                 });
             });
         });
