@@ -1,8 +1,9 @@
 'use strict';
 
-var fs = require('fs');
-var path = require('path');
-var uuid = require('uuid/v1');
+const fs        = require('fs');
+const path      = require('path');
+const uuid      = require('uuid/v1');
+const finder    = require('fs-finder');
 
 var screenshot_custom_functions = [];
 
@@ -49,6 +50,19 @@ screenshot_custom_functions.push({
             }
         }
         return { image_list: fs.readdirSync(image_file_folder) };
+    }
+});
+
+screenshot_custom_functions.push({
+    specifier: 'ScreenshotModule',
+    name: 'clearScreenshots',
+    function: (component, addons, socket, parameters) => {
+        var image_file_folder = './dist/images';
+        var images = finder.from(image_file_folder).findFiles('*.jpg');
+        images.forEach((image) => {
+            fs.unlink(image_file_folder + '/' + path.parse(image).base);
+        });
+        return { image_list: [] };
     }
 });
 

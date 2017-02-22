@@ -1,4 +1,16 @@
 <error-display [errors]="errors"></error-display>
+<modal #modal>
+    <modal-header [show-close]="true">
+        <h4 class="modal-title">Confirm Screenshot Delete</h4>
+    </modal-header>
+    <modal-body>
+        Delete all screenshots?
+    </modal-body>
+    <modal-footer>
+        <button type="button" class="btn btn-default" data-dismiss="modal" (click)="modal.dismiss()">Cancel</button>
+        <button type="button" class="btn btn-primary" (click)="clearScreenshots()">Ok</button>
+    </modal-footer>
+</modal>
 <div class="panel panel-primary">
     <div class="panel-heading">
         <spinner [visible]="screenshot_loading"></spinner>
@@ -15,6 +27,7 @@
     <div class="panel panel-primary">
         <div class="panel-heading">
             <h3 class="panel-title pull-left">Screenshots</h3>
+            <a class="btn btn-default pull-right clear-screenshot-button" role="button" (click)="modal.open()">Clear Screenshots</a>
             <div class="clearfix"></div>
         </div>
         <div class="panel-body">

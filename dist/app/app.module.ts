@@ -5,6 +5,8 @@ import { AppComponent }                 from './app.component';
 
 import { routing }                      from './app.routing';
 
+import { Ng2Bs3ModalModule }            from 'ng2-bs3-modal/ng2-bs3-modal';
+
 import { NavbarComponent }              from './components/navbar/navbar.component';
 import { ErrorDisplayComponent }        from './components/error-display/error-display.component';
 import { SpinnerComponent }             from './components/spinner/spinner.component';
@@ -19,7 +21,8 @@ import { SocketService }                from './services/socket.service';
 @NgModule({
     imports: [
         BrowserModule,
-        routing
+        routing,
+        Ng2Bs3ModalModule
     ],
     declarations: [
         AppComponent,

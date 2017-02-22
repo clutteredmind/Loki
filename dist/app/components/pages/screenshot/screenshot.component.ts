@@ -1,9 +1,14 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component,
+         OnDestroy,
+         OnInit,
+         ViewChild }        from '@angular/core';
 
-import { LokiComponent }                from '../../../interfaces/loki-component.interface';
-import { SocketMessage }                from '../../../interfaces/socket-message.interface';
+import { ModalComponent }   from 'ng2-bs3-modal/ng2-bs3-modal';
 
-import { SocketService }                from '../../../services/socket.service';
+import { LokiComponent }    from '../../../interfaces/loki-component.interface';
+import { SocketMessage }    from '../../../interfaces/socket-message.interface';
+
+import { SocketService }    from '../../../services/socket.service';
 
 @Component({
     moduleId: module.id,
@@ -16,6 +21,8 @@ export class ScreenshotComponent implements OnInit, OnDestroy, LokiComponent {
     image_name: string;
     images: Array<string>;
     screenshot_loading: boolean;
+
+    @ViewChild('modal') modal: ModalComponent;
 
     constructor(private socketService: SocketService) {
         this.errors = new Array<string>();
@@ -42,6 +49,17 @@ export class ScreenshotComponent implements OnInit, OnDestroy, LokiComponent {
         });
     }
 
+    clearScreenshots() {
+        this.socketService.sendMessage({
+            component: this.component,
+            specifier: 'ScreenshotModule',
+            action: 'clearScreenshots',
+            data: undefined
+        });
+        // close the modal
+        this.modal.close();
+    }
+
     processMessage(message: SocketMessage): void {
         switch(message.action) {
             case 'captureScreen':
@@ -54,6 +72,10 @@ export class ScreenshotComponent implements OnInit, OnDestroy, LokiComponent {
                 if(message.data) {
                     this.images = message.data.image_list;
                 }
+                break;
+            case 'clearScreenshots':
+                this.images = new Array<string>();
+                this.image_name = "";
                 break;
             case 'error':
                 this.errors.push(message.data);
