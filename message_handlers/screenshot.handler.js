@@ -60,7 +60,7 @@ screenshot_custom_functions.push({
         var image_file_folder = './dist/images';
         var images = finder.from(image_file_folder).findFiles('*.jpg');
         images.forEach((image) => {
-            fs.unlink(image_file_folder + '/' + path.parse(image).base);
+            fs.unlinkSync(image_file_folder + '/' + path.parse(image).base);
         });
         return { image_list: [] };
     }
