@@ -5,6 +5,7 @@ import { DebugElement }                     from '@angular/core';
 import { LokiComponent }                    from '../../../interfaces/loki-component.interface';
 import { SocketMessage }                    from '../../../interfaces/socket-message.interface';
 import { SocketService }                    from '../../../services/socket.service';
+import { Ng2Bs3ModalModule }                from 'ng2-bs3-modal/ng2-bs3-modal';
 import { ErrorDisplayComponent }            from '../../error-display/error-display.component';
 import { SpinnerComponent }                 from '../../spinner/spinner.component';
 import { ScreenshotComponent }              from './screenshot.component';
@@ -65,6 +66,9 @@ describe('ScreenshotComponent', () => {
             }
         }
         TestBed.configureTestingModule({
+            imports: [
+                Ng2Bs3ModalModule
+            ],
             declarations: [
                 ScreenshotComponent,
                 ErrorDisplayComponent,

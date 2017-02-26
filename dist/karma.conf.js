@@ -9,7 +9,7 @@ module.exports = function(config) {
     config.set({
         basePath: '',
         frameworks: ['jasmine'],
-        
+
         plugins: [
             require('karma-jasmine'),
             require('karma-chrome-launcher'),
@@ -73,7 +73,11 @@ module.exports = function(config) {
             { pattern: appBase + '**/*.ts', included: false, watched: false },
             { pattern: appBase + '**/*.js.map', included: false, watched: false },
             { pattern: testingSrcBase + '**/*.ts', included: false, watched: false },
-            { pattern: testingBase + '**/*.js.map', included: false, watched: false}
+            { pattern: testingBase + '**/*.js.map', included: false, watched: false},
+
+            // assets
+            'assets/js/jquery-3.1.1.min.js',
+            'assets/js/bootstrap.min.js'
         ],
 
         // Proxied base paths for loading assets

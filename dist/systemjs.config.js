@@ -36,6 +36,9 @@
             },
             rxjs: {
                 defaultExtension: 'js'
+            },
+            'ng2-bs3-modal': {
+                defaultExtension: 'js'
             }
         }
     });
