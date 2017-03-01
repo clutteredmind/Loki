@@ -1,0 +1,11 @@
+<aside class="main-sidebar">
+    <section class="sidebar">
+        <ul class="sidebar-menu">
+            <li class="header">Menu</li>
+            <li [class.active]="router.url == '/process-list'"><a routerLink="/process-list"><i class="fa fa-link"></i> <span>Process List</span></a></li>
+            <li [class.active]="router.url == '/device-list'"><a routerLink="/device-list"><i class="fa fa-link"></i> <span>Device List</span></a></li>
+            <li [class.active]="router.url == '/screenshot'"><a routerLink="/screenshot"><i class="fa fa-link"></i> <span>Screenshot</span></a></li>
+            <li [class.active]="router.url == '/system-information'"><a routerLink="/system-information"><i class="fa fa-link"></i> <span>System Information</span></a></li>
+        </ul>
+    </section>
+</aside>

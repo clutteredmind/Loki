@@ -1,16 +1,23 @@
-<error-display [errors]="errors"></error-display>
-<div class="panel panel-primary">
-    <div class="panel-heading">
-        <h3 class="panel-title">Welcome to Loki!</h3>
-    </div>
-    <div class="panel-body">
-        <p>Loki is a proof-of-concept application that I'm working on for testing out ideas with <a href="https://nodejs.org/api/addons.html" target="_blank">Node addons</a> and <a href="https://angular.io/" target="_blank">Angular2</a>.</p>
-        <p>In order to make Loki work, you'll need to:</p>
-        <ul>
-            <a class="list-group-item"><i class="fa fa-cog" aria-hidden="true"></i>  Build the Loki addons from <code>LokiModules/LokiModules.sln</code></a>
-            <a class="list-group-item"><i class="fa fa-cog" aria-hidden="true"></i>  Possibly update <code>module_file_path</code> in <code>config.js</code></a>
-            <a class="list-group-item"><i class="fa fa-cog" aria-hidden="true"></i>  Install (with <code>npm install</code>) packages both in the root and in the dist folder.</a>
-        </ul>
-        <p class="version-display" *ngIf="version.length > 0">This is version {{version}} of Loki.</p>
-    </div>
+<div class="content-wrapper">
+    <section class="content-header">
+        <h1>Home</h1>
+    </section>
+    <section class="content">
+        <error-display [errors]="errors"></error-display>
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <h3 class="panel-title">Welcome to Loki!</h3>
+            </div>
+            <div class="panel-body">
+                <p>Loki is a proof-of-concept application that I'm working on for testing out ideas with <a href="https://nodejs.org/api/addons.html" target="_blank">Node addons</a> and <a href="https://angular.io/" target="_blank">Angular2</a>.</p>
+                <p>In order to make Loki work, you'll need to:</p>
+                <ul>
+                    <a class="list-group-item"><i class="fa fa-cog" aria-hidden="true"></i>  Build the Loki addons from <code>LokiModules/LokiModules.sln</code></a>
+                    <a class="list-group-item"><i class="fa fa-cog" aria-hidden="true"></i>  Possibly update <code>module_file_path</code> in <code>config.js</code></a>
+                    <a class="list-group-item"><i class="fa fa-cog" aria-hidden="true"></i>  Install (with <code>npm install</code>) packages both in the root and in the dist folder.</a>
+                </ul>
+                <p class="version-display" *ngIf="version.length > 0">This is version {{version}} of Loki.</p>
+            </div>
+        </div>
+    </section>
 </div>

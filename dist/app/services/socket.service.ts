@@ -14,7 +14,7 @@ export class SocketService implements OnDestroy {
         this.pending_messages = new Array<SocketMessage>();
 
         // connect to the server
-        var host_string = location.host.indexOf(':') ? location.host.substr(0, location.host.indexOf(':')) : location.host ;
+        var host_string = location.host.indexOf(':') >= 0 ? location.host.substr(0, location.host.indexOf(':')) : location.host;
         this.connectToServer('ws://' + host_string + ':8889');
     }
 

@@ -3,10 +3,10 @@ import { Router }    from '@angular/router';
 
 @Component({
     moduleId: module.id,
-    selector: 'navbar',
-    templateUrl: './navbar.component.html'
+    selector: 'site-sidebar',
+    templateUrl: './site-sidebar.component.html'
 })
-export class NavbarComponent {
+export class SiteSidebarComponent {
     constructor(private router: Router) {
 
     }

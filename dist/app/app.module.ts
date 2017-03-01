@@ -7,7 +7,10 @@ import { routing }                      from './app.routing';
 
 import { Ng2Bs3ModalModule }            from 'ng2-bs3-modal/ng2-bs3-modal';
 
-import { NavbarComponent }              from './components/navbar/navbar.component';
+import { SiteHeaderComponent }          from './components/site-header/site-header.component';
+import { SiteSidebarComponent }         from './components/site-sidebar/site-sidebar.component';
+import { SiteFooterComponent }          from './components/site-footer/site-footer.component';
+
 import { ErrorDisplayComponent }        from './components/error-display/error-display.component';
 import { SpinnerComponent }             from './components/spinner/spinner.component';
 import { DeviceListComponent }          from './components/pages/device-list/device-list.component';
@@ -26,7 +29,9 @@ import { SocketService }                from './services/socket.service';
     ],
     declarations: [
         AppComponent,
-        NavbarComponent,
+        SiteHeaderComponent,
+        SiteSidebarComponent,
+        SiteFooterComponent,
         SpinnerComponent,
         HomeComponent,
         ErrorDisplayComponent,
