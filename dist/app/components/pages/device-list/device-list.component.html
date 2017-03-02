@@ -4,12 +4,11 @@
     </section>
     <section class="content">
         <error-display [errors]="errors"></error-display>
-        <div class="panel panel-primary">
-            <div class="panel-heading">
+        <div class="box box-info">
+            <div class="box-header">
                 <a class="btn btn-default pull-right" role="button" (click)="getDeviceList()">Get Devices</a>
-                <div class="clearfix"></div>
             </div>
-            <div class="panel-body">
+            <div class="box-body">
                 <div *ngIf="devices != undefined && devices.length > 0" class="device-list-table">
                     <div class="table-responsive">
                         <table class="table table-condensed table-hover">

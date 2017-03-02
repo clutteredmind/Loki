@@ -4,11 +4,10 @@
     </section>
     <section class="content">
         <error-display [errors]="errors"></error-display>
-        <div class="panel panel-primary">
-            <div class="panel-heading">
-                <h3 class="panel-title pull-left">Memory Information</h3>
+        <div class="box box-info">
+            <div class="box-header">
+                <h3 class="box-title pull-left">Memory Information</h3>
                 <a class="btn btn-default pull-right" role="button" (click)="getMemoryInfo()">Get Memory Info</a>
-                <div class="clearfix"></div>
             </div>
             <div *ngIf="memoryInfo.memoryLoad != undefined" class="panel-body memory-info-panel-body">
                 <ul class="list-group">
@@ -19,20 +18,19 @@
                     <li class="list-group-item">Available Extended Memory: {{memoryInfo.availableExtendedMemory | number}} KB</li>
                 </ul>
                 <div class="progress">
-                    <div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" [style.width]="memoryInfo.memoryLoad + '%'">
+                    <div class="progress-bar progress-bar-aqua" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" [style.width]="memoryInfo.memoryLoad + '%'">
                         Memory Load: {{memoryInfo.memoryLoad}}%
                     </div>
                 </div>
             </div>
-            <div class="panel-footer">
+            <div class="box-footer">
                 <input type="checkbox" class="refresh-checkbox" #autoRefreshCheckbox (click)="toggleAutoRefresh(autoRefreshCheckbox.checked)">Auto-Refresh
             </div>
         </div>
-        <div class="panel panel-primary">
-            <div class="panel-heading">
-                <h3 class="panel-title pull-left">CPU Information</h3>
+        <div class="box box-info">
+            <div class="box-header">
+                <h3 class="box-title pull-left">CPU Information</h3>
                 <a class="btn btn-default pull-right" role="button" (click)="getCpuInfo()">Get CPU Info</a>
-                <div class="clearfix"></div>
             </div>
             <div *ngIf="cpuInfo.numberOfProcessors != undefined" class="panel-body cpu-info-panel-body">
                 <ul class="list-group">

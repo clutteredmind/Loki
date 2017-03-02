@@ -16,26 +16,24 @@
                 <button type="button" class="btn btn-primary" (click)="clearScreenshots()">Ok</button>
             </modal-footer>
         </modal>
-        <div class="panel panel-primary">
-            <div class="panel-heading">
+        <div class="box box-info">
+            <div class="box-header">
                 <spinner [visible]="screenshot_loading"></spinner>
                 <a class="btn btn-default pull-right get-screenshot-button" role="button" (click)="getScreenshot()">Get Screenshot</a>
-                <div class="clearfix"></div>
             </div>
-            <div class="panel-body">
+            <div class="box-body">
                 <div *ngIf="image_name" class='screenshot-panel-body'>
                     <a href="/images/{{image_name}}" target="_blank"><img class="img-responsive" src="/images/{{image_name}}" alt="screenshot"></a>
                 </div>
             </div>
         </div>
         <div *ngIf="images != undefined && images.length > 0" class="screenshot-list-panel">
-            <div class="panel panel-primary">
-                <div class="panel-heading">
-                    <h3 class="panel-title pull-left">Screenshots</h3>
+            <div class="box box-info">
+                <div class="box-header">
+                    <h3 class="box-title pull-left">Screenshots</h3>
                     <a class="btn btn-default pull-right clear-screenshot-button" role="button" (click)="modal.open()">Clear Screenshots</a>
-                    <div class="clearfix"></div>
                 </div>
-                <div class="panel-body">
+                <div class="box-body">
                     <div class="row">
                         <div *ngFor="let image of images" class="thumbnail col-md-3">
                             <a href="/images/{{image}}" target="_blank"><img src="/images/{{image}}" class="img-thumbnail" alt="screenshot"></a>
