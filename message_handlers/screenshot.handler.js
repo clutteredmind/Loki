@@ -1,9 +1,9 @@
 'use strict';
 
-const fs        = require('fs');
-const path      = require('path');
-const uuid      = require('uuid/v1');
-const finder    = require('fs-finder');
+const fs = require('fs');
+const path = require('path');
+const uuid = require('uuid/v1');
+const finder = require('fs-finder');
 
 var screenshot_custom_functions = [];
 
@@ -13,10 +13,10 @@ screenshot_custom_functions.push({
     function: (component, addons, socket, parameters) => {
         // using UUID here to give the image a basically-random name
         var image_name = uuid() + '.jpg';
-        var image_file_folder = './dist/images';
+        var image_file_folder = './loki-site/dist/loki-site/assets/images';
         addons.forEach((addon) => {
             addon.functions.forEach((function_name) => {
-                if(function_name == 'captureScreen') {
+                if (function_name == 'captureScreen') {
                     // check to see if image directory exists
                     try {
                         fs.readdirSync(image_file_folder);
@@ -27,7 +27,7 @@ screenshot_custom_functions.push({
                         }
                     }
                     // capture screen. we need to go one directory up from where we're at before we append the final directory
-                    addon.addon.captureScreen(path.join(__dirname, '../',  image_file_folder, image_name));
+                    addon.addon.captureScreen(path.join(__dirname, '../', image_file_folder, image_name));
                 }
             });
         });
@@ -39,7 +39,7 @@ screenshot_custom_functions.push({
     specifier: 'ScreenshotModule',
     name: 'getScreenshotList',
     function: (component, addons, socket, parameters) => {
-        var image_file_folder = './dist/images';
+        var image_file_folder = './loki-site/dist/loki-site/assets/images';
         // check to see if image directory exists
         try {
             fs.readdirSync(image_file_folder);
@@ -57,7 +57,7 @@ screenshot_custom_functions.push({
     specifier: 'ScreenshotModule',
     name: 'clearScreenshots',
     function: (component, addons, socket, parameters) => {
-        var image_file_folder = './dist/images';
+        var image_file_folder = './loki-site/dist/loki-site/assets/images';
         var images = finder.from(image_file_folder).findFiles('*.jpg');
         images.forEach((image) => {
             fs.unlinkSync(image_file_folder + '/' + path.parse(image).base);

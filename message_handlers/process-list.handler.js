@@ -9,7 +9,7 @@ process_list_custom_functions.push({
         var result;
         addons.forEach((addon) => {
             addon.functions.forEach((function_name) => {
-                if(function_name == 'getProcessModules') {
+                if (function_name == 'getProcessModules') {
                     result = addon.addon.getProcessModules(parameters[0]);
                 }
             });

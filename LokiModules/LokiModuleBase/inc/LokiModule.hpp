@@ -47,7 +47,7 @@ namespace Loki
       static void Create (const v8::FunctionCallbackInfo<v8::Value>& args)
       {
          auto isolate = args.GetIsolate ();
-         v8::HandleScope scope (isolate);
+         Local<Context> context = isolate->GetCurrentContext ();
 
          if (args.IsConstructCall ())
          {
@@ -63,7 +63,7 @@ namespace Loki
             const int argc = 1;
             v8::Local<v8::Value> argv[argc] = { args[0] };
             auto ctor = v8::Local<v8::Function>::New (isolate, constructor);
-            args.GetReturnValue ().Set (ctor->NewInstance (argc, argv));
+            args.GetReturnValue ().Set (ctor->NewInstance (context, argc, argv).ToLocalChecked());
          }
       }
 

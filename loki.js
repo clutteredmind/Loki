@@ -1,7 +1,6 @@
 'use strict';
 
 // load dependencies
-const fs            = require('fs');
 const http          = require('http');
 const path          = require('path');
 const express       = require('express');
