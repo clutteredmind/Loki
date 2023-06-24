@@ -1,0 +1,40 @@
+<aside class="main-sidebar sidebar-dark-primary elevation-4">
+  <div class="sidebar">
+    <nav class="mt-2">
+      <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+        <li class="nav-item">
+          <a routerLink="/" [class.active]="router.url == '/'" class="nav-link">
+            <i class="nav-icon fa-solid fa-link"></i>
+            <p>Home</p>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a routerLink="/device-list" [class.active]="router.url == '/device-list'" class="nav-link">
+            <i class="nav-icon fa-solid fa-link"></i>
+            <p>Device List</p>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a routerLink="/process-list" [class.active]="router.url == '/process-list'" class="nav-link">
+            <i class="nav-icon fas fa-solid fa-link"></i>
+            <p>Process List</p>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a routerLink="/screenshot" [class.active]="router.url == '/screenshot'" class="nav-link">
+            <i class="nav-icon fas fa-solid fa-link"></i>
+            <p>Screenshot</p>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a routerLink="/system-information" [class.active]="router.url == '/system-information'" class="nav-link">
+            <i class="nav-icon fa-solid fa-link"></i>
+            <p>System Information</p>
+          </a>
+        </li>
+      </ul>
+    </nav>
+    <!-- /.sidebar-menu -->
+  </div>
+  <!-- /.sidebar -->
+</aside>

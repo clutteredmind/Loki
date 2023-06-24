@@ -1,0 +1,24 @@
+{
+    "configurations": [
+        {
+            "name": "Win32",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "${env:NODE_SOURCE}/src/",
+                "${env:NODE_SOURCE}/deps/v8/include/",
+                "${workspaceFolder}/addons/node_modules/node-addon-api/"
+            ],
+            "defines": [
+                "_DEBUG",
+                "UNICODE",
+                "_UNICODE"
+            ],
+            "windowsSdkVersion": "10.0.22000.0",
+            "compilerPath": "cl.exe",
+            "cStandard": "c17",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "windows-msvc-x64"
+        }
+    ],
+    "version": 4
+}
