@@ -7,6 +7,9 @@
   "dependencies": {
     "node-addon-api": "*"
   },
-  "scripts": {},
+  "scripts": {
+    "build": "node-gyp build",
+    "configure": "node-gyp configure"
+  },
   "gypfile": true
 }
