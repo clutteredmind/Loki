@@ -37,6 +37,25 @@
                     }
                 }
             },
+        },
+        {
+            "target_name": "ProcessListAddon",
+            "include_dirs": ["<!(node -p \"require('node-addon-api').include_dir\")"],
+            "sources": ["ProcessListAddon/ProcessListAddon.cpp"],
+            "defines": ["NAPI_DISABLE_CPP_EXCEPTIONS", "_UNICODE", "UNICODE"],
+            "configurations": {
+                "Release": {
+                    "msvs_settings": {
+                        "VCCLCompilerTool": {
+                            "AdditionalOptions": ["/EHsc"],
+                            # "RuntimeLibrary": 0, # MultiThreaded (/MT)}
+                            # "RuntimeLibrary": 1, # MultiThreadedDebug (/MTd)}
+                            "RuntimeLibrary": 2,  # MultiThreadedDLL (/MD)}
+                            # "RuntimeLibrary": 3, # MultiThreadedDebugDLL (/MDd)}
+                        }
+                    }
+                }
+            },
         }
     ]
 }
