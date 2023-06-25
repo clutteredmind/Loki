@@ -1,0 +1,52 @@
+{
+  "name": "loki",
+  "version": "1.0.0",
+  "productName": "Loki",
+  "description": "NodeJS backend for Loki",
+  "main": "build/main.js",
+  "bin": "build/main.js",
+  "scripts": {
+    "build:dev": "rimraf ./build && npm run compile:dev",
+    "build:prod": "rimraf ./build && npm run compile:prod",
+    "compile:dev": "npx tsc --inlineSourceMap --inlineSources --declaration --declarationMap",
+    "compile:prod": "npx tsc",
+    "lint": "esw src --ext .ts",
+    "lint:watch": "npm run lint -- -w",
+    "pkg": "pkg .",
+    "start": "npm run build:prod && node build/main.js",
+    "start:dev": "set DEBUG=Loki* && npx nodemon",
+    "test": "jest --json --outputFile=test-results.json",
+    "test:watch": "jest --watchAll"
+  },
+  "keywords": [],
+  "author": "Aaron Hall",
+  "private": "true",
+  "pkg": {
+    "scripts": [],
+    "assets": [],
+    "targets": [
+      "win"
+    ],
+    "outputPath": "dist"
+  },
+  "dependencies": {
+    "debug": "^4.3.4",
+    "ws": "^8.13.0"
+  },
+  "devDependencies": {
+    "@types/debug": "^4.1.8",
+    "@types/jest": "^29.5.2",
+    "@types/node": "^20.3.1",
+    "@types/ws": "^8.5.5",
+    "@typescript-eslint/eslint-plugin": "^5.60.0",
+    "@typescript-eslint/parser": "^5.60.0",
+    "eslint": "^8.43.0",
+    "eslint-watch": "^8.0.0",
+    "jest": "^29.5.0",
+    "nodemon": "^2.0.22",
+    "rimraf": "^5.0.1",
+    "ts-node": "^10.9.1",
+    "tslib": "^2.5.3",
+    "typescript": "^5.1.3"
+  }
+}
