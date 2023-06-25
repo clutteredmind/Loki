@@ -28,7 +28,7 @@
                 "Release": {
                     "msvs_settings": {
                         "VCCLCompilerTool": {
-                            "AdditionalOptions": ["/EHsc"],
+                            "AdditionalOptions": ["/EHsc", "/INCREMENTAL"],
                             # "RuntimeLibrary": 0, # MultiThreaded (/MT)}
                             # "RuntimeLibrary": 1, # MultiThreadedDebug (/MTd)}
                             "RuntimeLibrary": 2,  # MultiThreadedDLL (/MD)}
@@ -50,7 +50,7 @@
                 "Release": {
                     "msvs_settings": {
                         "VCCLCompilerTool": {
-                            "AdditionalOptions": ["/EHsc"],
+                            "AdditionalOptions": ["/EHsc", "/INCREMENTAL"],
                             # "RuntimeLibrary": 0, # MultiThreaded (/MT)}
                             # "RuntimeLibrary": 1, # MultiThreadedDebug (/MTd)}
                             "RuntimeLibrary": 2,  # MultiThreadedDLL (/MD)}
@@ -69,7 +69,7 @@
                 "Release": {
                     "msvs_settings": {
                         "VCCLCompilerTool": {
-                            "AdditionalOptions": ["/EHsc"],
+                            "AdditionalOptions": ["/EHsc", "/INCREMENTAL"],
                             # "RuntimeLibrary": 0, # MultiThreaded (/MT)}
                             # "RuntimeLibrary": 1, # MultiThreadedDebug (/MTd)}
                             "RuntimeLibrary": 2,  # MultiThreadedDLL (/MD)}
