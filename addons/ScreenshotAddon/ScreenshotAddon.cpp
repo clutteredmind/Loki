@@ -3,7 +3,7 @@
  * Created Date: Sunday, June 25th 2023
  * Author: Aaron Hall
  * -----
- * Last Modified: Sunday, 25th June 2023 7:25:54 am
+ * Last Modified: Sunday, 25th June 2023 8:42:25 am
  * Modified By: Aaron Hall
  * -----
  * Copyright (c) 2020 - 2023
@@ -36,7 +36,7 @@ namespace ScreenshotAddon
 
     if (!info[0].IsString())
     {
-      Napi::TypeError::New(env, "Wrong arguments").ThrowAsJavaScriptException();
+      Napi::TypeError::New(env, "Incorrect arguments. Expected a string path with filename.").ThrowAsJavaScriptException();
       result = env.Null();
     }
     else
@@ -143,11 +143,13 @@ namespace ScreenshotAddon
         {
           throw std::exception("CaptureScreen: Unable to save JPEG");
         }
+        std::string successMessage("Wrote screenshot to ");
+        result = Napi::String::New(env, successMessage + outputPath);
       }
       catch (std::exception &exception)
       {
         Napi::Error::New(env, Napi::String::New(env, exception.what())).ThrowAsJavaScriptException();
-        result = env.Null();
+        result = Napi::String::New(env, "Screen capture failed.");
       }
 
       // Clean up memory.

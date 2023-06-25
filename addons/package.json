@@ -1,7 +1,7 @@
 {
   "name": "loki_addons",
   "version": "0.0.0",
-  "description": "Node Addons For the Loki Project",
+  "description": "NodeJS Addons For the Loki Project",
   "main": "index.js",
   "private": true,
   "dependencies": {
